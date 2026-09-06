@@ -1,0 +1,25 @@
+{
+  "version": "2026-09-06-Q1-SAFETTA-RELEASE-REPLAY-COMPLETENESS-PATCH-v1",
+  "root": "F:\\MEDSEG_SAFETTA",
+  "release_dir": "F:\\MEDSEG_SAFETTA\\release\\SafeTTA_repro_release_candidate_v1",
+  "assembly_gate": "PASS_REPO_RELEASE_CANDIDATE_ASSEMBLED",
+  "numeric_replay_gate": "PASS_NUMERIC_REPLAY",
+  "dependency_count": 82,
+  "status_counts": {
+    "PASS_ALREADY_STAGED": 68,
+    "PASS_COPIED_SMALL_DEPENDENCY": 13,
+    "PASS_EXTERNALIZED_REQUIRED": 1
+  },
+  "failed_dependency_count": 0,
+  "external_split": {
+    "replay_required_count": 1,
+    "replay_required_bytes": 50580135,
+    "optional_count": 67,
+    "optional_bytes": 13037160545,
+    "review_count": 0,
+    "review_bytes": 0
+  },
+  "gate": "PASS_PUBLIC_RELEASE_ASSET_COMPLETENESS_LOCAL",
+  "next_gate": "BUILD_MINIMAL_REPLAY_RELEASE",
+  "important_note": "PASS means all 82 observed dependencies of the validated numeric replay are locally accounted for by a matching staged file or matching external-asset record. The 67 full-chain optional large assets are not required for Level-A paper-statistic replay."
+}

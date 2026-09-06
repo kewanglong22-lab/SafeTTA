@@ -1,0 +1,40 @@
+{
+  "SOURCE_ONLY": {
+    "adaptation_coverage": 0.0,
+    "adapted_rows": 0,
+    "prevented_harm_fraction": 1.0,
+    "mean_slice_deployed_dice": 0.6547997766274563,
+    "mean_patient_3d_deployed_dice": 0.7533350561600508
+  },
+  "TENT_ALL": {
+    "adaptation_coverage": 1.0,
+    "adapted_rows": 4131,
+    "prevented_harm_fraction": 0.0,
+    "mean_slice_deployed_dice": 0.5316731096865099,
+    "mean_patient_3d_deployed_dice": 0.705162011296578
+  },
+  "SAFETTA_FIXED_SOURCE_GATE": {
+    "adaptation_coverage": 0.1675139191479061,
+    "adapted_rows": 692,
+    "prevented_harm_fraction": 0.9007633587786259,
+    "mean_slice_deployed_dice": 0.6580831323424625,
+    "mean_patient_3d_deployed_dice": 0.7446111204829475
+  },
+  "family_matched_coverage": {
+    "UNet": {
+      "n": 1377,
+      "k_adapt": 208,
+      "coverage": 0.15105301379811184
+    },
+    "DeepLabV3_R50": {
+      "n": 1377,
+      "k_adapt": 231,
+      "coverage": 0.16775599128540306
+    },
+    "SegFormer_B0": {
+      "n": 1377,
+      "k_adapt": 253,
+      "coverage": 0.18373275236020334
+    }
+  }
+}

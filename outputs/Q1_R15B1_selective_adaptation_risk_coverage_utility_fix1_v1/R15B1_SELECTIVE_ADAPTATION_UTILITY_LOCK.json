@@ -1,0 +1,103 @@
+{
+  "status": "PASS",
+  "decision": "EXTERNAL_SELECTIVE_ADAPTATION_UTILITY_COMPLETE_NO_TARGET_POLICY_RETUNING",
+  "script_version": "2026-09-04-Q1-R15B1-v1-fix1",
+  "build": "Q1_R15B1_SELECTIVE_ADAPTATION_RISK_COVERAGE_UTILITY_FIX1",
+  "scientific_role": "post-freeze external selective-adaptation risk-coverage utility analysis",
+  "frozen_policy": {
+    "score_orientation": "higher frozen safety probability = higher HARM risk",
+    "coverage_grid": [
+      1.0,
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5,
+      0.4,
+      0.3,
+      0.2,
+      0.1,
+      0.0
+    ],
+    "ranking_rule": "adapt lowest-risk c fraction of model-frame rows; retain SOURCE for highest-risk 1-c fraction",
+    "coverage_count_rule": "nearest integer via floor(c*N + 0.5)",
+    "tie_break": "score, model_family, model_state_id, sample_id, original row order",
+    "frozen_threshold": 0.300584763193734,
+    "fixed_threshold_rule": "adapt iff score < frozen_threshold",
+    "random_reference": "exact expectation under uniform row-level selection at identical coverage"
+  },
+  "bootstrap": {
+    "replicates": 2000,
+    "PolypGen_cluster": "sample_id",
+    "PolypGen_seed": 20260904,
+    "SUN_cluster": "cluster_id",
+    "SUN_shared_seed": 20260905,
+    "same_cluster_draw_across_coverages": true,
+    "same_SUN_cluster_draw_for_TENT1_and_PL": true,
+    "duplicate_clusters_preserved_by_integer_multiplicity": true
+  },
+  "information_boundary": {
+    "model_fitting": false,
+    "pca_fitting": false,
+    "score_recomputation": false,
+    "target_calibration": false,
+    "threshold_tuning": false,
+    "coverage_selection_by_gt": false,
+    "feature_change": false,
+    "case_exclusion": false,
+    "action_specific_safety_retraining": false,
+    "best_coverage_selected_or_deployed": false
+  },
+  "upstream": {
+    "r15b0_lock_sha256": "49bdf197919059c115156a44eaa57a9304c5c1f11545f9e2841f657856af4713",
+    "panels": {
+      "PolypGen_TENT1": {
+        "path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L3C_polypgen_gt_reveal_prospective_external_evaluation_fix1_v1\\R10L3C_LOCKED_SCORE_GT_EVALUATION_PANEL.csv",
+        "sha256": "c484d10c4196359f62a34c0b0fa34ae817a1fdf9d451abb1a37c333d92576a67"
+      },
+      "SUN_TENT1": {
+        "path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R14C3B_sunseg_gt_reveal_dual_action_frozen_score_evaluation_fix1_v1\\R14C3B_LOCKED_SCORE_DUAL_ACTION_EVALUATION_PANEL.csv",
+        "sha256": "d3df3995c1470220ed53379bc6623cd55741c394a6459fedf4eaa103fe8192d8"
+      },
+      "SUN_PL_CONF90": {
+        "path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R14C3B_sunseg_gt_reveal_dual_action_frozen_score_evaluation_fix1_v1\\R14C3B_LOCKED_SCORE_DUAL_ACTION_EVALUATION_PANEL.csv",
+        "sha256": "d3df3995c1470220ed53379bc6623cd55741c394a6459fedf4eaa103fe8192d8"
+      }
+    }
+  },
+  "artifacts": {
+    "R15B1_selective_utility_point_curve.csv": {
+      "sha256": "1bb300460d3e28985bf545e72cd8816cd8ae8fd6939638b3d781f89ad8143310",
+      "bytes": 8603
+    },
+    "R15B1_selective_vs_random_point_delta.csv": {
+      "sha256": "55f3b7f849070def59a8ad68b3f728b859cae4ce91bc239e5c97617a22f644e7",
+      "bytes": 30358
+    },
+    "R15B1_frozen_threshold_policy_point.csv": {
+      "sha256": "17c30bd12da984b5b5b3325db48224d596d567127e07fe9d9594569876184aaa",
+      "bytes": 1266
+    },
+    "R15B1_frozen_threshold_vs_random_point_delta.csv": {
+      "sha256": "51424f1ba1e4ea81cc1bab498582bc41117d71fada78ac443327e11ee9001221",
+      "bytes": 3441
+    },
+    "R15B1_selective_utility_cluster_bootstrap_ci.csv": {
+      "sha256": "50d60be93457fc868df6b6bf9b6b55b96392f9a67b2bcf221f6fe40c959ef0aa",
+      "bytes": 29848
+    },
+    "R15B1_selective_vs_random_cluster_bootstrap_delta_ci.csv": {
+      "sha256": "7fbc4561300c6adb7771344eaacf418360b0a49a50fe5bad85aa0d651bc26401",
+      "bytes": 31717
+    },
+    "R15B1_frozen_threshold_cluster_bootstrap_ci.csv": {
+      "sha256": "6787127f4dff9753d7e952487235cb6b0db1fc5f379509b679cb4fd9a90e4847",
+      "bytes": 3358
+    },
+    "R15B1_frozen_threshold_vs_random_cluster_bootstrap_delta_ci.csv": {
+      "sha256": "3fe0b489e23ff2eb6efe6a8170e15d11b1406cdc0b58e7eba165d33d074fe310",
+      "bytes": 3561
+    }
+  },
+  "next_stage": "R15C_CONTINUOUS_RISK_VS_DELTA_DICE_ANALYSIS"
+}

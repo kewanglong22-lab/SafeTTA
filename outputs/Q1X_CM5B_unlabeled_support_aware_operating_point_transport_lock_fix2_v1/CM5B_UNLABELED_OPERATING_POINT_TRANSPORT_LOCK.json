@@ -1,0 +1,119 @@
+{
+  "status": "ABSTAIN",
+  "decision": "UNLABELED_OPERATING_POINT_TRANSPORT_ABSTAIN_SUPPORT_INADEQUATE_READY_FOR_CM6_GT_REVEAL_AS_ABSTENTION_ANALYSIS",
+  "version": "2026-09-05-Q1X-CM5B-v1-fix2",
+  "build": "Q1X_CM5B_UNLABELED_SUPPORT_AWARE_OPERATING_POINT_TRANSPORT_LOCK_FIX2",
+  "cm4b_lock_sha256": "7903f8dd84338be8051883b1a905607daec25e55539205f7c6fb78ca3cc41a7e",
+  "cm4c_lock_sha256": "5ddf4a6a4b44d19a1e3c8cccc8a2a9cdba71da18850a7df58cbbee83a40527ff",
+  "cm5a_lock_sha256": "18198bf417ec30434fedcab39f8f50bff270fade676e47fccfa1e397fc2c93fd",
+  "cm5a_helper_sha256": "e7373152880068157b88cba31f091258932c9366e53313476692ab81c5c50f3b",
+  "fix2_schema_correction": {
+    "issue": "CM5B Fix1 expected target-score column `fixed_source_threshold`, while CM5A actually serialized `frozen_source_threshold`.",
+    "correction": "Use the actual CM5A column name and verify exact consistency with the CM4C frozen final-refit deployment threshold and both serialized fixed-source gate decisions.",
+    "scientific_method_changed": false,
+    "target_gt_used": false
+  },
+  "scientific_assumption": "Covariate shift / conditional stability in frozen safety representation: P_t(HARM|z,a) ~= P_s(HARM|z,a). No unlabeled method can identify arbitrary conditional shift.",
+  "domain_ratio_estimator": {
+    "space": "frozen final SOURCE standardized PCA64+M2 z",
+    "per_family": true,
+    "folds": 5,
+    "grouping": "patient",
+    "classifier": "balanced LogisticRegression",
+    "C": 1.0,
+    "max_iter": 3000,
+    "density_ratio": "q_target/(1-q_target) under balanced priors",
+    "weight_normalization": "mean 1 within family",
+    "max_normalized_weight": 10.0,
+    "cross_fitted_source_weights": true,
+    "cross_fitted_target_propensities": true
+  },
+  "support_gate": {
+    "pooled_harm_slice_ess": 21.003559757291583,
+    "pooled_harm_patient_ess": 13.413806859842529,
+    "min_family_harm_patient_ess": 4.2205269021565295,
+    "max_family_target_q_ge_0.99_fraction": 0.8278867102396514,
+    "requirements": {
+      "min_pooled_harm_slice_ess": 100.0,
+      "min_pooled_harm_patient_ess": 20.0,
+      "min_family_harm_patient_ess": 8.0,
+      "max_family_target_q_ge_0.99_fraction": 0.5
+    },
+    "pass": false
+  },
+  "fixed_source_reference": {
+    "threshold": 0.2950987857155136,
+    "source_oof_adaptation_coverage": 0.3055633736748288
+  },
+  "naive_target_quantile_baseline": {
+    "threshold": 0.41531424822113006,
+    "target_adaptation_coverage_requested": 0.3055633736748288,
+    "target_adaptation_coverage_achieved": 0.3054950375211813,
+    "target_low_risk_rows": 1262,
+    "target_total_rows": 4131,
+    "rule": "risk_score >= threshold => retain SOURCE; below => adapt"
+  },
+  "support_aware_transport": {
+    "status": "ABSTAIN",
+    "method": "support-aware covariate-shift operating-point transport",
+    "reason": "pre-registered overlap/ESS support gate failed",
+    "support_gate": {
+      "pooled_harm_slice_ess": 21.003559757291583,
+      "pooled_harm_patient_ess": 13.413806859842529,
+      "min_family_harm_patient_ess": 4.2205269021565295,
+      "max_family_target_q_ge_0.99_fraction": 0.8278867102396514,
+      "requirements": {
+        "min_pooled_harm_slice_ess": 100.0,
+        "min_pooled_harm_patient_ess": 20.0,
+        "min_family_harm_patient_ess": 8.0,
+        "max_family_target_q_ge_0.99_fraction": 0.5
+      },
+      "pass": false
+    },
+    "threshold": null,
+    "uses_target_gt": false,
+    "uses_target_harm_labels": false
+  },
+  "information_boundary": {
+    "promises12_gt_access": false,
+    "target_harm_labels": false,
+    "target_delta_dice": false,
+    "target_oracle_threshold": false,
+    "target_threshold_tuning_with_gt": false
+  },
+  "locked_cm6_evaluation_plan": {
+    "primary_ranking": "macro-family target HARM AUROC with 2000x patient-cluster bootstrap 95% CI",
+    "operating_points": [
+      "fixed SOURCE deployment threshold",
+      "naive unlabeled target-quantile baseline",
+      "support-aware method ABSTAIN",
+      "oracle target threshold at HARM recall >=0.90 (reference only)"
+    ],
+    "metrics": [
+      "HARM recall",
+      "FPR",
+      "precision",
+      "adaptation coverage",
+      "prevented HARM fraction",
+      "deployed Dice",
+      "SOURCE Dice",
+      "TENT1 Dice",
+      "Spearman(risk,-DeltaDice)"
+    ],
+    "family_level_reporting": true,
+    "no_post_gt_threshold_changes": true
+  },
+  "artifacts": {
+    "support_diagnostics": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1\\CM5B_SUPPORT_DIAGNOSTICS.csv",
+    "support_diagnostics_sha256": "6be09c6f78c0b0e15f3d2d0e9e7c7b1091617c4339ec39a72a78cdb811c01706",
+    "source_density_ratio_weights": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1\\CM5B_SOURCE_CROSSFIT_DENSITY_RATIO_WEIGHTS.csv",
+    "source_density_ratio_weights_sha256": "90e2b0c7ce110ab5e3210863b02ae381c653f707c9e55c4450fe5fc82b972823",
+    "target_domain_propensities": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1\\CM5B_TARGET_CROSSFIT_DOMAIN_PROPENSITIES.csv",
+    "target_domain_propensities_sha256": "825be133680ffb45a16ef712f66022ce9a4253b228a17e278ee45f3c95416fb5",
+    "policy_summary": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1\\CM5B_LOCKED_POLICY_SUMMARY.csv",
+    "policy_summary_sha256": "9775485cae884a52262f246d155f34083c8ccfefb3dee49b6e5ba69aa5cecff3",
+    "transport": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1\\CM5B_UNLABELED_OPERATING_POINT_TRANSPORT.json",
+    "transport_sha256": "607f0723e5c82d6a83aed85f1218188fc4fdfe2b7e10349d438c7a1908d534c8"
+  },
+  "next_stage": "CM6_PROMISE12_GT_REVEAL_AND_LOCKED_POLICY_EVALUATION"
+}

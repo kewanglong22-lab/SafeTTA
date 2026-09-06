@@ -1,0 +1,793 @@
+{
+  "status": "PASS",
+  "decision": "SUNSEG_GT_REVEAL_OUTCOME_SEMANTICS_LOCATED_READY_FOR_LOCKED_OUTCOME_CONSTRUCTION",
+  "r14c2b": {
+    "lock_path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R14C2B_sunseg_frozen_safety_score_lock_preGT_fix1_v1\\R14C2B_SUNSEG_FROZEN_SAFETY_SCORE_LOCK.json",
+    "lock_sha256": "29030a2301178575971c8f5fab2c131d7cc06ffa99dbbd98431c288a3343337d",
+    "decision": "SUNSEG_FROZEN_SAFETY_SCORES_LOCKED_BEFORE_GT_REVEAL",
+    "frozen_probability_rows": 8820,
+    "frozen_threshold": 0.300584763193734
+  },
+  "sun_gt_schema": {
+    "manifest_path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R14B4B_sunseg_selected_rgb_contamination_audit_fix3_v1\\R14B4B_FIX3_FINAL_CONFIRMATORY_MANIFEST.csv",
+    "manifest_sha256": "f38cc8e5af4a007df3394ec95fa621c0b819f488bdd797ddad9338ac12491b4d",
+    "frames": 980,
+    "physical_cases": 49,
+    "gt_members": 980,
+    "gt_member_names_verified_in_tar": true,
+    "gt_pixel_decode": false
+  },
+  "historical_tent1_outcome_code": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\Q1_R05D4_neopolyp_gt_reveal_paot_confirmatory_evaluation_v1.py",
+    "sha256": "f26cf378ceaee69acc4782a551c07d613a1cc882acad938d6151c824e54633ed",
+    "blocks": [
+      {
+        "kind": "FunctionDef",
+        "name": "validate_gt_rule",
+        "start_line": 286,
+        "end_line": 324,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "benefit",
+          "threshold",
+          "gt"
+        ],
+        "text": "def validate_gt_rule(path: Path):\n    rule = json.loads(path.read_text(encoding=\"utf-8\"))\n\n    if rule.get(\"evaluation_task\") != \"binary_polyp_segmentation\":\n        raise RuntimeError(\"Frozen evaluation task changed.\")\n    if rule.get(\"future_decode_rule\") != \"nearest_RGB_prototype_euclidean\":\n        raise RuntimeError(\"Frozen GT decode rule changed.\")\n\n    if rule.get(\"binary_mapping\") != {\n        \"background\": 0,\n        \"non_neoplastic_polyp\": 1,\n        \"neoplastic_polyp\": 1,\n    }:\n        raise RuntimeError(\"Frozen binary GT mapping changed.\")\n\n    classes = rule.get(\"original_gt_classes\", {})\n    expected_rgb = {\n        \"0\": [0, 0, 0],\n        \"1\": [0, 255, 0],\n        \"2\": [255, 0, 0],\n    }\n    for key, rgb in expected_rgb.items():\n        if classes.get(key, {}).get(\"rgb\") != rgb:\n            raise RuntimeError(f\"Frozen RGB prototype changed: class={key}\")\n\n    resize = rule.get(\"future_gt_resize\", {})\n    if (\n        int(resize.get(\"height\", -1)) != MASK_H\n        or int(resize.get(\"width\", -1)) != MASK_W\n        or resize.get(\"interpolation\") != \"nearest\"\n    ):\n        raise RuntimeError(\"Frozen GT resize rule changed.\")\n\n    if float(rule.get(\"harm_threshold_delta_dice\")) != HARM_THRESHOLD:\n        raise RuntimeError(\"Frozen HARM threshold changed.\")\n    if float(rule.get(\"benefit_threshold_delta_dice\")) != BENEFIT_THRESHOLD:\n        raise RuntimeError(\"Frozen BENEFIT threshold changed.\")\n\n    return rule"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "build_outcomes",
+        "start_line": 539,
+        "end_line": 667,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "benefit",
+          "outcome",
+          "source",
+          "a1",
+          "gt"
+        ],
+        "text": "def build_outcomes(gt_masks, d2_probs, d3):\n    rows = []\n    seen_keys = set()\n    state_meta = []\n\n    for family, seeds in (\n        (\"PraNet\", (20260817, 20260818, 20260819)),\n        (\"DeepLabV3-R50\", (20260817, 20260818, 20260819)),\n        (\"SegFormer-B0\", (20260820, 20260821, 20260822)),\n    ):\n        for seed in seeds:\n            paths = state_artifacts(d3, family, seed)\n            sidecar = json.loads(paths[\"lock\"].read_text(encoding=\"utf-8\"))\n\n            if sidecar.get(\"model_family\") != family:\n                raise RuntimeError(f\"D3 state family mismatch: {family}/{seed}\")\n            if int(sidecar.get(\"training_seed\", -1)) != seed:\n                raise RuntimeError(f\"D3 state seed mismatch: {family}/{seed}\")\n            if int(sidecar.get(\"target_cases\", -1)) != EXPECTED_CASES:\n                raise RuntimeError(f\"D3 state target count mismatch: {family}/{seed}\")\n            if bool(sidecar.get(\"target_gt_pixels_decoded\", True)):\n                raise RuntimeError(f\"D3 state reports prior GT decode: {family}/{seed}\")\n            if bool(sidecar.get(\"paot_probability_values_read\", True)):\n                raise RuntimeError(f\"D3 state reports probability read: {family}/{seed}\")\n            if bool(sidecar.get(\"paot_gating_used\", True)):\n                raise RuntimeError(f\"D3 state reports PAOT gating: {family}/{seed}\")\n\n            idx_rows, idx_fields = read_csv(paths[\"index\"])\n            required_idx = {\n                \"row_index\",\n                \"sample_id\",\n                \"model_family\",\n                \"model_state_id\",\n                \"training_seed\",\n                \"checkpoint_sha256\",\n            }\n            if not required_idx.issubset(set(idx_fields)):\n                raise RuntimeError(f\"D3 index schema mismatch: {family}/{seed}\")\n            if len(idx_rows) != EXPECTED_CASES:\n                raise RuntimeError(f\"D3 index count mismatch: {family}/{seed}\")\n\n            with np.load(paths[\"npz\"], allow_pickle=False) as z:\n                if set(z.files) != {\"source_masks_packed\", \"a1_masks_packed\"}:\n                    raise RuntimeError(f\"D3 NPZ arrays mismatch: {family}/{seed}\")\n                source_pack = np.asarray(z[\"source_masks_packed\"], dtype=np.uint8)\n                a1_pack = np.asarray(z[\"a1_masks_packed\"], dtype=np.uint8)\n\n            expected_shape = (EXPECTED_CASES, PACKED_BYTES)\n            if source_pack.shape != expected_shape or a1_pack.shape != expected_shape:\n                raise RuntimeError(f\"D3 packed shape mismatch: {family}/{seed}\")\n\n            state_id = sidecar[\"model_state_id\"]\n            cksha = sidecar[\"checkpoint_sha256\"]\n\n            for idx_row in tqdm(\n                idx_rows,\n                desc=f\"Utility {state_id}\",\n                unit=\"case\",\n                dynamic_ncols=True,\n            ):\n                i = int(idx_row[\"row_index\"])\n                sid = idx_row[\"sample_id\"]\n                key = (state_id, sid)\n\n                if key in seen_keys:\n                    raise RuntimeError(f\"Duplicate D3 model-case key: {key}\")\n                seen_keys.add(key)\n\n                if sid not in gt_masks:\n                    raise RuntimeError(f\"Missing GT mask: {sid}\")\n                if key not in d2_probs:\n                    raise RuntimeError(f\"Missing D2 probability: {key}\")\n\n                d2row = d2_probs[key]\n                if d2row[\"model_family\"] != family:\n                    raise RuntimeError(f\"D2/D3 family mismatch: {key}\")\n                if d2row[\"training_seed\"] != seed:\n                    raise RuntimeError(f\"D2/D3 seed mismatch: {key}\")\n                if d2row[\"checkpoint_sha256\"] != cksha:\n                    raise RuntimeError(f\"D2/D3 checkpoint mismatch: {key}\")\n\n                source_mask = unpack_mask(source_pack[i])\n                a1_mask = unpack_mask(a1_pack[i])\n                gt = gt_masks[sid]\n\n                source_dice = binary_dice(source_mask, gt)\n                a1_dice = binary_dice(a1_mask, gt)\n                delta = float(a1_dice - source_dice)\n                label = outcome_label(delta)\n                probs = d2row[\"probabilities\"]\n\n                rows.append({\n                    \"sample_id\": sid,\n                    \"model_family\": family,\n                    \"model_state_id\": state_id,\n                    \"training_seed\": seed,\n                    \"checkpoint_sha256\": cksha,\n                    \"source_dice\": source_dice,\n                    \"a1_dice\": a1_dice,\n                    \"delta_dice\": delta,\n                    \"adaptation_outcome\": label,\n                    \"harm_label\": int(label == \"HARM\"),\n                    \"benefit_label\": int(label == \"BENEFIT\"),\n                    \"paot_mrz19_harm_probability\": probs[(\"MRZ19\", \"HARM\")],\n                    \"paot_mrz19_benefit_probability\": probs[(\"MRZ19\", \"BENEFIT\")],\n                    \"paot_raw19_harm_probability\": probs[(\"RAW19\", \"HARM\")],\n                    \"paot_raw19_benefit_probability\": probs[(\"RAW19\", \"BENEFIT\")],\n                })\n\n            state_meta.append({\n                \"model_family\": family,\n                \"model_state_id\": state_id,\n                \"training_seed\": seed,\n                \"checkpoint_sha256\": cksha,\n                \"prediction_npz_sha256\": sha256_file(paths[\"npz\"]),\n                \"state_index_sha256\": sha256_file(paths[\"index\"]),\n                \"state_lock_sha256\": sha256_file(paths[\"lock\"]),\n            })\n\n            del source_pack, a1_pack\n\n    if len(rows) != EXPECTED_MODEL_CASES:\n        raise RuntimeError(f\"Outcome rows={len(rows)} expected={EXPECTED_MODEL_CASES}\")\n    if seen_keys != set(d2_probs):\n        raise RuntimeError(\"D2/D3 model-case key sets differ.\")\n    if len(state_meta) != EXPECTED_STATES:\n        raise RuntimeError(\"D3 state metadata count mismatch.\")\n\n    return rows, state_meta"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "segmentation_summary",
+        "start_line": 927,
+        "end_line": 957,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "source",
+          "a1"
+        ],
+        "text": "def segmentation_summary(rows):\n    groups = defaultdict(list)\n    for row in rows:\n        groups[(row[\"model_family\"], row[\"model_state_id\"])].append(row)\n        groups[(row[\"model_family\"], \"ALL_3_STATES\")].append(row)\n        groups[(\"ALL_ARCHITECTURES\", \"ALL_9_STATES\")].append(row)\n\n    out = []\n    for (family, state_id), subset in sorted(groups.items()):\n        src = np.asarray([float(r[\"source_dice\"]) for r in subset])\n        a1 = np.asarray([float(r[\"a1_dice\"]) for r in subset])\n        delta = np.asarray([float(r[\"delta_dice\"]) for r in subset])\n        labels = Counter(r[\"adaptation_outcome\"] for r in subset)\n\n        out.append({\n            \"model_family\": family,\n            \"model_state_id\": state_id,\n            \"rows\": len(subset),\n            \"source_dice_mean\": float(src.mean()),\n            \"source_dice_median\": float(np.median(src)),\n            \"a1_dice_mean\": float(a1.mean()),\n            \"a1_dice_median\": float(np.median(a1)),\n            \"delta_dice_mean\": float(delta.mean()),\n            \"delta_dice_median\": float(np.median(delta)),\n            \"harm_rows\": int(labels.get(\"HARM\", 0)),\n            \"neutral_rows\": int(labels.get(\"NEUTRAL\", 0)),\n            \"benefit_rows\": int(labels.get(\"BENEFIT\", 0)),\n            \"harm_fraction\": float(labels.get(\"HARM\", 0) / len(subset)),\n            \"benefit_fraction\": float(labels.get(\"BENEFIT\", 0) / len(subset)),\n        })\n    return out"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "run",
+        "start_line": 1069,
+        "end_line": 1437,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "threshold",
+          "source",
+          "a1",
+          "gt"
+        ],
+        "text": "def run(args):\n    (\n        d1,\n        d2,\n        d3,\n        d1_manifest_path,\n        d2_table_path,\n        d3_rule_path,\n    ) = validate_upstream()\n\n    if args.output_dir.exists():\n        raise FileExistsError(f\"Final D4 output exists: {args.output_dir}\")\n\n    build_dir = Path(str(args.output_dir) + \"__building\")\n    if build_dir.exists():\n        raise FileExistsError(\n            f\"Partial D4 output exists: {build_dir}. \"\n            \"Do not silently discard a post-reveal partial run.\"\n        )\n    build_dir.mkdir(parents=True, exist_ok=False)\n\n    protocol_copy = build_dir / \"preregistered_protocol_copy.md\"\n    shutil.copy2(PROTOCOL, protocol_copy)\n    validate_sha(protocol_copy, EXPECTED_PROTOCOL_SHA256, \"D4 protocol copy\")\n\n    validate_gt_rule(d3_rule_path)\n    d1_manifest = load_d1_manifest(d1_manifest_path)\n    d2_probs = load_d2_probabilities(d2_table_path)\n\n    if set(sid for _, sid in d2_probs) != set(d1_manifest):\n        raise RuntimeError(\"D2 sample set differs from frozen D1 cohort.\")\n\n    upstream_path = build_dir / \"upstream_audit.json\"\n    write_json(\n        upstream_path,\n        {\n            \"script_version\": VERSION,\n            \"protocol_sha256\": EXPECTED_PROTOCOL_SHA256,\n            \"r05d1_lock_sha256\": EXPECTED_R05D1_LOCK_SHA256,\n            \"r05d1_decision\": d1.get(\"decision\"),\n            \"r05d2_lock_sha256\": EXPECTED_R05D2_LOCK_SHA256,\n            \"r05d2_decision\": d2.get(\"decision\"),\n            \"r05d2_probability_table_sha256\": EXPECTED_D2_TABLE_SHA256,\n            \"r05d3_lock_sha256\": EXPECTED_R05D3_LOCK_SHA256,\n            \"r05d3_decision\": d3.get(\"decision\"),\n            \"target_cases\": EXPECTED_CASES,\n            \"model_states\": EXPECTED_STATES,\n            \"model_case_rows\": EXPECTED_MODEL_CASES,\n            \"gt_rule_verified_before_reveal\": True,\n            \"confirmatory_criteria_verified_before_reveal\": True,\n            \"no_model_inference_in_d4\": True,\n            \"no_tta_in_d4\": True,\n            \"no_predictor_fit_in_d4\": True,\n            \"no_target_threshold_selection\": True,\n        },\n    )\n\n    # -------- FIRST TARGET GT PIXEL REVEAL --------\n    gt_masks, gt_rows = reveal_gt(d1_manifest)\n\n    gt_path = build_dir / \"gt_reveal_manifest.csv\"\n    write_csv(\n        gt_path,\n        gt_rows,\n        [\n            \"sample_id\",\n            \"gt_path\",\n            \"gt_raw_sha256\",\n            \"native_width\",\n            \"native_height\",\n            \"native_background_pixels\",\n            \"native_non_neoplastic_pixels\",\n            \"native_neoplastic_pixels\",\n            \"native_binary_foreground_pixels\",\n            \"resized_binary_foreground_pixels\",\n            \"gt_decode_rule\",\n        ],\n    )\n\n    outcome_rows, state_meta = build_outcomes(gt_masks, d2_probs, d3)\n\n    # Update upstream audit with verified state artifact identities.\n    upstream = json.loads(upstream_path.read_text(encoding=\"utf-8\"))\n    upstream[\"d3_state_artifacts\"] = state_meta\n    write_json(upstream_path, upstream)\n\n    outcome_path = build_dir / \"model_case_outcomes.csv\"\n    write_csv(\n        outcome_path,\n        outcome_rows,\n        [\n            \"sample_id\",\n            \"model_family\",\n            \"model_state_id\",\n            \"training_seed\",\n            \"checkpoint_sha256\",\n            \"source_dice\",\n            \"a1_dice\",\n            \"delta_dice\",\n            \"adaptation_outcome\",\n            \"harm_label\",\n            \"benefit_label\",\n            \"paot_mrz19_harm_probability\",\n            \"paot_mrz19_benefit_probability\",\n            \"paot_raw19_harm_probability\",\n            \"paot_raw19_benefit_probability\",\n        ],\n    )\n\n    seg_rows = segmentation_summary(outcome_rows)\n    seg_path = build_dir / \"segmentation_outcome_summary.csv\"\n    write_csv(\n        seg_path,\n        seg_rows,\n        [\n            \"model_family\",\n            \"model_state_id\",\n            \"rows\",\n            \"source_dice_mean\",\n            \"source_dice_median\",\n            \"a1_dice_mean\",\n            \"a1_dice_median\",\n            \"delta_dice_mean\",\n            \"delta_dice_median\",\n            \"harm_rows\",\n            \"neutral_rows\",\n            \"benefit_rows\",\n            \"harm_fraction\",\n            \"benefit_fraction\",\n        ],\n    )\n\n    arch_rows = architecture_metrics(outcome_rows)\n    arch_path = build_dir / \"architecture_confirmatory_metrics.csv\"\n    write_csv(\n        arch_path,\n        arch_rows,\n        [\n            \"model_family\",\n            \"representation\",\n            \"task\",\n            \"rows\",\n            \"target_clusters\",\n            \"positive_rows\",\n            \"positive_clusters\",\n            \"auroc\",\n            \"auprc\",\n            \"bootstrap_resamples_requested\",\n            \"valid_bootstrap_resamples\",\n            \"auroc_ci_low\",\n            \"auroc_ci_high\",\n            \"auprc_ci_low\",\n            \"auprc_ci_high\",\n            \"class_degenerate\",\n            \"primary\",\n        ],\n    )\n\n    state_rows = secondary_metrics(outcome_rows, by_state=True)\n    state_path = build_dir / \"state_secondary_metrics.csv\"\n    write_csv(\n        state_path,\n        state_rows,\n        [\n            \"model_family\",\n            \"model_state_id\",\n            \"representation\",\n            \"task\",\n            \"rows\",\n            \"positive_rows\",\n            \"auroc\",\n            \"auprc\",\n            \"class_degenerate\",\n        ],\n    )\n\n    pooled_rows = secondary_metrics(outcome_rows, by_state=False)\n    pooled_path = build_dir / \"pooled_secondary_metrics.csv\"\n    write_csv(\n        pooled_path,\n        pooled_rows,\n        [\n            \"model_family\",\n            \"model_state_id\",\n            \"representation\",\n            \"task\",\n            \"rows\",\n            \"positive_rows\",\n            \"auroc\",\n            \"auprc\",\n            \"class_degenerate\",\n        ],\n    )\n\n    gate = evaluate_gate(arch_rows)\n    gate_path = build_dir / \"confirmatory_gate.json\"\n    write_json(gate_path, gate)\n\n    decision = gate[\"decision\"]\n    decision_path = build_dir / \"decision.txt\"\n    decision_path.write_text(decision + \"\\n\", encoding=\"utf-8\")\n\n    boundary_path = build_dir / \"information_boundary_audit.json\"\n    write_json(\n        boundary_path,\n        {\n            \"target_gt_pixels_decoded_for_first_time_in_d4\": True,\n            \"gt_files_decoded\": EXPECTED_CASES,\n            \"source_predictions_modified\": False,\n            \"a1_predictions_modified\": False,\n            \"d2_paot_probabilities_modified\": False,\n            \"model_inference_run_in_d4\": False,\n            \"tta_run_in_d4\": False,\n            \"predictor_fit_or_modified\": False,\n            \"target_calibration\": False,\n            \"target_probability_threshold_selected\": False,\n            \"target_hyperparameter_tuning\": False,\n            \"target_case_exclusion_after_gt_reveal\": False,\n            \"source_dice_computed\": True,\n            \"a1_dice_computed\": True,\n            \"delta_dice_computed\": True,\n            \"adaptation_outcomes_revealed\": True,\n            \"primary_paot_evaluation_run\": True,\n            \"raw19_comparator_run\": True,\n            \"target_image_cluster_bootstrap_run\": True,\n        },\n    )\n\n    primary = {\n        (r[\"model_family\"], r[\"task\"]): r\n        for r in arch_rows\n        if r[\"representation\"] == \"MRZ19\"\n    }\n\n    log = [\n        \"===== Q1-R05D4 NEOPOLYP GT REVEAL + PAOT CONFIRMATORY EVALUATION =====\",\n        f\"Script version: {VERSION}\",\n        f\"Build: {BUILD}\",\n        \"\",\n        \"GT reveal:\",\n        f\"  GT files decoded={len(gt_rows)}\",\n        \"  nearest RGB prototype rule=YES\",\n        \"  non-neoplastic + neoplastic -> binary foreground\",\n        \"  resized=352x352 nearest\",\n        \"\",\n        \"Frozen outcomes:\",\n        f\"  model-case rows={len(outcome_rows)}\",\n        f\"  HARM threshold={HARM_THRESHOLD}\",\n        f\"  BENEFIT threshold={BENEFIT_THRESHOLD}\",\n        \"\",\n        \"Primary MRZ19 architecture metrics:\",\n    ]\n\n    for family in FAMILIES:\n        for task in TASKS:\n            r = primary[(family, task)]\n            log.append(\n                f\"  {family} {task}: \"\n                f\"AUROC={r['auroc']} \"\n                f\"AUPRC={r['auprc']} \"\n                f\"AUROC95CI=[{r['auroc_ci_low']},{r['auroc_ci_high']}] \"\n                f\"AUPRC95CI=[{r['auprc_ci_low']},{r['auprc_ci_high']}] \"\n                f\"positive_rows={r['positive_rows']} \"\n                f\"positive_clusters={r['positive_clusters']} \"\n                f\"valid_bootstrap={r['valid_bootstrap_resamples']}\"\n            )\n\n    log += [\n        \"\",\n        \"Frozen GO criteria:\",\n        \"  median architecture HARM AUROC >= 0.70\",\n        \"  minimum architecture HARM AUROC >= 0.60\",\n        \"  median architecture BENEFIT AUROC >= 0.75\",\n        \"  minimum architecture BENEFIT AUROC >= 0.65\",\n        \"\",\n        \"Gate metrics:\",\n    ]\n\n    if decision != DECISION_INCONCLUSIVE:\n        for key, value in gate[\"metrics\"].items():\n            log.append(f\"  {key}={value}\")\n        log += [\"\", \"Checks:\"]\n        for key, passed in gate[\"checks\"].items():\n            log.append(f\"  {key}={'PASS' if passed else 'FAIL'}\")\n\n    log += [\n        \"\",\n        \"Decision:\",\n        f\"  {decision}\",\n        \"\",\n        \"Post-reveal boundary:\",\n        \"  model inference in D4=NO\",\n        \"  TTA in D4=NO\",\n        \"  predictor modification=NO\",\n        \"  target calibration=NO\",\n        \"  target threshold selection=NO\",\n        \"  post-hoc target case exclusion=NO\",\n    ]\n\n    run_log_path = build_dir / \"run_log.txt\"\n    run_log_path.write_text(\"\\n\".join(log) + \"\\n\", encoding=\"utf-8\")\n\n    artifacts = {\n        \"protocol_copy\": protocol_copy,\n        \"upstream_audit\": upstream_path,\n        \"gt_reveal_manifest\": gt_path,\n        \"model_case_outcomes\": outcome_path,\n        \"segmentation_outcome_summary\": seg_path,\n        \"architecture_confirmatory_metrics\": arch_path,\n        \"state_secondary_metrics\": state_path,\n        \"pooled_secondary_metrics\": pooled_path,\n        \"confirmatory_gate\": gate_path,\n        \"information_boundary_audit\": boundary_path,\n        \"decision\": decision_path,\n        \"run_log\": run_log_path,\n    }\n\n    final_lock = {\n        \"script_version\": VERSION,\n        \"build\": BUILD,\n        \"protocol_sha256\": EXPECTED_PROTOCOL_SHA256,\n        \"r05d1_lock_sha256\": EXPECTED_R05D1_LOCK_SHA256,\n        \"r05d2_lock_sha256\": EXPECTED_R05D2_LOCK_SHA256,\n        \"r05d3_lock_sha256\": EXPECTED_R05D3_LOCK_SHA256,\n        \"d2_probability_table_sha256\": EXPECTED_D2_TABLE_SHA256,\n        \"target_cases\": EXPECTED_CASES,\n        \"model_states\": EXPECTED_STATES,\n        \"model_case_rows\": EXPECTED_MODEL_CASES,\n        \"gt_files_decoded\": EXPECTED_CASES,\n        \"target_gt_pixels_revealed\": True,\n        \"primary_representation\": \"MRZ19\",\n        \"confirmatory_criteria\": PRIMARY_CRITERIA,\n        \"decision\": decision,\n        \"gate\": gate,\n        \"model_inference_run_in_d4\": False,\n        \"tta_run_in_d4\": False,\n        \"predictor_fit_or_modified\": False,\n        \"target_calibration\": False,\n        \"target_threshold_selected\": False,\n        \"posthoc_case_exclusion\": False,\n        \"artifacts\": {\n            name: {\n                \"relative_path\": str(path.relative_to(build_dir)),\n                \"sha256\": sha256_file(path),\n            }\n            for name, path in artifacts.items()\n        },\n    }\n\n    lock_path = (\n        build_dir / \"Q1_R05D4_NEOPOLYP_CONFIRMATORY_EVALUATION_LOCK.json\"\n    )\n    write_json(lock_path, final_lock)\n    lock_sha = sha256_file(lock_path)\n\n    for name, meta in final_lock[\"artifacts\"].items():\n        p = build_dir / meta[\"relative_path\"]\n        if sha256_file(p) != meta[\"sha256\"]:\n            raise RuntimeError(f\"Artifact changed before D4 commit: {name}\")\n\n    build_dir.rename(args.output_dir)\n\n    print()\n    print((args.output_dir / \"run_log.txt\").read_text(encoding=\"utf-8\"))\n    print(\n        \"Q1-R05D4 LOCK:\",\n        args.output_dir / \"Q1_R05D4_NEOPOLYP_CONFIRMATORY_EVALUATION_LOCK.json\",\n    )\n    print(\"Q1-R05D4 LOCK SHA256:\", lock_sha)"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "self_test",
+        "start_line": 1440,
+        "end_line": 1525,
+        "matched_tokens": [
+          "dice",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "gt"
+        ],
+        "text": "def self_test():\n    assert EXPECTED_CASES == 1000\n    assert EXPECTED_STATES == 9\n    assert EXPECTED_MODEL_CASES == 9000\n    assert MASK_H == 352 and MASK_W == 352\n    assert PACKED_BYTES == 15488\n    assert BOOTSTRAP_RESAMPLES == 10000\n    assert BOOTSTRAP_BASE_SEED == 20260819\n\n    z = np.zeros((MASK_H, MASK_W), dtype=np.uint8)\n    o = np.ones((MASK_H, MASK_W), dtype=np.uint8)\n    assert binary_dice(z, z) == 1.0\n    assert binary_dice(o, o) == 1.0\n    assert binary_dice(z, o) == 0.0\n\n    assert outcome_label(-0.02) == \"HARM\"\n    assert outcome_label(-0.019999) == \"NEUTRAL\"\n    assert outcome_label(0.0) == \"NEUTRAL\"\n    assert outcome_label(0.02) == \"BENEFIT\"\n\n    rgb = np.asarray(\n        [[[0, 0, 0], [0, 250, 0], [250, 0, 0]]],\n        dtype=np.uint8,\n    )\n    assert nearest_rgb_classes(rgb).tolist() == [[0, 1, 2]]\n\n    mask = np.zeros((MASK_H, MASK_W), dtype=np.uint8)\n    mask[10:30, 15:40] = 1\n    packed = np.packbits(mask.reshape(-1), bitorder=BITORDER)\n    assert np.array_equal(mask, unpack_mask(packed))\n\n    toy = [\n        {\n            \"harm_label\": y,\n            \"benefit_label\": 1 - y,\n            \"paot_mrz19_harm_probability\": p,\n            \"paot_mrz19_benefit_probability\": 1 - p,\n            \"paot_raw19_harm_probability\": p,\n            \"paot_raw19_benefit_probability\": 1 - p,\n        }\n        for y, p in [(0, 0.1), (0, 0.2), (1, 0.8), (1, 0.9)]\n    ]\n    pm = point_metrics(toy, \"MRZ19\", \"HARM\")\n    assert pm is not None\n    assert abs(pm[\"auroc\"] - 1.0) < 1e-12\n    assert abs(pm[\"auprc\"] - 1.0) < 1e-12\n\n    # Validate fast weighted bootstrap metric against sklearn.\n    rng = np.random.RandomState(7)\n    y = np.asarray([0, 1, 0, 1, 1, 0], dtype=np.int8)\n    p = np.asarray([0.1, 0.8, 0.3, 0.8, 0.6, 0.2], dtype=np.float64)\n    w = rng.randint(0, 4, size=len(y)).astype(np.float64)\n    if w[y == 1].sum() == 0:\n        w[1] = 1\n    if w[y == 0].sum() == 0:\n        w[0] = 1\n\n    prepared = prepare_weighted_metric(y, p)\n    fast_auc, fast_ap = weighted_metrics_prepared(prepared, w)\n    ref_auc = roc_auc_score(y, p, sample_weight=w)\n    ref_ap = average_precision_score(y, p, sample_weight=w)\n    assert abs(fast_auc - ref_auc) < 1e-12\n    assert abs(fast_ap - ref_ap) < 1e-12\n\n    assert PRIMARY_CRITERIA[\n        \"median_architecture_harm_auroc_min\"\n    ] == 0.70\n    assert PRIMARY_CRITERIA[\n        \"minimum_architecture_harm_auroc_min\"\n    ] == 0.60\n    assert PRIMARY_CRITERIA[\n        \"median_architecture_benefit_auroc_min\"\n    ] == 0.75\n    assert PRIMARY_CRITERIA[\n        \"minimum_architecture_benefit_auroc_min\"\n    ] == 0.65\n\n    print(\"CARDINALITY_TEST_PASS\")\n    print(\"DICE_TEST_PASS\")\n    print(\"OUTCOME_BOUNDARY_TEST_PASS\")\n    print(\"FROZEN_RGB_GT_RULE_TEST_PASS\")\n    print(\"PACKBITS_TEST_PASS\")\n    print(\"METRIC_SANITY_TEST_PASS\")\n    print(\"WEIGHTED_BOOTSTRAP_METRIC_EQUIVALENCE_TEST_PASS\")\n    print(\"FROZEN_CONFIRMATORY_CRITERIA_TEST_PASS\")\n    print(\"SELF_TEST_PASS\")"
+      }
+    ],
+    "constants": [
+      {
+        "line": 107,
+        "text": "TASKS = (\"HARM\", \"BENEFIT\")"
+      },
+      {
+        "line": 112,
+        "text": "HARM_THRESHOLD = -0.02"
+      },
+      {
+        "line": 113,
+        "text": "BENEFIT_THRESHOLD = 0.02"
+      },
+      {
+        "line": 319,
+        "text": "if float(rule.get(\"harm_threshold_delta_dice\")) != HARM_THRESHOLD:"
+      },
+      {
+        "line": 321,
+        "text": "if float(rule.get(\"benefit_threshold_delta_dice\")) != BENEFIT_THRESHOLD:"
+      },
+      {
+        "line": 532,
+        "text": "if delta <= HARM_THRESHOLD:"
+      },
+      {
+        "line": 533,
+        "text": "return \"HARM\""
+      },
+      {
+        "line": 534,
+        "text": "if delta >= BENEFIT_THRESHOLD:"
+      },
+      {
+        "line": 535,
+        "text": "return \"BENEFIT\""
+      },
+      {
+        "line": 536,
+        "text": "return \"NEUTRAL\""
+      },
+      {
+        "line": 624,
+        "text": "source_dice = binary_dice(source_mask, gt)"
+      },
+      {
+        "line": 625,
+        "text": "a1_dice = binary_dice(a1_mask, gt)"
+      },
+      {
+        "line": 626,
+        "text": "delta = float(a1_dice - source_dice)"
+      },
+      {
+        "line": 627,
+        "text": "label = outcome_label(delta)"
+      },
+      {
+        "line": 640,
+        "text": "\"harm_label\": int(label == \"HARM\"),"
+      },
+      {
+        "line": 641,
+        "text": "\"benefit_label\": int(label == \"BENEFIT\"),"
+      },
+      {
+        "line": 671,
+        "text": "label_field = \"harm_label\" if task == \"HARM\" else \"benefit_label\""
+      },
+      {
+        "line": 810,
+        "text": "label_field = \"harm_label\" if task == \"HARM\" else \"benefit_label\""
+      },
+      {
+        "line": 844,
+        "text": "if task == \"HARM\""
+      },
+      {
+        "line": 916,
+        "text": "if task == \"HARM\""
+      },
+      {
+        "line": 936,
+        "text": "src = np.asarray([float(r[\"source_dice\"]) for r in subset])"
+      },
+      {
+        "line": 937,
+        "text": "a1 = np.asarray([float(r[\"a1_dice\"]) for r in subset])"
+      },
+      {
+        "line": 938,
+        "text": "delta = np.asarray([float(r[\"delta_dice\"]) for r in subset])"
+      },
+      {
+        "line": 979,
+        "text": "harm = np.asarray("
+      },
+      {
+        "line": 982,
+        "text": "benefit = np.asarray("
+      },
+      {
+        "line": 1001,
+        "text": "metrics[\"median_architecture_harm_auroc\"] >= 0.70,"
+      },
+      {
+        "line": 1003,
+        "text": "metrics[\"minimum_architecture_harm_auroc\"] >= 0.60,"
+      },
+      {
+        "line": 1005,
+        "text": "metrics[\"median_architecture_benefit_auroc\"] >= 0.75,"
+      },
+      {
+        "line": 1007,
+        "text": "metrics[\"minimum_architecture_benefit_auroc\"] >= 0.65,"
+      },
+      {
+        "line": 1065,
+        "text": "print(\"target_threshold_selection=NO\")"
+      },
+      {
+        "line": 1316,
+        "text": "f\"  HARM threshold={HARM_THRESHOLD}\","
+      },
+      {
+        "line": 1317,
+        "text": "f\"  BENEFIT threshold={BENEFIT_THRESHOLD}\","
+      },
+      {
+        "line": 1339,
+        "text": "\"  median architecture HARM AUROC >= 0.70\","
+      },
+      {
+        "line": 1340,
+        "text": "\"  minimum architecture HARM AUROC >= 0.60\","
+      },
+      {
+        "line": 1341,
+        "text": "\"  median architecture BENEFIT AUROC >= 0.75\","
+      },
+      {
+        "line": 1342,
+        "text": "\"  minimum architecture BENEFIT AUROC >= 0.65\","
+      },
+      {
+        "line": 1364,
+        "text": "\"  target threshold selection=NO\","
+      },
+      {
+        "line": 1451,
+        "text": "assert binary_dice(z, z) == 1.0"
+      },
+      {
+        "line": 1452,
+        "text": "assert binary_dice(o, o) == 1.0"
+      },
+      {
+        "line": 1453,
+        "text": "assert binary_dice(z, o) == 0.0"
+      },
+      {
+        "line": 1455,
+        "text": "assert outcome_label(-0.02) == \"HARM\""
+      },
+      {
+        "line": 1456,
+        "text": "assert outcome_label(-0.019999) == \"NEUTRAL\""
+      },
+      {
+        "line": 1457,
+        "text": "assert outcome_label(0.0) == \"NEUTRAL\""
+      },
+      {
+        "line": 1458,
+        "text": "assert outcome_label(0.02) == \"BENEFIT\""
+      },
+      {
+        "line": 1464,
+        "text": "assert nearest_rgb_classes(rgb).tolist() == [[0, 1, 2]]"
+      },
+      {
+        "line": 1482,
+        "text": "pm = point_metrics(toy, \"MRZ19\", \"HARM\")"
+      }
+    ]
+  },
+  "historical_pl_outcome_code": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\Q1_R13C_pl_conf90_gt_utility_reveal_and_outcome_lock_fix1.py",
+    "sha256": "f2dd94d59e61be0432a2117e60aca1dc7ec4352af15e0aea0a27afdbf293590b",
+    "blocks": [
+      {
+        "kind": "FunctionDef",
+        "name": "verify_r13b",
+        "start_line": 60,
+        "end_line": 80,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "benefit",
+          "outcome",
+          "source",
+          "a1",
+          "gt"
+        ],
+        "text": "def verify_r13b():\n    for p in (R13B_SCRIPT,R13B_LOCK,R13B_MANIFEST):\n        if not p.exists(): raise FileNotFoundError(p)\n    if sha(R13B_SCRIPT)!=EXPECTED_R13B_SCRIPT_SHA: raise RuntimeError(\"R13B script SHA mismatch\")\n    if sha(R13B_LOCK)!=EXPECTED_R13B_LOCK_SHA: raise RuntimeError(\"R13B lock SHA mismatch\")\n    lk=json.loads(R13B_LOCK.read_text(encoding=\"utf-8\"))\n    if lk.get(\"decision\")!=EXPECTED_R13B_DECISION or lk.get(\"action\")!=ACTION:\n        raise RuntimeError(\"R13B decision/action mismatch\")\n    if (int(lk.get(\"target_cases\",-1)),int(lk.get(\"model_states\",-1)),int(lk.get(\"model_case_rows\",-1)))!=(CASES,STATES,ROWS):\n        raise RuntimeError(\"R13B cardinality mismatch\")\n    if int(lk.get(\"source_parity_mismatches\",-1))!=0: raise RuntimeError(\"R13B parity failed\")\n    ep=lk.get(\"episodic_reset\",{})\n    if not ep.get(\"trainable_parameters\",False) or not ep.get(\"all_model_buffers\",False):\n        raise RuntimeError(\"R13B episodic reset audit missing\")\n    ib=lk.get(\"information_boundary\",{})\n    for k in (\"r05d3_a1_mask_values_read\",\"target_gt_used\",\"target_gt_pixels_decoded\",\"dice_computed\",\"delta_dice_computed\",\"harm_label_computed\",\"benefit_label_computed\",\"safety_scores_read\",\"polypgen_access\",\"hyperparameter_sweep\",\"target_outcome_based_selection\",\"r13b_fix1_partial_outputs_reused\",\"absolute_building_paths_written_to_manifest\"):\n        if bool(ib.get(k,True)): raise RuntimeError(f\"R13B boundary failed: {k}\")\n    if not ib.get(\"state_asset_paths_are_relative\",False): raise RuntimeError(\"relative path policy missing\")\n    exp=lk.get(\"artifacts\",{}).get(R13B_MANIFEST.name)\n    if not exp or sha(R13B_MANIFEST)!=exp: raise RuntimeError(\"R13B manifest SHA mismatch\")\n    return lk"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "load_gt_old",
+        "start_line": 82,
+        "end_line": 99,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "benefit",
+          "outcome",
+          "source",
+          "a1",
+          "gt"
+        ],
+        "text": "def load_gt_old():\n    d4=imod(R05D4_SCRIPT,\"q1_r13c_r05d4\")\n    lk=json.loads(R05D4_LOCK.read_text(encoding=\"utf-8\"))\n    if int(lk.get(\"target_cases\",-1))!=CASES or int(lk.get(\"model_case_rows\",-1))!=ROWS:\n        raise RuntimeError(\"R05D4 cardinality mismatch\")\n    _,_,_,mp,_,gp=d4.validate_upstream()\n    d4.validate_gt_rule(gp)\n    gm=d4.load_d1_manifest(mp)\n    gt,_=d4.reveal_gt(gm)\n    old=pd.read_csv(R05D4_OUTCOMES,usecols=[\n        \"sample_id\",\"model_family\",\"model_state_id\",\"training_seed\",\"checkpoint_sha256\",\n        \"source_dice\",\"a1_dice\",\"delta_dice\",\"adaptation_outcome\",\"harm_label\",\"benefit_label\"\n    ],low_memory=False)\n    old=old.rename(columns={\n        \"a1_dice\":\"tent1_dice\",\"delta_dice\":\"tent1_delta_dice\",\n        \"adaptation_outcome\":\"tent1_adaptation_outcome\",\n        \"harm_label\":\"tent1_harm_label\",\"benefit_label\":\"tent1_benefit_label\"})\n    return d4,gt,old"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "build_panel",
+        "start_line": 101,
+        "end_line": 145,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "benefit",
+          "outcome",
+          "source",
+          "pl_",
+          "gt"
+        ],
+        "text": "def build_panel(d4,gt,old):\n    man=pd.read_csv(R13B_MANIFEST,low_memory=False)\n    if len(man)!=ROWS or man[[\"sample_id\",\"model_state_id\"]].drop_duplicates().shape[0]!=ROWS:\n        raise RuntimeError(\"R13B manifest key/cardinality failed\")\n    rows=[]\n    for state_id,g in man.groupby(\"model_state_id\",sort=True):\n        pv=g.state_prediction_npz_relpath.astype(str).unique()\n        iv=g.state_index_csv_relpath.astype(str).unique()\n        lv=g.state_lock_json_relpath.astype(str).unique()\n        if len(pv)!=1 or len(iv)!=1 or len(lv)!=1: raise RuntimeError(f\"{state_id}: ambiguous assets\")\n        pred,idxp,sidep=rel(pv[0]),rel(iv[0]),rel(lv[0])\n        side=json.loads(sidep.read_text(encoding=\"utf-8\"))\n        if side.get(\"decision\")!=\"STATE_COMPLETE\" or side.get(\"action\")!=ACTION: raise RuntimeError(f\"{state_id}: state lock\")\n        if int(side.get(\"source_parity_mismatches\",-1))!=0: raise RuntimeError(f\"{state_id}: parity\")\n        ep=side.get(\"episodic_reset\",{})\n        if not ep.get(\"trainable_parameters\",False) or not ep.get(\"all_model_buffers\",False): raise RuntimeError(f\"{state_id}: reset flags\")\n        if sha(pred)!=side[\"prediction_npz_sha256\"] or sha(idxp)!=side[\"index_csv_sha256\"]:\n            raise RuntimeError(f\"{state_id}: SHA mismatch\")\n        idx=pd.read_csv(idxp,low_memory=False)\n        g=g.copy()\n        g[\"row_index\"]=pd.to_numeric(g[\"row_index\"],errors=\"raise\").astype(int)\n        idx[\"row_index\"]=pd.to_numeric(idx[\"row_index\"],errors=\"raise\").astype(int)\n        if sorted(g.row_index.tolist())!=list(range(CASES)) or sorted(idx.row_index.tolist())!=list(range(CASES)):\n            raise RuntimeError(f\"{state_id}: row index\")\n        L=g[[\"row_index\",\"sample_id\"]].assign(sample_id=lambda x:x.sample_id.astype(str)).sort_values(\"row_index\").reset_index(drop=True)\n        R=idx[[\"row_index\",\"sample_id\"]].assign(sample_id=lambda x:x.sample_id.astype(str)).sort_values(\"row_index\").reset_index(drop=True)\n        if not L.equals(R): raise RuntimeError(f\"{state_id}: manifest/index mapping\")\n        with np.load(pred,allow_pickle=False) as z:\n            if set(z.files)!={\"pl_masks_packed\"}: raise RuntimeError(f\"{state_id}: NPZ keys\")\n            masks=np.asarray(z[\"pl_masks_packed\"],dtype=np.uint8)\n        if masks.shape!=(CASES,PACKED): raise RuntimeError(f\"{state_id}: masks {masks.shape}\")\n        for r in tqdm(g.sort_values(\"row_index\").itertuples(index=False),total=CASES,desc=f\"R13C {state_id}\",unit=\"case\",dynamic_ncols=True):\n            sid=str(r.sample_id); i=int(r.row_index)\n            dice=float(d4.binary_dice(unpack(masks[i]),gt[sid]))\n            rows.append(dict(sample_id=sid,model_family=str(r.model_family),model_state_id=str(r.model_state_id),training_seed=int(r.training_seed),checkpoint_sha256=str(r.checkpoint_sha256),pl_dice=dice))\n    pl=pd.DataFrame(rows)\n    panel=pl.merge(old,on=[\"sample_id\",\"model_state_id\"],how=\"left\",validate=\"one_to_one\",suffixes=(\"_pl\",\"_old\"))\n    for c in (\"model_family\",\"training_seed\",\"checkpoint_sha256\"):\n        if not (panel[f\"{c}_pl\"].astype(str)==panel[f\"{c}_old\"].astype(str)).all(): raise RuntimeError(f\"metadata mismatch {c}\")\n        panel[c]=panel[f\"{c}_pl\"]\n    panel[\"pl_delta_dice\"]=panel.pl_dice.to_numpy(float)-panel.source_dice.to_numpy(float)\n    panel[\"pl_adaptation_outcome\"]=[outcome(x) for x in panel.pl_delta_dice]\n    panel[\"pl_harm_label\"]=panel.pl_adaptation_outcome.eq(\"HARM\").astype(int)\n    panel[\"pl_benefit_label\"]=panel.pl_adaptation_outcome.eq(\"BENEFIT\").astype(int)\n    return panel.drop(columns=[f\"{c}_{s}\" for c in (\"model_family\",\"training_seed\",\"checkpoint_sha256\") for s in (\"pl\",\"old\")])"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "main",
+        "start_line": 147,
+        "end_line": 193,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "threshold",
+          "pl_",
+          "gt"
+        ],
+        "text": "def main():\n    p=argparse.ArgumentParser(); p.add_argument(\"--self-test\",action=\"store_true\"); args=p.parse_args()\n    if args.self_test:\n        assert outcome(-.02)==\"HARM\" and outcome(.02)==\"BENEFIT\" and outcome(0)==\"NEUTRAL\"\n        print(\"SELF_TEST_PASS\"); return\n    print(\"===== R13C PL-CONF90 GT UTILITY REVEAL + OUTCOME LOCK FIX1 =====\")\n    print(\"safety score read=NO\"); print(\"fit/refit/recalibration/score reversal=NO\"); print(\"PolypGen access=NO\"); print(\"PL retuning=NO\")\n    verify_r13b(); print(\"R13B exact pre-GT lock gate=PASS\")\n    d4,gt,old=load_gt_old(); print(\"R05D4 GT/outcome lineage=PASS\")\n    panel=build_panel(d4,gt,old)\n    harm=int(panel.pl_harm_label.sum()); benefit=int(panel.pl_benefit_label.sum()); neutral=int(panel.pl_adaptation_outcome.eq(\"NEUTRAL\").sum())\n    unique_classes=int(panel.pl_harm_label.nunique())\n    evaluable=bool(unique_classes==2 and harm>0 and harm<ROWS)\n    fam=(panel.groupby(\"model_family\",as_index=False).agg(\n        rows=(\"sample_id\",\"size\"),pl_harm=(\"pl_harm_label\",\"sum\"),pl_benefit=(\"pl_benefit_label\",\"sum\"),\n        pl_harm_prevalence=(\"pl_harm_label\",\"mean\"),pl_delta_mean=(\"pl_delta_dice\",\"mean\"),\n        pl_delta_median=(\"pl_delta_dice\",\"median\"),pl_delta_min=(\"pl_delta_dice\",\"min\"),pl_delta_max=(\"pl_delta_dice\",\"max\")))\n    print(\"\\n===== PL OUTCOME SUMMARY =====\")\n    print(\"rows=\",len(panel),\"cases=\",panel.sample_id.nunique(),\"states=\",panel.model_state_id.nunique())\n    print(\"PL HARM=\",harm); print(\"PL NEUTRAL=\",neutral); print(\"PL BENEFIT=\",benefit)\n    print(\"PL HARM prevalence=\",float(panel.pl_harm_label.mean()))\n    print(\"PL DeltaDice mean/median=\",float(panel.pl_delta_dice.mean()),float(panel.pl_delta_dice.median()))\n    print(\"PL DeltaDice min/max=\",float(panel.pl_delta_dice.min()),float(panel.pl_delta_dice.max()))\n    print(\"TENT1↔PL HARM agreement=\",float(np.mean(panel.tent1_harm_label.to_numpy(int)==panel.pl_harm_label.to_numpy(int))))\n    print(\"TENT1↔PL DeltaDice Spearman=\",float(panel.tent1_delta_dice.corr(panel.pl_delta_dice,method=\"spearman\")))\n    print(\"R13D transfer evaluable=\",evaluable)\n    print(\"\\n===== BY FAMILY =====\"); print(fam.to_string(index=False))\n    if OUTPUT_DIR.exists(): raise FileExistsError(OUTPUT_DIR)\n    OUTPUT_DIR.mkdir(parents=True)\n    p1=OUTPUT_DIR/\"R13C_PL_model_case_outcomes.csv\"; p2=OUTPUT_DIR/\"R13C_PL_family_summary.csv\"\n    p3=OUTPUT_DIR/\"R13C_TENT1_to_PL_harm_transition.csv\"; p4=OUTPUT_DIR/\"R13C_TENT1_to_PL_tristate_transition.csv\"\n    panel.to_csv(p1,index=False); fam.to_csv(p2,index=False)\n    pd.crosstab(panel.tent1_harm_label,panel.pl_harm_label,rownames=[\"TENT1_harm\"],colnames=[\"PL_harm\"]).to_csv(p3)\n    pd.crosstab(panel.tent1_adaptation_outcome,panel.pl_adaptation_outcome,rownames=[\"TENT1_outcome\"],colnames=[\"PL_outcome\"]).to_csv(p4)\n    lock={\"decision\":DECISION,\"action\":ACTION,\"r13b_script_sha256\":sha(R13B_SCRIPT),\"r13b_lock_sha256\":sha(R13B_LOCK),\n          \"target_cases\":CASES,\"model_states\":STATES,\"model_case_rows\":ROWS,\n          \"pl_harm_rows\":harm,\"pl_neutral_rows\":neutral,\"pl_benefit_rows\":benefit,\n          \"pl_harm_prevalence\":float(panel.pl_harm_label.mean()),\"pl_harm_unique_classes\":unique_classes,\n          \"r13d_transfer_evaluable\":evaluable,\"pl_delta_dice_mean\":float(panel.pl_delta_dice.mean()),\n          \"pl_delta_dice_median\":float(panel.pl_delta_dice.median()),\"pl_delta_dice_min\":float(panel.pl_delta_dice.min()),\n          \"pl_delta_dice_max\":float(panel.pl_delta_dice.max()),\n          \"information_boundary\":{\"safety_scores_read\":False,\"safety_model_fit_or_refit\":False,\"threshold_recalibration\":False,\n          \"score_reversal\":False,\"polypgen_access\":False,\"pl_hyperparameter_tuning\":False},\n          \"artifacts\":{p.name:sha(p) for p in (p1,p2,p3,p4)},\n          \"next_stage\":\"R13D_FROZEN_PRE_ADAPTATION_SAFETY_SCORE_TRANSFER_TO_PL\" if evaluable else \"R13D_PL_TRANSFER_DEGENERACY_STOP\"}\n    lp=OUTPUT_DIR/\"R13C_PL_OUTCOME_LOCK.json\"; lp.write_text(json.dumps(lock,indent=2),encoding=\"utf-8\")\n    print(\"\\nDecision=\",DECISION); print(\"R13D transfer evaluable=\",evaluable); print(\"R13C LOCK:\",lp); print(\"R13C LOCK SHA256:\",sha(lp)); print(\"PASS\")"
+      }
+    ],
+    "constants": [
+      {
+        "line": 29,
+        "text": "HARM_THR,BENEFIT_THR=-0.02,0.02"
+      },
+      {
+        "line": 49,
+        "text": "if d<=HARM_THR: return \"HARM\""
+      },
+      {
+        "line": 50,
+        "text": "if d>=BENEFIT_THR: return \"BENEFIT\""
+      },
+      {
+        "line": 51,
+        "text": "return \"NEUTRAL\""
+      },
+      {
+        "line": 123,
+        "text": "if sorted(g.row_index.tolist())!=list(range(CASES)) or sorted(idx.row_index.tolist())!=list(range(CASES)):"
+      },
+      {
+        "line": 134,
+        "text": "dice=float(d4.binary_dice(unpack(masks[i]),gt[sid]))"
+      },
+      {
+        "line": 135,
+        "text": "rows.append(dict(sample_id=sid,model_family=str(r.model_family),model_state_id=str(r.model_state_id),training_seed=int(r.training_seed),checkpoint_sha256=str(r.checkpoint_sha256),pl_dice=dice))"
+      },
+      {
+        "line": 141,
+        "text": "panel[\"pl_delta_dice\"]=panel.pl_dice.to_numpy(float)-panel.source_dice.to_numpy(float)"
+      },
+      {
+        "line": 142,
+        "text": "panel[\"pl_adaptation_outcome\"]=[outcome(x) for x in panel.pl_delta_dice]"
+      },
+      {
+        "line": 143,
+        "text": "panel[\"pl_harm_label\"]=panel.pl_adaptation_outcome.eq(\"HARM\").astype(int)"
+      },
+      {
+        "line": 144,
+        "text": "panel[\"pl_benefit_label\"]=panel.pl_adaptation_outcome.eq(\"BENEFIT\").astype(int)"
+      },
+      {
+        "line": 150,
+        "text": "assert outcome(-.02)==\"HARM\" and outcome(.02)==\"BENEFIT\" and outcome(0)==\"NEUTRAL\""
+      },
+      {
+        "line": 157,
+        "text": "harm=int(panel.pl_harm_label.sum()); benefit=int(panel.pl_benefit_label.sum()); neutral=int(panel.pl_adaptation_outcome.eq(\"NEUTRAL\").sum())"
+      },
+      {
+        "line": 158,
+        "text": "unique_classes=int(panel.pl_harm_label.nunique())"
+      },
+      {
+        "line": 159,
+        "text": "evaluable=bool(unique_classes==2 and harm>0 and harm<ROWS)"
+      },
+      {
+        "line": 161,
+        "text": "rows=(\"sample_id\",\"size\"),pl_harm=(\"pl_harm_label\",\"sum\"),pl_benefit=(\"pl_benefit_label\",\"sum\"),"
+      },
+      {
+        "line": 162,
+        "text": "pl_harm_prevalence=(\"pl_harm_label\",\"mean\"),pl_delta_mean=(\"pl_delta_dice\",\"mean\"),"
+      },
+      {
+        "line": 163,
+        "text": "pl_delta_median=(\"pl_delta_dice\",\"median\"),pl_delta_min=(\"pl_delta_dice\",\"min\"),pl_delta_max=(\"pl_delta_dice\",\"max\")))"
+      },
+      {
+        "line": 166,
+        "text": "print(\"PL HARM=\",harm); print(\"PL NEUTRAL=\",neutral); print(\"PL BENEFIT=\",benefit)"
+      },
+      {
+        "line": 167,
+        "text": "print(\"PL HARM prevalence=\",float(panel.pl_harm_label.mean()))"
+      },
+      {
+        "line": 168,
+        "text": "print(\"PL DeltaDice mean/median=\",float(panel.pl_delta_dice.mean()),float(panel.pl_delta_dice.median()))"
+      },
+      {
+        "line": 169,
+        "text": "print(\"PL DeltaDice min/max=\",float(panel.pl_delta_dice.min()),float(panel.pl_delta_dice.max()))"
+      },
+      {
+        "line": 170,
+        "text": "print(\"TENT1↔PL HARM agreement=\",float(np.mean(panel.tent1_harm_label.to_numpy(int)==panel.pl_harm_label.to_numpy(int))))"
+      },
+      {
+        "line": 171,
+        "text": "print(\"TENT1↔PL DeltaDice Spearman=\",float(panel.tent1_delta_dice.corr(panel.pl_delta_dice,method=\"spearman\")))"
+      },
+      {
+        "line": 177,
+        "text": "p3=OUTPUT_DIR/\"R13C_TENT1_to_PL_harm_transition.csv\"; p4=OUTPUT_DIR/\"R13C_TENT1_to_PL_tristate_transition.csv\""
+      },
+      {
+        "line": 179,
+        "text": "pd.crosstab(panel.tent1_harm_label,panel.pl_harm_label,rownames=[\"TENT1_harm\"],colnames=[\"PL_harm\"]).to_csv(p3)"
+      }
+    ]
+  },
+  "historical_polypgen_r10l3c": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\Q1_R10L3C_polypgen_gt_reveal_prospective_external_evaluation_fix1.py",
+    "sha256": "6761de1da2c6ece73dd1b18f566517b0c438c37b060a369084bdf26624375e6f",
+    "blocks": [
+      {
+        "kind": "FunctionDef",
+        "name": "verify_upstream_locks",
+        "start_line": 198,
+        "end_line": 301,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "outcome",
+          "threshold",
+          "source",
+          "gt"
+        ],
+        "text": "def verify_upstream_locks():\n    pg_lock = json.loads(\n        POLYPGEN_MANIFEST_LOCK.read_text(encoding=\"utf-8\")\n    )\n    if pg_lock.get(\"decision\") != EXPECTED_POLYPGEN_MANIFEST_DECISION:\n        raise RuntimeError(\n            f\"Unexpected PolypGen manifest decision: {pg_lock.get('decision')}\"\n        )\n    if int(pg_lock.get(\"retained_unique_rows\", -1)) != EXPECTED_CASES:\n        raise RuntimeError(\"Frozen PolypGen case count changed.\")\n\n    indep = json.loads(INDEPENDENCE_LOCK.read_text(encoding=\"utf-8\"))\n    if indep.get(\"decision\") != EXPECTED_INDEPENDENCE_DECISION:\n        raise RuntimeError(\n            f\"Independence gate changed: {indep.get('decision')}\"\n        )\n    if int(\n        indep.get(\"total_source_development_exact_polypgen_overlaps\", -1)\n    ) != 0:\n        raise RuntimeError(\"Source-development exact overlap is not zero.\")\n\n    l3a_sha = sha256_file(R10L3A_LOCK)\n    if l3a_sha.lower() != EXPECTED_R10L3A_LOCK_SHA256.lower():\n        raise RuntimeError(\n            f\"R10L3A lock SHA changed: {l3a_sha}\"\n        )\n    l3a = json.loads(R10L3A_LOCK.read_text(encoding=\"utf-8\"))\n    if l3a.get(\"decision\") != EXPECTED_R10L3A_DECISION:\n        raise RuntimeError(\n            f\"R10L3A decision changed: {l3a.get('decision')}\"\n        )\n    if int(l3a.get(\"model_case_rows\", -1)) != EXPECTED_MODEL_CASES:\n        raise RuntimeError(\"R10L3A model-case count changed.\")\n    if bool(l3a.get(\"target_gt_path_column_read\", True)):\n        raise RuntimeError(\"R10L3A reports GT-path read.\")\n    if bool(l3a.get(\"target_gt_pixels_decoded\", True)):\n        raise RuntimeError(\"R10L3A reports prior GT decode.\")\n    if bool(l3a.get(\"target_outcomes_revealed\", True)):\n        raise RuntimeError(\"R10L3A reports prior outcome reveal.\")\n\n    l3b_sha = sha256_file(R10L3B_LOCK)\n    if l3b_sha.lower() != EXPECTED_R10L3B_LOCK_SHA256.lower():\n        raise RuntimeError(\n            f\"R10L3B lock SHA changed: {l3b_sha}\"\n        )\n    l3b = json.loads(R10L3B_LOCK.read_text(encoding=\"utf-8\"))\n    if l3b.get(\"decision\") != EXPECTED_R10L3B_DECISION:\n        raise RuntimeError(\n            f\"R10L3B decision changed: {l3b.get('decision')}\"\n        )\n    if int(l3b.get(\"target_cases\", -1)) != EXPECTED_CASES:\n        raise RuntimeError(\"R10L3B target count changed.\")\n    if int(l3b.get(\"model_case_rows\", -1)) != EXPECTED_MODEL_CASES:\n        raise RuntimeError(\"R10L3B model-case count changed.\")\n\n    ib = l3b.get(\"information_boundary\", {})\n    forbidden_true = [\n        \"polypgen_gt_path_column_read\",\n        \"polypgen_gt_pixels_decoded\",\n        \"polypgen_outcomes_revealed\",\n        \"external_dice_computed\",\n        \"external_delta_dice_computed\",\n        \"external_harm_label_computed\",\n        \"pca_fit_called\",\n        \"pca_refit_called\",\n        \"safety_head_fit_called\",\n        \"safety_head_refit_called\",\n        \"target_calibration\",\n        \"target_threshold_selection\",\n        \"target_feature_selection\",\n        \"target_score_orientation_change\",\n        \"target_case_selection_from_scores\",\n    ]\n    for key in forbidden_true:\n        if bool(ib.get(key, True)):\n            raise RuntimeError(\n                f\"R10L3B information boundary invalid: {key}={ib.get(key)}\"\n            )\n\n    frozen_thr = float(\n        l3b.get(\"estimator\", {}).get(\"frozen_threshold\", math.nan)\n    )\n    if abs(frozen_thr - FROZEN_THRESHOLD) > 1e-15:\n        raise RuntimeError(\"R10L3B frozen threshold changed.\")\n\n    score_meta = l3b.get(\"artifacts\", {}).get(\n        R10L3B_SCORE_CSV.name\n    )\n    if not isinstance(score_meta, dict):\n        raise RuntimeError(\"R10L3B lock missing score artifact metadata.\")\n    score_sha = sha256_file(R10L3B_SCORE_CSV)\n    if score_sha.lower() != str(score_meta.get(\"sha256\", \"\")).lower():\n        raise RuntimeError(\"R10L3B score CSV SHA mismatch.\")\n\n    return {\n        \"polypgen_manifest_sha256\": sha256_file(POLYPGEN_MANIFEST),\n        \"polypgen_manifest_lock_sha256\": sha256_file(\n            POLYPGEN_MANIFEST_LOCK\n        ),\n        \"independence_lock_sha256\": sha256_file(INDEPENDENCE_LOCK),\n        \"r10l3a_lock_sha256\": l3a_sha,\n        \"r10l3b_lock_sha256\": l3b_sha,\n        \"r10l3b_score_csv_sha256\": score_sha,\n    }"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "verify_development_outcome_rule",
+        "start_line": 304,
+        "end_line": 354,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "threshold"
+        ],
+        "text": "def verify_development_outcome_rule():\n    df = pd.read_csv(\n        R05D4_OUTCOMES,\n        usecols=[\n            \"delta_dice\",\n            \"adaptation_outcome\",\n            \"harm_label\",\n            \"benefit_label\",\n        ],\n        low_memory=False,\n    )\n    if len(df) != 9000:\n        raise RuntimeError(\"R05D4 development outcome table rows != 9000.\")\n\n    delta = df[\"delta_dice\"].to_numpy(dtype=float)\n    expected = np.where(\n        delta <= HARM_THRESHOLD,\n        \"HARM\",\n        np.where(\n            delta >= BENEFIT_THRESHOLD,\n            \"BENEFIT\",\n            \"NEUTRAL\",\n        ),\n    )\n    outcome = (\n        df[\"adaptation_outcome\"]\n        .astype(str)\n        .str.upper()\n        .to_numpy()\n    )\n\n    if not np.array_equal(expected, outcome):\n        raise RuntimeError(\n            \"Frozen development outcome boundary no longer reproduces R05D4.\"\n        )\n    if not np.array_equal(\n        (expected == \"HARM\").astype(int),\n        df[\"harm_label\"].to_numpy(dtype=int),\n    ):\n        raise RuntimeError(\"R05D4 harm_label boundary mismatch.\")\n    if not np.array_equal(\n        (expected == \"BENEFIT\").astype(int),\n        df[\"benefit_label\"].to_numpy(dtype=int),\n    ):\n        raise RuntimeError(\"R05D4 benefit_label boundary mismatch.\")\n\n    print(\"\\n===== FROZEN DEVELOPMENT OUTCOME RULE =====\")\n    print(\"HARM: DeltaDice <= -0.02\")\n    print(\"BENEFIT: DeltaDice >= +0.02\")\n    print(\"NEUTRAL: otherwise\")\n    print(\"R05D4 reproduction:\", len(df), \"/\", len(df), \"PASS\")"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "build_external_outcomes",
+        "start_line": 535,
+        "end_line": 682,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "benefit",
+          "outcome",
+          "source",
+          "a1",
+          "gt"
+        ],
+        "text": "def build_external_outcomes(gt_masks):\n    mc = pd.read_csv(\n        R10L3A_MODEL_CASE_MANIFEST,\n        low_memory=False,\n    )\n\n    required = [\n        \"sample_id\",\n        \"center\",\n        \"model_family\",\n        \"model_state_id\",\n        \"training_seed\",\n        \"checkpoint_sha256\",\n        \"state_prediction_npz\",\n        \"state_lock_json\",\n        \"state_row_index\",\n    ]\n    missing = [c for c in required if c not in mc.columns]\n    if missing:\n        raise RuntimeError(\n            f\"R10L3A model-case manifest missing: {missing}\"\n        )\n    if len(mc) != EXPECTED_MODEL_CASES:\n        raise RuntimeError(\"R10L3A model-case rows !=13788.\")\n    if (\n        mc[[\"sample_id\", \"model_state_id\"]]\n        .drop_duplicates()\n        .shape[0]\n        != EXPECTED_MODEL_CASES\n    ):\n        raise RuntimeError(\"R10L3A model-case key not unique.\")\n\n    rows = []\n\n    for state_id, g in mc.groupby(\"model_state_id\", sort=True):\n        if len(g) != EXPECTED_CASES:\n            raise RuntimeError(\n                f\"{state_id}: rows={len(g)} expected={EXPECTED_CASES}\"\n            )\n\n        npz_vals = g[\"state_prediction_npz\"].astype(str).unique()\n        lock_vals = g[\"state_lock_json\"].astype(str).unique()\n        if len(npz_vals) != 1 or len(lock_vals) != 1:\n            raise RuntimeError(\n                f\"{state_id}: expected one NPZ and one state lock.\"\n            )\n\n        npz_path = resolve_r10l3a_path(npz_vals[0])\n        sidecar_path = resolve_r10l3a_path(lock_vals[0])\n\n        if not npz_path.exists():\n            raise FileNotFoundError(npz_path)\n\n        validate_state_sidecar(\n            sidecar_path,\n            npz_path,\n            state_id,\n        )\n\n        with np.load(npz_path, allow_pickle=False) as z:\n            if \"source_masks_packed\" not in z.files:\n                raise RuntimeError(f\"{state_id}: SOURCE missing.\")\n            if \"a1_masks_packed\" not in z.files:\n                raise RuntimeError(f\"{state_id}: A1 missing.\")\n            source = np.asarray(\n                z[\"source_masks_packed\"],\n                dtype=np.uint8,\n            )\n            a1 = np.asarray(\n                z[\"a1_masks_packed\"],\n                dtype=np.uint8,\n            )\n\n        expected_shape = (EXPECTED_CASES, PACKED_BYTES)\n        if source.shape != expected_shape:\n            raise RuntimeError(\n                f\"{state_id}: SOURCE shape={source.shape}\"\n            )\n        if a1.shape != expected_shape:\n            raise RuntimeError(\n                f\"{state_id}: A1 shape={a1.shape}\"\n            )\n\n        g = g.sort_values(\n            \"state_row_index\",\n            kind=\"mergesort\",\n        )\n\n        for r in tqdm(\n            g.itertuples(index=False),\n            total=len(g),\n            desc=f\"GT utility {state_id}\",\n            unit=\"case\",\n            dynamic_ncols=True,\n        ):\n            sid = str(r.sample_id)\n            if sid not in gt_masks:\n                raise RuntimeError(\n                    f\"{state_id}: missing frozen GT {sid}\"\n                )\n\n            i = int(r.state_row_index)\n            if not 0 <= i < EXPECTED_CASES:\n                raise RuntimeError(\n                    f\"{state_id}: invalid state_row_index={i}\"\n                )\n\n            sm = unpack_mask(source[i])\n            am = unpack_mask(a1[i])\n            gt = gt_masks[sid]\n\n            sd = binary_dice(sm, gt)\n            ad = binary_dice(am, gt)\n            delta = float(ad - sd)\n            outcome = outcome_label(delta)\n\n            rows.append({\n                \"sample_id\": sid,\n                \"center\": str(r.center),\n                \"model_family\": str(r.model_family),\n                \"model_state_id\": str(r.model_state_id),\n                \"training_seed\": int(r.training_seed),\n                \"checkpoint_sha256\": str(r.checkpoint_sha256),\n                \"state_row_index\": i,\n                \"source_dice\": sd,\n                \"a1_dice\": ad,\n                \"delta_dice\": delta,\n                \"adaptation_outcome\": outcome,\n                \"harm_label\": int(outcome == \"HARM\"),\n                \"benefit_label\": int(outcome == \"BENEFIT\"),\n            })\n\n        del source, a1\n\n    out = pd.DataFrame(rows)\n    if len(out) != EXPECTED_MODEL_CASES:\n        raise RuntimeError(\n            f\"Outcome rows={len(out)} expected={EXPECTED_MODEL_CASES}\"\n        )\n    if (\n        out[[\"sample_id\", \"model_state_id\"]]\n        .drop_duplicates()\n        .shape[0]\n        != EXPECTED_MODEL_CASES\n    ):\n        raise RuntimeError(\"Outcome model-case key not unique.\")\n\n    return out"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "main_evaluation",
+        "start_line": 1159,
+        "end_line": 1541,
+        "matched_tokens": [
+          "dice",
+          "delta",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "threshold",
+          "source",
+          "a1",
+          "gt"
+        ],
+        "text": "def main_evaluation(args):\n    print(\"===== R10L3C POLYPGEN GT REVEAL + PROSPECTIVE EXTERNAL EVALUATION FIX1 =====\")\n    print(\"STATUS: FIRST GT REVEAL AFTER R10L3A + R10L3B LOCKS\")\n    print(\"MODEL INFERENCE: NONE\")\n    print(\"TTA: NONE\")\n    print(\"SAFETY MODEL FIT/REFIT: NONE\")\n    print(\"SCORE ORIENTATION CHANGE: NO\")\n    print(\"THRESHOLD CHANGE: NO\")\n    print(\"TARGET CALIBRATION: NO\")\n    print(\"TARGET FEATURE SELECTION: NO\")\n    print(\"TARGET CASE/CENTER/STATE SELECTION: NO\")\n    print(\"FROZEN SAFETY THRESHOLD:\", FROZEN_THRESHOLD)\n    print(\"FROZEN OUTCOME HARM THRESHOLD:\", HARM_THRESHOLD)\n    print(\"FROZEN OUTCOME BENEFIT THRESHOLD:\", BENEFIT_THRESHOLD)\n    print(\"BOOTSTRAP:\", BOOTSTRAP_RESAMPLES)\n    print(\"BOOTSTRAP CLUSTER: sample_id\")\n    print(\"BOOTSTRAP CENTER STRATIFIED: YES\")\n    print()\n\n    verify_required_paths()\n    upstream = verify_upstream_locks()\n    verify_development_outcome_rule()\n\n    print(\"\\n===== FIRST POLYPGEN GT ACCESS AUTHORIZED =====\")\n    gt_df = load_locked_gt_manifest()\n    gt_masks, gt_audit = reveal_gt_masks(gt_df)\n\n    print(\"GT cases decoded:\", len(gt_masks))\n    print(\n        \"GT empty after 352x352 decode:\",\n        int(\n            sum(\n                int(m.sum()) == 0\n                for m in gt_masks.values()\n            )\n        ),\n    )\n\n    print(\"\\n===== FROZEN SOURCE/A1 OUTCOME CONSTRUCTION =====\")\n    outcomes = build_external_outcomes(gt_masks)\n\n    outcome_counts = (\n        outcomes[\"adaptation_outcome\"]\n        .value_counts()\n        .to_dict()\n    )\n    harm_n = int(outcomes[\"harm_label\"].sum())\n    benefit_n = int(outcomes[\"benefit_label\"].sum())\n\n    print(\"Outcome counts:\", outcome_counts)\n    print(\"HARM/NON-HARM:\", harm_n, \"/\", len(outcomes) - harm_n)\n    print(\"BENEFIT:\", benefit_n)\n    print(\n        \"SOURCE Dice mean/median:\",\n        float(outcomes[\"source_dice\"].mean()),\n        float(outcomes[\"source_dice\"].median()),\n    )\n    print(\n        \"A1 Dice mean/median:\",\n        float(outcomes[\"a1_dice\"].mean()),\n        float(outcomes[\"a1_dice\"].median()),\n    )\n    print(\n        \"DeltaDice mean/median:\",\n        float(outcomes[\"delta_dice\"].mean()),\n        float(outcomes[\"delta_dice\"].median()),\n    )\n\n    print(\"\\n===== JOIN ALREADY-LOCKED SAFETY SCORES =====\")\n    panel = load_and_join_locked_scores(outcomes)\n\n    print(\"Evaluation rows:\", len(panel))\n    print(\"Unique cases:\", panel[\"sample_id\"].nunique())\n    print(\"Unique states:\", panel[\"model_state_id\"].nunique())\n    print(\n        \"Frozen score min/median/max:\",\n        float(panel[\"frozen_safety_probability\"].min()),\n        float(panel[\"frozen_safety_probability\"].median()),\n        float(panel[\"frozen_safety_probability\"].max()),\n    )\n    print(\n        \"Frozen risk flags:\",\n        int(panel[\"frozen_risk_flag\"].sum()),\n        \"/\",\n        len(panel),\n    )\n\n    point_rows = []\n\n    pooled = point_metric_row(\n        \"ALL_ROWS\",\n        \"SECONDARY_POOLED\",\n        panel,\n    )\n    point_rows.append(pooled)\n\n    family_rows = []\n    for fam in FAMILIES:\n        r = point_metric_row(\n            fam,\n            \"SECONDARY_FAMILY\",\n            panel[panel[\"model_family\"] == fam],\n        )\n        family_rows.append(r)\n        point_rows.append(r)\n\n    macro = macro_family_point(family_rows)\n    point_rows.insert(0, macro)\n\n    for center in CENTERS:\n        point_rows.append(\n            point_metric_row(\n                center,\n                \"SECONDARY_CENTER\",\n                panel[panel[\"center\"] == center],\n            )\n        )\n\n    for state_id in sorted(panel[\"model_state_id\"].unique()):\n        point_rows.append(\n            point_metric_row(\n                state_id,\n                \"SECONDARY_STATE\",\n                panel[panel[\"model_state_id\"] == state_id],\n            )\n        )\n\n    print(\"\\n===== PRIMARY EXTERNAL RESULT: MACRO OVER 3 FAMILIES =====\")\n    for k in [\n        \"harm_prevalence\",\n        \"auroc\",\n        \"auprc\",\n        \"recall\",\n        \"fpr\",\n        \"empirical_ppv\",\n        \"ppv_at_1pct\",\n        \"oracle_target_fpr_at_r90_diagnostic\",\n    ]:\n        print(f\"{k}: {macro[k]:.9f}\")\n\n    print(\"\\n===== FAMILY POINT RESULTS =====\")\n    for r in family_rows:\n        print(\n            r[\"group\"],\n            f\"AUROC={r['auroc']:.6f}\",\n            f\"AUPRC={r['auprc']:.6f}\",\n            f\"Recall={r['recall']:.6f}\",\n            f\"FPR={r['fpr']:.6f}\",\n            f\"PPV1%={r['ppv_at_1pct']:.6f}\",\n            f\"OracleFPR90={r['oracle_target_fpr_at_r90_diagnostic']:.6f}\",\n        )\n\n    print(\"\\n===== CONFIRMATORY CASE-CLUSTERED BOOTSTRAP =====\")\n    bootstrap_rows, valid_bootstrap = bootstrap_primary(panel)\n\n    macro_ci = pd.DataFrame(bootstrap_rows)\n    macro_ci = macro_ci[\n        macro_ci[\"level\"] == \"PRIMARY_MACRO_FAMILY\"\n    ]\n\n    print(\"Valid bootstrap resamples:\", valid_bootstrap)\n    for r in macro_ci.itertuples(index=False):\n        print(\n            r.metric,\n            f\"CI95=[{r.ci_low_2p5:.6f}, {r.ci_high_97p5:.6f}]\",\n        )\n\n    out = args.output_dir\n    if out.exists():\n        raise FileExistsError(\n            f\"R10L3C final output already exists: {out}\"\n        )\n\n    build = Path(str(out) + \"__building\")\n    if build.exists():\n        raise FileExistsError(\n            f\"R10L3C partial build already exists: {build}\"\n        )\n    build.mkdir(parents=True, exist_ok=False)\n\n    gt_audit_path = build / \"R10L3C_polypgen_gt_decode_audit.csv\"\n    pd.DataFrame(gt_audit).to_csv(\n        gt_audit_path,\n        index=False,\n    )\n\n    outcomes_path = build / \"R10L3C_model_case_outcomes.csv\"\n    outcomes.to_csv(outcomes_path, index=False)\n\n    panel_path = build / \"R10L3C_LOCKED_SCORE_GT_EVALUATION_PANEL.csv\"\n    panel.to_csv(panel_path, index=False)\n\n    point_path = build / \"R10L3C_external_point_metrics.csv\"\n    pd.DataFrame(point_rows).to_csv(point_path, index=False)\n\n    boot_path = build / \"R10L3C_clustered_bootstrap_ci.csv\"\n    pd.DataFrame(bootstrap_rows).to_csv(boot_path, index=False)\n\n    outcome_summary = (\n        panel.groupby(\n            [\"model_family\", \"adaptation_outcome\"],\n            sort=True,\n        )\n        .size()\n        .reset_index(name=\"rows\")\n    )\n    outcome_summary.to_csv(\n        build / \"R10L3C_family_outcome_counts.csv\",\n        index=False,\n    )\n\n    center_outcome_summary = (\n        panel.groupby(\n            [\"center\", \"adaptation_outcome\"],\n            sort=True,\n        )\n        .size()\n        .reset_index(name=\"rows\")\n    )\n    center_outcome_summary.to_csv(\n        build / \"R10L3C_center_outcome_counts.csv\",\n        index=False,\n    )\n\n    artifacts = {}\n    for p in [\n        gt_audit_path,\n        outcomes_path,\n        panel_path,\n        point_path,\n        boot_path,\n        build / \"R10L3C_family_outcome_counts.csv\",\n        build / \"R10L3C_center_outcome_counts.csv\",\n    ]:\n        artifacts[p.name] = {\n            \"sha256\": sha256_file(p),\n            \"bytes\": p.stat().st_size,\n        }\n\n    info_boundary = {\n        \"polypgen_gt_path_read_in_r10l3c\": True,\n        \"polypgen_gt_pixels_decoded_in_r10l3c\": True,\n        \"model_inference_run_in_r10l3c\": False,\n        \"tta_run_in_r10l3c\": False,\n        \"safety_model_fit_or_refit\": False,\n        \"score_orientation_changed\": False,\n        \"threshold_changed\": False,\n        \"target_calibration\": False,\n        \"target_feature_selection\": False,\n        \"target_case_selection\": False,\n        \"target_center_selection\": False,\n        \"target_state_selection\": False,\n        \"oracle_r90_threshold_deployed\": False,\n        \"oracle_r90_metric_role\": \"DIAGNOSTIC_ONLY\",\n    }\n\n    lock = {\n        \"status\": \"COMPLETE\",\n        \"decision\": DECISION_COMPLETE,\n        \"script_version\": VERSION,\n        \"build\": BUILD,\n        \"target_dataset\": \"PolypGen2021_MultiCenterData_v3\",\n        \"target_cases\": EXPECTED_CASES,\n        \"model_states\": EXPECTED_STATES,\n        \"model_case_rows\": EXPECTED_MODEL_CASES,\n        \"outcome_definition\": {\n            \"source_metric\": \"binary_dice\",\n            \"a1_metric\": \"binary_dice\",\n            \"delta\": \"a1_dice - source_dice\",\n            \"harm\": \"delta_dice <= -0.02\",\n            \"benefit\": \"delta_dice >= +0.02\",\n            \"neutral\": \"-0.02 < delta_dice < +0.02\",\n        },\n        \"polypgen_gt_decode\": {\n            \"native_decode\": \"PIL convert L\",\n            \"binary_threshold\": \"gray > 127\",\n            \"resize\": \"nearest neighbor to 352x352\",\n            \"post_resize_binary\": \">0\",\n            \"adaptive_threshold\": False,\n            \"morphological_repair\": False,\n        },\n        \"frozen_safety_evaluation\": {\n            \"score\": \"R10L3B frozen_safety_probability\",\n            \"score_orientation\": \"higher = higher HARM risk\",\n            \"operating_threshold\": FROZEN_THRESHOLD,\n            \"threshold_changed\": False,\n            \"assumed_prevalence_for_ppv_1pct\": ASSUMED_PREVALENCE,\n            \"primary_level\": \"macro over 3 model families\",\n            \"bootstrap_resamples\": BOOTSTRAP_RESAMPLES,\n            \"bootstrap_valid\": valid_bootstrap,\n            \"bootstrap_cluster\": \"sample_id\",\n            \"bootstrap_center_stratified\": True,\n            \"oracle_target_fpr_at_r90\": \"diagnostic only; not deployed\",\n        },\n        \"outcome_counts\": {\n            k: int(v)\n            for k, v in outcome_counts.items()\n        },\n        \"harm_rows\": harm_n,\n        \"nonharm_rows\": int(len(panel) - harm_n),\n        \"benefit_rows\": benefit_n,\n        \"primary_macro_point\": {\n            k: float(v)\n            for k, v in macro.items()\n            if isinstance(v, (int, float, np.integer, np.floating))\n        },\n        \"information_boundary\": info_boundary,\n        \"upstream_hashes\": upstream,\n        \"artifacts\": artifacts,\n    }\n\n    lock_path = (\n        build\n        / \"R10L3C_POLYPGEN_PROSPECTIVE_EXTERNAL_EVALUATION_LOCK.json\"\n    )\n    write_json(lock_path, lock)\n\n    run_log = \"\\n\".join([\n        \"===== R10L3C POLYPGEN PROSPECTIVE EXTERNAL EVALUATION FIX1 =====\",\n        f\"Script version: {VERSION}\",\n        f\"Build: {BUILD}\",\n        \"\",\n        \"Frozen evidence order:\",\n        \"  R10L3A SOURCE/A1 prediction lock=PASS\",\n        \"  R10L3B safety-score lock=PASS\",\n        \"  first PolypGen GT reveal=R10L3C\",\n        \"\",\n        \"External panel:\",\n        f\"  cases={EXPECTED_CASES}\",\n        f\"  states={EXPECTED_STATES}\",\n        f\"  model-case rows={EXPECTED_MODEL_CASES}\",\n        f\"  HARM={harm_n}\",\n        f\"  NON-HARM={len(panel)-harm_n}\",\n        f\"  BENEFIT={benefit_n}\",\n        \"\",\n        \"Frozen outcome:\",\n        \"  delta_dice=A1 Dice - SOURCE Dice\",\n        \"  HARM=delta<=-0.02\",\n        \"  BENEFIT=delta>=+0.02\",\n        \"  NEUTRAL=otherwise\",\n        \"\",\n        \"Frozen safety operating point:\",\n        f\"  threshold={FROZEN_THRESHOLD:.15f}\",\n        \"  recalibration=NO\",\n        \"  score reversal=NO\",\n        \"  feature selection=NO\",\n        \"  target subset selection=NO\",\n        \"\",\n        \"Primary macro-over-family external metrics:\",\n        f\"  AUROC={macro['auroc']:.9f}\",\n        f\"  AUPRC={macro['auprc']:.9f}\",\n        f\"  Recall={macro['recall']:.9f}\",\n        f\"  FPR={macro['fpr']:.9f}\",\n        f\"  empirical PPV={macro['empirical_ppv']:.9f}\",\n        f\"  PPV@1%={macro['ppv_at_1pct']:.9f}\",\n        f\"  oracle target FPR@R90 diagnostic=\"\n        f\"{macro['oracle_target_fpr_at_r90_diagnostic']:.9f}\",\n        \"\",\n        f\"Bootstrap resamples valid={valid_bootstrap}/{BOOTSTRAP_RESAMPLES}\",\n        \"Bootstrap cluster=sample_id\",\n        \"Bootstrap center stratified=YES\",\n        \"\",\n        f\"Decision={DECISION_COMPLETE}\",\n        \"PASS\",\n    ]) + \"\\n\"\n\n    (build / \"run_log.txt\").write_text(\n        run_log,\n        encoding=\"utf-8\",\n    )\n\n    lock_sha = sha256_file(lock_path)\n    build.rename(out)\n\n    print()\n    print((out / \"run_log.txt\").read_text(encoding=\"utf-8\"))\n    print(\n        \"R10L3C LOCK:\",\n        out\n        / \"R10L3C_POLYPGEN_PROSPECTIVE_EXTERNAL_EVALUATION_LOCK.json\",\n    )\n    print(\"R10L3C LOCK SHA256:\", lock_sha)\n    print(\"PASS\")"
+      },
+      {
+        "kind": "FunctionDef",
+        "name": "self_test",
+        "start_line": 1544,
+        "end_line": 1577,
+        "matched_tokens": [
+          "dice",
+          "harm",
+          "neutral",
+          "benefit",
+          "outcome",
+          "threshold"
+        ],
+        "text": "def self_test():\n    vals = np.asarray(\n        [-0.021, -0.020, -0.019, 0.0, 0.019, 0.020, 0.021]\n    )\n    labels = [outcome_label(float(x)) for x in vals]\n    assert labels == [\n        \"HARM\",\n        \"HARM\",\n        \"NEUTRAL\",\n        \"NEUTRAL\",\n        \"NEUTRAL\",\n        \"BENEFIT\",\n        \"BENEFIT\",\n    ]\n\n    z = np.zeros((MASK_H, MASK_W), dtype=np.uint8)\n    o = np.ones((MASK_H, MASK_W), dtype=np.uint8)\n    assert binary_dice(z, z) == 1.0\n    assert binary_dice(o, o) == 1.0\n    assert binary_dice(z, o) == 0.0\n\n    val = adjusted_ppv_at_prevalence(0.90, 0.10, 0.01)\n    expected = 0.009 / (0.009 + 0.099)\n    assert abs(val - expected) < 1e-15\n\n    assert EXPECTED_CASES * EXPECTED_STATES == EXPECTED_MODEL_CASES\n    assert abs(FROZEN_THRESHOLD - 0.300584763193734) <= 1e-15\n\n    print(\"OUTCOME_BOUNDARY_TEST_PASS\")\n    print(\"BINARY_DICE_TEST_PASS\")\n    print(\"PPV1PCT_TEST_PASS\")\n    print(\"CARDINALITY_TEST_PASS\")\n    print(\"FROZEN_THRESHOLD_TEST_PASS\")\n    print(\"SELF_TEST_PASS\")"
+      }
+    ],
+    "constants": [
+      {
+        "line": 16,
+        "text": "HARM    if DeltaDice <= -0.02"
+      },
+      {
+        "line": 17,
+        "text": "BENEFIT if DeltaDice >= +0.02"
+      },
+      {
+        "line": 146,
+        "text": "FROZEN_THRESHOLD = 0.300584763193734"
+      },
+      {
+        "line": 147,
+        "text": "HARM_THRESHOLD = -0.02"
+      },
+      {
+        "line": 148,
+        "text": "BENEFIT_THRESHOLD = +0.02"
+      },
+      {
+        "line": 280,
+        "text": "if abs(frozen_thr - FROZEN_THRESHOLD) > 1e-15:"
+      },
+      {
+        "line": 318,
+        "text": "delta = df[\"delta_dice\"].to_numpy(dtype=float)"
+      },
+      {
+        "line": 320,
+        "text": "delta <= HARM_THRESHOLD,"
+      },
+      {
+        "line": 323,
+        "text": "delta >= BENEFIT_THRESHOLD,"
+      },
+      {
+        "line": 340,
+        "text": "(expected == \"HARM\").astype(int),"
+      },
+      {
+        "line": 341,
+        "text": "df[\"harm_label\"].to_numpy(dtype=int),"
+      },
+      {
+        "line": 345,
+        "text": "(expected == \"BENEFIT\").astype(int),"
+      },
+      {
+        "line": 346,
+        "text": "df[\"benefit_label\"].to_numpy(dtype=int),"
+      },
+      {
+        "line": 351,
+        "text": "print(\"HARM: DeltaDice <= -0.02\")"
+      },
+      {
+        "line": 352,
+        "text": "print(\"BENEFIT: DeltaDice >= +0.02\")"
+      },
+      {
+        "line": 493,
+        "text": "if delta <= HARM_THRESHOLD:"
+      },
+      {
+        "line": 494,
+        "text": "return \"HARM\""
+      },
+      {
+        "line": 495,
+        "text": "if delta >= BENEFIT_THRESHOLD:"
+      },
+      {
+        "line": 496,
+        "text": "return \"BENEFIT\""
+      },
+      {
+        "line": 497,
+        "text": "return \"NEUTRAL\""
+      },
+      {
+        "line": 646,
+        "text": "sd = binary_dice(sm, gt)"
+      },
+      {
+        "line": 647,
+        "text": "ad = binary_dice(am, gt)"
+      },
+      {
+        "line": 648,
+        "text": "delta = float(ad - sd)"
+      },
+      {
+        "line": 649,
+        "text": "outcome = outcome_label(delta)"
+      },
+      {
+        "line": 663,
+        "text": "\"harm_label\": int(outcome == \"HARM\"),"
+      },
+      {
+        "line": 664,
+        "text": "\"benefit_label\": int(outcome == \"BENEFIT\"),"
+      },
+      {
+        "line": 717,
+        "text": "score[\"frozen_operating_threshold\"].to_numpy(dtype=float),"
+      },
+      {
+        "line": 719,
+        "text": "rtol=0.0,"
+      },
+      {
+        "line": 720,
+        "text": "atol=1e-15,"
+      },
+      {
+        "line": 729,
+        "text": "(p >= FROZEN_THRESHOLD).astype(int),"
+      },
+      {
+        "line": 816,
+        "text": "threshold = float(positive_scores[need - 1])"
+      },
+      {
+        "line": 818,
+        "text": "pred = p >= threshold"
+      },
+      {
+        "line": 825,
+        "text": "return float(fpr), float(recall), threshold"
+      },
+      {
+        "line": 829,
+        "text": "y = df[\"harm_label\"].to_numpy(dtype=np.int8)"
+      },
+      {
+        "line": 831,
+        "text": "pred = p >= FROZEN_THRESHOLD"
+      },
+      {
+        "line": 911,
+        "text": "df[\"harm_label\"].to_numpy(dtype=int),"
+      },
+      {
+        "line": 1205,
+        "text": "harm_n = int(outcomes[\"harm_label\"].sum())"
+      },
+      {
+        "line": 1206,
+        "text": "benefit_n = int(outcomes[\"benefit_label\"].sum())"
+      },
+      {
+        "line": 1428,
+        "text": "\"harm\": \"delta_dice <= -0.02\","
+      },
+      {
+        "line": 1429,
+        "text": "\"benefit\": \"delta_dice >= +0.02\","
+      },
+      {
+        "line": 1442,
+        "text": "\"score_orientation\": \"higher = higher HARM risk\","
+      },
+      {
+        "line": 1490,
+        "text": "f\"  HARM={harm_n}\","
+      },
+      {
+        "line": 1491,
+        "text": "f\"  NON-HARM={len(panel)-harm_n}\","
+      },
+      {
+        "line": 1492,
+        "text": "f\"  BENEFIT={benefit_n}\","
+      },
+      {
+        "line": 1495,
+        "text": "\"  delta_dice=A1 Dice - SOURCE Dice\","
+      },
+      {
+        "line": 1496,
+        "text": "\"  HARM=delta<=-0.02\","
+      },
+      {
+        "line": 1497,
+        "text": "\"  BENEFIT=delta>=+0.02\","
+      },
+      {
+        "line": 1498,
+        "text": "\"  NEUTRAL=otherwise\","
+      },
+      {
+        "line": 1501,
+        "text": "f\"  threshold={FROZEN_THRESHOLD:.15f}\","
+      },
+      {
+        "line": 1561,
+        "text": "assert binary_dice(z, z) == 1.0"
+      },
+      {
+        "line": 1562,
+        "text": "assert binary_dice(o, o) == 1.0"
+      },
+      {
+        "line": 1563,
+        "text": "assert binary_dice(z, o) == 0.0"
+      },
+      {
+        "line": 1570,
+        "text": "assert abs(FROZEN_THRESHOLD - 0.300584763193734) <= 1e-15"
+      }
+    ]
+  },
+  "information_boundary": {
+    "r14c2b_score_lock_completed": true,
+    "gt_member_names_accessed": true,
+    "gt_pixel_bytes_extracted": false,
+    "gt_pixels_decoded": false,
+    "dice_computed": false,
+    "delta_dice_computed": false,
+    "outcomes_constructed": false,
+    "safety_scores_recomputed": false,
+    "safety_scores_recalibrated": false,
+    "threshold_retuned": false,
+    "tta_rerun": false
+  },
+  "next_stage": "R14C3B_SUNSEG_GT_REVEAL_DUAL_ACTION_OUTCOME_LOCK_THEN_FROZEN_SCORE_EVALUATION"
+}

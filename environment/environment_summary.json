@@ -1,0 +1,13 @@
+{
+  "python_executable": "D:\\anaconda\\envs\\rare26\\python.exe",
+  "python_version": "3.10.20 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:13:20) [MSC v.1942 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "torch": "2.5.1+cu121",
+  "torchvision": "0.20.1+cu121",
+  "numpy": "1.26.4",
+  "pandas": "2.3.3",
+  "scipy": "1.15.3",
+  "sklearn": "1.7.2",
+  "transformers": "5.15.0",
+  "joblib": "1.5.3"
+}

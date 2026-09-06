@@ -1,0 +1,28 @@
+{
+  "decision": "POLYPGEN_STATIC_UNIQUE_MANIFEST_LOCKED_PENDING_SOURCE_TRAINING_AUDIT",
+  "input_paired_rows": 1536,
+  "retained_unique_rows": 1532,
+  "retained_unique_rgb_hashes": 1532,
+  "prior_hash_columns_removed_before_lock": [
+    "image_sha256"
+  ],
+  "output_duplicate_column_labels": false,
+  "exact_duplicate_or_conflict_rows_excluded": 4,
+  "conflicting_annotation_rows_excluded": 4,
+  "redundant_same_rgb_same_gt_rows_excluded": 0,
+  "unpaired_files_excluded": 2,
+  "centers": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+  ],
+  "neoPolyp_exact_rgb_duplicates": 0,
+  "conflicting_gt_policy": "EXCLUDE_ENTIRE_RGB_CONFLICT_GROUP",
+  "model_inference_run": false,
+  "performance_evaluated": false,
+  "source_training_overlap_status": "PENDING_R10L2",
+  "locked_manifest": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L1B_polypgen_unique_static_manifest_lock_fix3_v1\\R10L1B_POLYPGEN_UNIQUE_STATIC_MANIFEST.csv"
+}

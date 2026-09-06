@@ -1,0 +1,21 @@
+{
+  "version": "2026-09-06-Q1-SAFETTA-EXACT-REPRO-NUMERIC-PROVENANCE-v1",
+  "source_chain_gate_path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_SAFETTA_repro_chain_resolver_v2\\paper_repro_chain_gate.json",
+  "source_chain_gate_sha256": "59b263e24f2ffb30714fab3deab0174972354139130ef9dff1be81b669ee2cea",
+  "r14c1_canonical_audit_path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_SAFETTA_R14C1_canonical_chain_audit_v2\\R14C1_CANONICAL_CHAIN_AUDIT.json",
+  "r14c1_canonical_audit_sha256": "41eb8b263e933e5303e5a0d1edaa271f5c788ba2c205cf18e64e9a50a34f14a4",
+  "selected_stage_count": 43,
+  "selected_stage_pass_before_canonical_resolution": 42,
+  "selected_stage_pass_after_canonical_resolution": 43,
+  "selected_stage_blocked_after_canonical_resolution": 0,
+  "resolved_stage": {
+    "stage_id": "R14C1",
+    "resolution_model": "retained fix2 runner -> frozen fix2_v1 output -> retained R14C1A canonicalizer -> frozen fix3_v1 canonical output",
+    "canonical_gate": "PASS_R14C1_CANONICAL_CHAIN_RESOLVED",
+    "fix2_script_sha256": "f6c2ba3401d6de7082085521504a86d505544d965882389e356f07dd8c870f78",
+    "canonicalizer_sha256": "bc2e21e4a69e82612250d94972242422903d5dac0dacea906f0dfbc73f05095c",
+    "final_manifest_sha256": "1ea4fae25a270babb9b1b0b2d2f1c4f694f458079f573b6f070c098ab3a96e40"
+  },
+  "gate": "PASS_CHAIN_ASSET_RESOLUTION",
+  "important_note": "This closes retained paper-chain asset/provenance resolution. It does not yet assert fresh numerical replay."
+}

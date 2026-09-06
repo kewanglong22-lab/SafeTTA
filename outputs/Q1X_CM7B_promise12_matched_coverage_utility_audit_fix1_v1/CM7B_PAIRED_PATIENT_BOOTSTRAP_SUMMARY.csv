@@ -1,0 +1,4 @@
+metric,bootstrap_reps,inner_random_draws_per_rep,mean_delta_safettta_minus_random,ci95_low,ci95_high,safettta_significantly_better_95ci
+prevented_harm_fraction,2000,10,0.06598351577564392,0.03977616066330513,0.09324833237492813,True
+mean_slice_deployed_dice,2000,10,0.023751058009978863,0.01884975396281961,0.029163767585695617,True
+mean_patient_3d_deployed_dice,2000,10,-0.0009462262244835924,-0.006396889743574316,0.003676344709274701,False

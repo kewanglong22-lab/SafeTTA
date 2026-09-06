@@ -1,0 +1,102 @@
+{
+  "status": "PASS",
+  "decision": "CORE_ABLATION_COMPLETE_READY_FOR_R15A1_PAIRED_CLUSTER_BOOTSTRAP",
+  "script_version": "2026-09-04-Q1-R15A0-v1-fix1",
+  "build": "Q1_R15A0_PREDICTION_CONDITIONED_CORE_ABLATION_LOMO_FIX1",
+  "scientific_role": "post-freeze explanatory source-side component ablation",
+  "final_method_reselected": false,
+  "external_data_accessed": false,
+  "panel": {
+    "rows": 9000,
+    "cases": 1000,
+    "model_states": 9,
+    "families": [
+      "DeepLabV3-R50",
+      "PraNet",
+      "SegFormer-B0"
+    ]
+  },
+  "protocol": {
+    "outer_folds": 5,
+    "inner_folds": 4,
+    "seeds": [
+      20260816,
+      20260817,
+      20260818,
+      20260819,
+      20260820
+    ],
+    "group_key": "sample_id",
+    "pca_dim": 64,
+    "pca_whiten": true,
+    "target_recall_for_source_only_threshold": 0.9,
+    "target_family_labels_used_for_evaluation_only": true,
+    "target_family_features_used_to_fit_pca": false,
+    "final_method_or_threshold_changed": false
+  },
+  "methods": [
+    "M2_backbone",
+    "ImageCLS_PCA64",
+    "CondDINO_PCA64",
+    "M2_plus_CondDINO_PCA64",
+    "FG_PCA64",
+    "BG_PCA64",
+    "M2_plus_FG_PCA64",
+    "M2_plus_BG_PCA64"
+  ],
+  "historical_methods_reused_from_frozen_predictions": [
+    "M2_backbone",
+    "ImageCLS_PCA64",
+    "CondDINO_PCA64",
+    "M2_plus_CondDINO_PCA64"
+  ],
+  "newly_fitted_component_ablation_methods": [
+    "FG_PCA64",
+    "BG_PCA64",
+    "M2_plus_FG_PCA64",
+    "M2_plus_BG_PCA64"
+  ],
+  "upstream": {
+    "image_features_sha256": "e8251ce40024218e1b9a4720e67776a087c7d1ba25cabfc4a9ddb20c300e4000",
+    "state_features_sha256": "87ef5ddc61d8fd9330d7d1b075c7d8164d1059c92b52bdedd36e14cb10dae8e1",
+    "state_metadata_sha256": "83d9dfd38f3038862d351acc0cbd0c24e9a658bbf2d6bbf43cf4c253f10a7b5c",
+    "image_manifest_sha256": "c944b95ec17f9c3fe26ea1c8555ca9309e490fc22a62da8fab43fa8ace1d39b9",
+    "morphology_sha256": "adfc78f98bc8244acf4237255be063a58629443f089c038134862108ae6a0581",
+    "historical_r10k2b_predictions_sha256": "68c9f4b3700236e0242de19d0b8fd05402a3862881a8f60dd096895a29a596bb"
+  },
+  "artifacts": {
+    "R15A0_all_8method_target_predictions.csv": {
+      "sha256": "cff9b08f06dbafa0816bd4f4f732af66304761bf9105d3106b725686f3bf961e",
+      "bytes": 50580135
+    },
+    "R15A0_new_component_ablation_predictions.csv": {
+      "sha256": "7508461139be46db2a569b47b5ac69c3f3f6e06a41f7f05c2283626a55b5ba23",
+      "bytes": 25079566
+    },
+    "R15A0_family_seed_metrics.csv": {
+      "sha256": "11fc2f5283774a60c2f5aefdc9b81f4ca41b252e94245347b3f4fc8a3b3fdb70",
+      "bytes": 18245
+    },
+    "R15A0_by_family_summary.csv": {
+      "sha256": "614dfa4a6001b9f215a65a2bea52fb4545674dd9bbe52596648e3220c57399bf",
+      "bytes": 6807
+    },
+    "R15A0_macro_by_seed.csv": {
+      "sha256": "acd44349705643fb4617ab655f3cc6e5f8b38509d7e394d6059fc9fc6d8471ec",
+      "bytes": 5716
+    },
+    "R15A0_macro_summary.csv": {
+      "sha256": "787167aca6b81ee45d10651b6c0ce5cdea7756e5da84b23d6b3b978f7dfa96d5",
+      "bytes": 2365
+    },
+    "R15A0_component_point_deltas.csv": {
+      "sha256": "8fcae76a930ef840c3e05165b38f88ac6f222c95b386396eda98e62fc4adcf49",
+      "bytes": 1135
+    },
+    "R15A0_new_method_fold_audit.csv": {
+      "sha256": "14b336f3d78a6f6fb8ff2fa134362e316dac05d6c67e079162182038179d20db",
+      "bytes": 29149
+    }
+  },
+  "next_stage": "R15A1_CASE_CLUSTERED_PAIRED_BOOTSTRAP_FOR_CORE_ABLATION"
+}

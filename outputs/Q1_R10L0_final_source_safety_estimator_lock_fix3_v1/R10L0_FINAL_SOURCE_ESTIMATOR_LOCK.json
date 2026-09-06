@@ -1,0 +1,53 @@
+{
+  "status": "FROZEN",
+  "decision": "FINAL_SOURCE_ESTIMATOR_LOCKED_FOR_INDEPENDENT_EXTERNAL_VALIDATION",
+  "development_dataset": "NeoPolyp",
+  "development_rows": 9000,
+  "development_cases": 1000,
+  "model_families": [
+    "DeepLabV3-R50",
+    "PraNet",
+    "SegFormer-B0"
+  ],
+  "primary_method": "M2_plus_CondDINO_PCA64",
+  "representation": {
+    "encoder": "facebook/dinov2-base",
+    "conditioned_semantics": "foreground/background weighted patch means",
+    "conditioned_dimension": 1536,
+    "pca_dimension": 64,
+    "m2_features": [
+      "morph_fg_fraction",
+      "morph_boundary_density"
+    ],
+    "final_input_dimension": 66
+  },
+  "final_fit": {
+    "pca_fit_rows": 9000,
+    "head_fit_rows": 9000,
+    "external_rows_used": 0,
+    "external_labels_used": false,
+    "serialized_parameter_identity": true,
+    "serialized_roundtrip_max_abs_probability_diff": 1.6755798948331346e-07,
+    "serialized_functional_tolerance": 1e-06,
+    "frozen_threshold_decision_mismatch_count": 0,
+    "fittransform_vs_transform_max_abs_probability_diff": 0.006988411858080745
+  },
+  "operating_point": {
+    "target_recall": 0.9,
+    "selection": "5-seed 5-fold StratifiedGroupKFold OOF by sample_id; median seed-specific threshold",
+    "final_threshold": 0.300584763193734
+  },
+  "artifacts": {
+    "pca": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L0_final_source_safety_estimator_lock_fix3_v1\\R10L0_final_condDINO_PCA64.joblib",
+    "safety_head": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L0_final_source_safety_estimator_lock_fix3_v1\\R10L0_final_safety_head.joblib",
+    "threshold": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L0_final_source_safety_estimator_lock_fix3_v1\\R10L0_frozen_operating_threshold.json"
+  },
+  "post_lock_rules": [
+    "Do not refit PCA on external-cohort features.",
+    "Do not refit or recalibrate the safety head on external labels.",
+    "Do not alter PCA dimension.",
+    "Do not alter M2 features.",
+    "Do not change DINOv2 or semantic pooling.",
+    "Do not alter the frozen operating threshold after external outcomes are revealed."
+  ]
+}

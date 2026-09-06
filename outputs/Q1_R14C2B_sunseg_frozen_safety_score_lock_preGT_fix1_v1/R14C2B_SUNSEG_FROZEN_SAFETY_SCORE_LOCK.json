@@ -1,0 +1,136 @@
+{
+  "status": "FROZEN",
+  "decision": "SUNSEG_FROZEN_SAFETY_SCORES_LOCKED_BEFORE_GT_REVEAL",
+  "script_version": "2026-09-03-Q1-R14C2B-v1-fix1",
+  "build": "Q1_R14C2B_SUNSEG_FROZEN_SAFETY_SCORE_LOCK_PRE_GT_FIX1",
+  "primary_method": "M2_plus_CondDINO_PCA64",
+  "target_dataset": "SUN-SEG",
+  "target_component": "R14B4B_Fix3_final_confirmatory_cohort_EasyUnseen_plus_HardUnseen",
+  "target_frames": 980,
+  "physical_cases": 49,
+  "model_states": 9,
+  "model_frame_rows": 8820,
+  "representation": {
+    "historical_deployment_reference": "F:\\MEDSEG_SAFETTA\\code\\Q1_R10L3B_polypgen_frozen_safety_score_lock_fix1.py",
+    "historical_deployment_reference_sha256": "e19e802355dc36873af4bf78ac336ba24313eea8beb19c40c3f646eb4effc646",
+    "encoder": "facebook/dinov2-base",
+    "encoder_trainable": false,
+    "image_resize": "224x224 direct bicubic",
+    "processor_resize": false,
+    "processor_center_crop": false,
+    "patch_grid": "16x16",
+    "source_mask": "352x352 binary pre-adaptation SOURCE only",
+    "source_mask_alignment": "exact 22x22 block occupancy -> 16x16",
+    "foreground_patch_mean_dim": 768,
+    "background_patch_mean_dim": 768,
+    "feature_lock_precision": "float32 pooling -> float16 lock -> float32 PCA input",
+    "conditioned_dim": 1536,
+    "m2": [
+      "morph_fg_fraction",
+      "morph_boundary_density"
+    ],
+    "pca_dim": 64,
+    "final_input_dim": 66,
+    "final_input_order": "M2 first, then PCA64"
+  },
+  "estimator": {
+    "pca_sha256": "2c6c289ce395105a0c79f7b7751df2a195d76a248c22b43e817d71511c4a24f1",
+    "head_sha256": "602574418a309400bf7e7fc854267a702496c1bd47e4f07f6f60415ec9bd14ce",
+    "threshold_artifact_sha256": "4a37fb4f9a9b729a9aa6551b1417afea7348e2dfecdfcb6e0e2b5986e748e4d7",
+    "pca_fit_on_sun": false,
+    "safety_head_fit_on_sun": false,
+    "frozen_threshold": 0.300584763193734,
+    "probability_rows": 8820,
+    "flagged_rows": 4260
+  },
+  "representation_sentinel": {
+    "development_cases_checked": 8,
+    "float16_locked_cls_max_abs_difference": 0.001953125,
+    "tolerance": 0.0025,
+    "pass": true
+  },
+  "source_mask_decode_audit": {
+    "reads": 8820,
+    "foreground_pixel_agreement": 8820,
+    "tent1_values_accessed": false,
+    "pl_values_accessed": false
+  },
+  "rgb_cache": {
+    "technical_source_cache_path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix2_v1\\rgb_cache",
+    "files": 980,
+    "mapping_rule": "exact encoded SHA256 only"
+  },
+  "information_boundary": {
+    "sun_rgb_pixels_decoded": true,
+    "source_mask_values_accessed": true,
+    "tent1_mask_values_accessed": false,
+    "pl_mask_values_accessed": false,
+    "sun_gt_path_or_member_accessed": false,
+    "sun_gt_pixels_decoded": false,
+    "sun_outcomes_revealed": false,
+    "dice_computed": false,
+    "delta_dice_computed": false,
+    "harm_benefit_labels_computed": false,
+    "pca_fit_called": false,
+    "pca_refit_called": false,
+    "safety_head_fit_called": false,
+    "safety_head_refit_called": false,
+    "target_calibration": false,
+    "target_threshold_selection": false,
+    "target_feature_selection": false,
+    "target_score_orientation_change": false,
+    "target_case_selection_from_scores": false,
+    "frozen_threshold": 0.300584763193734
+  },
+  "upstream_hashes": {
+    "r14c1_lock_sha256": "802e585dc075df23e0eeddf2b7d613d229dd1f7c6ae99aeaa89cf7dd7b358163",
+    "r14c1_global_manifest_sha256": "1ea4fae25a270babb9b1b0b2d2f1c4f694f458079f573b6f070c098ab3a96e40",
+    "r14c2a_audit_sha256": "8d789ef0c78d6a49712ae38d4c133f45038cfad5e94297fea6c43d14e3727586",
+    "r10k2a_script_sha256": "25853e849fecaf847f7ba04dcc2c8b520aa3e248f50af5ac21d19bb0ce4c4778",
+    "r10j1_script_sha256": "88555d55c33a57c76cf68e7605f267c500fe8b44921706300131879ca013dccf",
+    "historical_r10l3b_script_sha256": "e19e802355dc36873af4bf78ac336ba24313eea8beb19c40c3f646eb4effc646",
+    "polypgen_r10l3b_lock_sha256": "3c0dd916e56f55a0398dc085c5f007d1fec65878efabd62b5a1c46d00e77f218",
+    "r10k2d_lock_sha256": "6772fb8d1e18dff517e0e5de5e26f0f055e3cc26f23e492650f14c65d063db3d",
+    "r10l0_lock_sha256": "e67ad3ac9306d44b1e1f2bc13d1633d93c780241090c53c3c702f962a5ec3d6f",
+    "r10l0_pca_sha256": "2c6c289ce395105a0c79f7b7751df2a195d76a248c22b43e817d71511c4a24f1",
+    "r10l0_head_sha256": "602574418a309400bf7e7fc854267a702496c1bd47e4f07f6f60415ec9bd14ce",
+    "r10l0_threshold_sha256": "4a37fb4f9a9b729a9aa6551b1417afea7348e2dfecdfcb6e0e2b5986e748e4d7"
+  },
+  "artifacts": {
+    "R14C2B_SUN_conditioned_dino_features.npz": {
+      "sha256": "f3e5f36476ab93b0ce01237d1a413ad37f945c59c7a3beeb0e6f1d05201034cd",
+      "bytes": 23931016
+    },
+    "R14C2B_SUN_pca64_features.npz": {
+      "sha256": "32115cea89df907cc6e96a5c1d1a8af155a0c0852011a7a6a25f65d480e1c546",
+      "bytes": 2450119
+    },
+    "R14C2B_FROZEN_SUNSEG_SAFETY_SCORES.csv": {
+      "sha256": "36e0791e44bdfbb29add422d090b7d9ce1ffa63637f7135366765a27d7fb2dd5",
+      "bytes": 5420704
+    },
+    "R14C2B_unlabeled_family_score_summary.csv": {
+      "sha256": "4ce4a2718cb512c5f6e058c9b703dbb67649875aa7635240a250e8abbe3239f4",
+      "bytes": 315
+    },
+    "R14C2B_unlabeled_split_score_summary.csv": {
+      "sha256": "a1b319c6beb65d5024ce5a76c8d2f891de9cd00a0a5df2c25367d2c1b9510ac7",
+      "bytes": 299
+    },
+    "information_boundary_audit.json": {
+      "sha256": "bd8a0186ce3ecaa1cba29ab7bf51a04620f91e1d1b1173b9f0dd916d10f0d639",
+      "bytes": 747
+    }
+  },
+  "post_score_rules": [
+    "Do not refit PCA on SUN-SEG.",
+    "Do not refit or recalibrate the safety head on SUN-SEG.",
+    "Do not change score orientation.",
+    "Do not change the frozen threshold.",
+    "Do not select split/case/state based on score performance.",
+    "Do not alter the representation after GT reveal.",
+    "Do not access TENT1/PL mask values for safety scoring.",
+    "Next stage may reveal GT only after this lock is finalized."
+  ],
+  "next_stage": "R14C3_SUNSEG_GT_REVEAL_OUTCOME_CONSTRUCTION_AND_FROZEN_SCORE_EVALUATION"
+}

@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "decision": "PROMISE12_POST_GT_BASELINE_AUDIT_COMPLETE_READY_FOR_CM7B_MATCHED_COVERAGE_UTILITY",
+  "version": "2026-09-05-Q1X-CM7A-v1-fix2",
+  "build": "Q1X_CM7A_PROMISE12_EXTERNAL_RANKING_BASELINE_AUDIT_FIX2",
+  "scope": "POST_GT_FIXED_PROTOCOL_BASELINE_AUDIT",
+  "cm3_lock_sha256": "4cfbe8f108f53e014973111d96244c666bfabd13eb022675fa31a34edaae7cec",
+  "cm4b_lock_sha256": "7903f8dd84338be8051883b1a905607daec25e55539205f7c6fb78ca3cc41a7e",
+  "cm4d_lock_sha256": "fbc55b3d09276e214491e115ca90dff72599222fa7ee92a584c8083de0afbfa7",
+  "cm5a_lock_sha256": "18198bf417ec30434fedcab39f8f50bff270fade676e47fccfa1e397fc2c93fd",
+  "cm6_lock_sha256": "151b067b73ab690694f40f8f72d06fc0414de56b5763f1bc31a8eb478db4f4a7",
+  "cm3_helper_sha256": "443e371c1a71173cc9fd3eaa4876cb8721a00497836e06d902b50da12cb9f57a",
+  "cm4a_helper_sha256": "cd4af7a78fcfc72ff4a12df43578757f095d6a0cb3a6445c8b6c25e50e6ca6c0",
+  "cm4b_helper_sha256": "0b894a2db0d58dda6fa9fe26bf0b1482a3da89d25918405e45e39346d132cc40",
+  "cm5a_helper_sha256": "e7373152880068157b88cba31f091258932c9366e53313476692ab81c5c50f3b",
+  "methods": [
+    "SOURCE_ENTROPY",
+    "SOURCE_LOW_CONFIDENCE",
+    "M2",
+    "DINO_CLS",
+    "CondDINO",
+    "Final"
+  ],
+  "baseline_construction": {
+    "target_gt_used": false,
+    "target_tuning": false,
+    "source_labels_used": true,
+    "pooled_all_source_head_for": [
+      "M2",
+      "DINO_CLS",
+      "CondDINO"
+    ],
+    "final_score": "prospectively frozen CM5A Final risk_score",
+    "source_uncertainty": "recomputed from exact frozen SOURCE eval logits with binary-mask replay mismatch required to be zero"
+  },
+  "statistics": {
+    "primary_metric": "macro-family HARM AUROC",
+    "bootstrap": "2000x paired target patient-cluster bootstrap",
+    "final_macro_auroc": 0.5723944174388094
+  },
+  "interpretation_boundary": "CM7A is a post-GT fixed-protocol baseline audit. It can support method-specific comparative evidence but does not replace the prospective CM6 endpoint.",
+  "artifacts": {
+    "dino_cls_meta": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_DINO_CLS_META.json",
+    "dino_cls_meta_sha256": "94bae11ef5dced16ee69311b020418f354da4cc8fff9965cdc3ea957b154402c",
+    "uncertainty_meta": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_SOURCE_UNCERTAINTY_META.json",
+    "uncertainty_meta_sha256": "08f80f9e383feeb5cd1edd95a17b9d8221a14dc593502d68e0782d51dbcb6dfc",
+    "baseline_score_lock": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_TARGET_BASELINE_SCORE_CONSTRUCTION_LOCK.json",
+    "baseline_score_lock_sha256": "3aa3cd8dbd5e45ef024d15cfe56e61306f98fe2500f90503d1d352a1b83d9aa7",
+    "merged_scores_outcomes": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_TARGET_BASELINE_SCORES_WITH_LOCKED_OUTCOMES.csv",
+    "merged_scores_outcomes_sha256": "43c693ba96de2514edba78122cd42800d87e59c18d43a1249a9448b1efae4caf",
+    "metrics": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_PROMISE12_BASELINE_RANKING_METRICS.csv",
+    "metrics_sha256": "0866897c891efdd9890bdf5907106ec7e69c53c56b639fa3a5a36f9a2121556d",
+    "method_bootstrap": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_METHOD_MACRO_AUROC_PATIENT_BOOTSTRAP.csv",
+    "method_bootstrap_sha256": "3f7963cd36803a6157c92c6eadc40bcce01b6bb65106c83d7c0cdf39f8efb29b",
+    "paired_delta_bootstrap": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1\\CM7A_FINAL_VS_BASELINE_PAIRED_DELTA_AUROC_BOOTSTRAP.csv",
+    "paired_delta_bootstrap_sha256": "df69e1bd81e3c4444423202133a11cad611eb575a5aa473519ed6016ef460ff2"
+  },
+  "next_stage": "CM7B_MATCHED_COVERAGE_SELECTIVE_ADAPTATION_UTILITY_AUDIT"
+}

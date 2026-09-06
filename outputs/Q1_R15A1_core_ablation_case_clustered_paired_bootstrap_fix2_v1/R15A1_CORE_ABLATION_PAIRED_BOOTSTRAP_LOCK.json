@@ -1,0 +1,135 @@
+{
+  "status": "PASS",
+  "decision": "CORE_ABLATION_PAIRED_CLUSTER_INFERENCE_COMPLETE_FINAL_METHOD_REMAINS_FROZEN",
+  "script_version": "2026-09-04-Q1-R15A1-v1-fix2",
+  "build": "Q1_R15A1_CORE_ABLATION_CASE_CLUSTERED_PAIRED_BOOTSTRAP_FIX2",
+  "scientific_role": "post-freeze explanatory paired case-clustered inference for representation components",
+  "final_method_reselected": false,
+  "external_data_accessed": false,
+  "bootstrap": {
+    "cluster_unit": "sample_id",
+    "cases": 1000,
+    "rows_per_target_family_case": 3,
+    "target_families": [
+      "DeepLabV3-R50",
+      "PraNet",
+      "SegFormer-B0"
+    ],
+    "split_seeds": [
+      20260816,
+      20260817,
+      20260818,
+      20260819,
+      20260820
+    ],
+    "replicates": 2000,
+    "seed": 20260826,
+    "rng": "numpy.random.default_rng",
+    "same_case_draw_across_methods_families_seeds": true,
+    "aggregation": "mean over 5 split seeds within family, then macro mean over 3 target families"
+  },
+  "methods": [
+    "M2_backbone",
+    "ImageCLS_PCA64",
+    "FG_PCA64",
+    "BG_PCA64",
+    "CondDINO_PCA64",
+    "M2_plus_FG_PCA64",
+    "M2_plus_BG_PCA64",
+    "M2_plus_CondDINO_PCA64"
+  ],
+  "comparisons": [
+    {
+      "name": "COND_vs_CLS",
+      "method_A": "CondDINO_PCA64",
+      "method_B": "ImageCLS_PCA64"
+    },
+    {
+      "name": "COND_vs_FG",
+      "method_A": "CondDINO_PCA64",
+      "method_B": "FG_PCA64"
+    },
+    {
+      "name": "COND_vs_BG",
+      "method_A": "CondDINO_PCA64",
+      "method_B": "BG_PCA64"
+    },
+    {
+      "name": "FINAL_vs_M2",
+      "method_A": "M2_plus_CondDINO_PCA64",
+      "method_B": "M2_backbone"
+    },
+    {
+      "name": "FINAL_vs_M2_FG",
+      "method_A": "M2_plus_CondDINO_PCA64",
+      "method_B": "M2_plus_FG_PCA64"
+    },
+    {
+      "name": "FINAL_vs_M2_BG",
+      "method_A": "M2_plus_CondDINO_PCA64",
+      "method_B": "M2_plus_BG_PCA64"
+    },
+    {
+      "name": "FINAL_vs_COND",
+      "method_A": "M2_plus_CondDINO_PCA64",
+      "method_B": "CondDINO_PCA64"
+    }
+  ],
+  "historical_r10k2c_primary_vs_m2_reproduced_exactly": true,
+  "claim_audit": {
+    "prediction_conditioning_beats_image_only_CLS_by_AUROC": true,
+    "prediction_conditioning_beats_image_only_CLS_by_AUPRC": true,
+    "FG_plus_BG_beats_FG_only_by_AUROC": false,
+    "FG_plus_BG_beats_FG_only_by_AUPRC": false,
+    "FG_plus_BG_improves_oracle_R90_FPR_vs_FG_only": false,
+    "FG_plus_BG_beats_BG_only_by_AUROC": true,
+    "frozen_final_beats_M2_by_AUROC": true,
+    "frozen_final_beats_M2_plus_FG_by_AUROC": false,
+    "frozen_final_improves_oracle_R90_FPR_vs_M2_plus_FG": false,
+    "M2_addition_beats_CondDINO_by_AUROC": false,
+    "M2_addition_beats_CondDINO_by_AUPRC": false
+  },
+  "interpretation_boundary": {
+    "component_ablation_only": true,
+    "frozen_final_method_changed": false,
+    "new_external_evidence_claimed": false,
+    "non_significant_component_differences_must_not_be_overclaimed": true
+  },
+  "upstream": {
+    "r15a0_lock_sha256": "a28835ad18cd31e01bf0af0a1696788f6a3aecaf241c083e8399230ca7ccb30a",
+    "r15a0_predictions_sha256": "cff9b08f06dbafa0816bd4f4f732af66304761bf9105d3106b725686f3bf961e",
+    "historical_r10k2c_delta_sha256": "337c12cdd623ddc83aebb678a0b7c45a436b0c2aff7c641c138cb71cbcacb84f",
+    "historical_r10k2c_summary_sha256": "0308d3fe38da79d7cfafd6ea33771922650d099cf059a358d360b80d6d997081"
+  },
+  "artifacts": {
+    "R15A1_point_estimates_by_family.csv": {
+      "sha256": "d010ad744e630600302d66a95deee683c631297b9bfc5c72ef9617f9686cbd37",
+      "bytes": 3479
+    },
+    "R15A1_point_estimates_macro.csv": {
+      "sha256": "dd2f697d41bb1a8e37f576a5063b861e4ff850c4befd004e1f5304f74b65bfc7",
+      "bytes": 1102
+    },
+    "R15A1_macro_bootstrap_replicates.csv": {
+      "sha256": "79d010fb5163a3f883bafed8058e93b69b6176f916153344c7881b423c9996ff",
+      "bytes": 2169676
+    },
+    "R15A1_macro_bootstrap_ci.csv": {
+      "sha256": "6b248f95cd5ec4c66aa8a4e35c9f35af406f6805533f9a55581a8ce0ae2deed6",
+      "bytes": 4523
+    },
+    "R15A1_paired_macro_component_delta_ci.csv": {
+      "sha256": "8f0b51fa75da0ac367ff26fe1f99ab58ad53ea4e10e8dff439d81f9be3a1177e",
+      "bytes": 5871
+    },
+    "R15A1_family_component_delta_ci.csv": {
+      "sha256": "54af679f88cd632246e69a82c156cea1373df1c6006e2f6ffd1429bf6d5a6d76",
+      "bytes": 13966
+    },
+    "R15A1_component_claim_audit.json": {
+      "sha256": "6430006ee4b8c123f8e99ad9a38c8a2ee7211dd3ae7e3e7edebceffe9964db28",
+      "bytes": 591
+    }
+  },
+  "next_stage": "R15B_SELECTIVE_ADAPTATION_RISK_COVERAGE_UTILITY_USING_ALREADY_FROZEN_EXTERNAL_SCORES"
+}

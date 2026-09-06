@@ -1,0 +1,162 @@
+{
+  "status": "PASS",
+  "decision": "PROMISE12_GT_FREE_PREDICTIONS_SAFETY_SCORES_LOCKED_READY_FOR_CM5B_UNLABELED_OPERATING_POINT_TRANSPORT",
+  "version": "2026-09-05-Q1X-CM5A-v1-fix1",
+  "build": "Q1X_CM5A_PROMISE12_GT_FREE_PREDICTION_TENT1_SAFETY_SCORING_LOCK_FIX1",
+  "cm2b_lock_sha256": "9122400454853212f7cc9451be45789a052c5279141becdbfad2546c37b4019f",
+  "cm4c_lock_sha256": "5ddf4a6a4b44d19a1e3c8cccc8a2a9cdba71da18850a7df58cbbee83a40527ff",
+  "cm4d_lock_sha256": "fbc55b3d09276e214491e115ca90dff72599222fa7ee92a584c8083de0afbfa7",
+  "cm3_helper_sha256": "443e371c1a71173cc9fd3eaa4876cb8721a00497836e06d902b50da12cb9f57a",
+  "cm4a_helper_sha256": "cd4af7a78fcfc72ff4a12df43578757f095d6a0cb3a6445c8b6c25e50e6ca6c0",
+  "cm4b_helper_sha256": "0b894a2db0d58dda6fa9fe26bf0b1482a3da89d25918405e45e39346d132cc40",
+  "cm4c_helper_sha256": "dd5b410f612b81bcbdc6ac2fbfe8bc4b22a21a049beeac80a2fb589d474a58bc",
+  "promise_archive": {
+    "path": "F:\\MEDSEG_SAFETTA\\cross_modality_prostate_mri\\data\\raw\\PROMISE12\\training_data.zip",
+    "size": 323664221,
+    "md5": "f6d23994117c989daf07e5291edd0aea",
+    "sha256": "150287d0c74cd0105d8b70b43af4a7bf4f1fd3e1748829779177a0ccaf948f45"
+  },
+  "target": {
+    "patients": 50,
+    "image_only_slices": 1377,
+    "all_image_slices_included": true,
+    "gt_based_slice_selection": false
+  },
+  "preprocessing": {
+    "target_spacing_xy": 0.4017857015132904,
+    "z_resampling": false,
+    "seg_size": [
+      352,
+      352
+    ],
+    "normalization": "per-volume finite nonzero q0.5/q99.5 -> [0,1]"
+  },
+  "segmentation": {
+    "families": [
+      "UNet",
+      "DeepLabV3_R50",
+      "SegFormer_B0"
+    ],
+    "final_source_models": {
+      "UNet": {
+        "checkpoint": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4D_final_all_source_segmentation_models_lock_fix1_v1\\models\\UNet\\final.pt",
+        "checkpoint_sha256": "006932908c110b0e16efe58d5d218266d395410263024dcfd612910e325642bb"
+      },
+      "DeepLabV3_R50": {
+        "checkpoint": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1\\models\\DeepLabV3_R50\\final.pt",
+        "checkpoint_sha256": "03adf2c05250fa65ea25bdfee268734729ec749607559f84fb0b0c7cee07fab0"
+      },
+      "SegFormer_B0": {
+        "checkpoint": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1\\models\\SegFormer_B0\\final.pt",
+        "checkpoint_sha256": "19271f55a354896f5f27b3705f7f0b5fb4f5a8a3e2cedb8c7dbfba69754669af"
+      }
+    },
+    "source_inference_batch_size": 8,
+    "tent_action": "A1_TENT_1STEP episodic single-slice"
+  },
+  "safety": {
+    "final_estimator": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4C_final_source_safety_estimator_and_threshold_lock_fix2_v1\\CM4C_FINAL_SOURCE_SAFETY_ESTIMATOR.joblib",
+    "final_estimator_sha256": "6a293e7398c6495175d645f1b6e61144d1affa2d339bebf7d1023097300a2946",
+    "frozen_source_deployment_threshold": 0.2950987857155136,
+    "representation": "CondDINO FG768 + BG768 + M2",
+    "target_threshold_tuning": false,
+    "unlabeled_threshold_transport_performed": false
+  },
+  "information_boundary": {
+    "promises12_image_access": true,
+    "promises12_gt_mhd_payload_read": false,
+    "promises12_gt_raw_payload_read": false,
+    "target_gt": false,
+    "target_harm_labels": false,
+    "target_delta_dice": false,
+    "target_threshold_tuning": false
+  },
+  "artifacts": {
+    "target_cache_meta": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\target_image_only_cache\\PROMISE12_IMAGE_ONLY_CACHE_META.json",
+    "target_cache_meta_sha256": "2edb5f6904ab1f258e20b7211d8bbc5c1f1ba30309a56fca3da5babb5af05693",
+    "target_features": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\CM5A_TARGET_RAW_SAFETY_FEATURES_F16.npy",
+    "target_features_sha256": "bc81f83c95a75c3c220b109a2ba8ba2c2bfd43e8d1474fd945d2a21d198d3c7d",
+    "target_scores": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\CM5A_PROMISE12_GT_FREE_SAFETY_SCORES.csv",
+    "target_scores_sha256": "c49037d8df12d49f2bf75cdfbf07c15050ad4fc777f3f45946d29cdf08184369",
+    "summary": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\CM5A_GT_FREE_TARGET_SUMMARY.csv",
+    "summary_sha256": "b70ce3d58224eeabaea67adc11792e7ee3cbcfd06594a49c65f89c5ba8736736",
+    "family_predictions": {
+      "UNet": {
+        "status": "PASS",
+        "version": "2026-09-05-Q1X-CM5A-v1-fix1",
+        "family": "UNet",
+        "rows": 1377,
+        "patients": 50,
+        "checkpoint": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4D_final_all_source_segmentation_models_lock_fix1_v1\\models\\UNet\\final.pt",
+        "checkpoint_sha256": "006932908c110b0e16efe58d5d218266d395410263024dcfd612910e325642bb",
+        "source_inference_batch_size": 8,
+        "tent_action": {
+          "name": "A1_TENT_1STEP",
+          "optimizer": "Adam",
+          "lr": 0.001,
+          "weight_decay": 0.0,
+          "steps": 1,
+          "episodic_reset_per_slice": true
+        },
+        "source_masks": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\UNet\\source_masks_packbits.npy",
+        "source_masks_sha256": "12c255f8475993ff31a3f309c7727695211373cc5b873527421114fabc8048ae",
+        "tent1_masks": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\UNet\\tent1_masks_packbits.npy",
+        "tent1_masks_sha256": "7f3862e37b648b7fbb444c5d90459e4277cfdc4212947482ddb46ba6e6b5d3e3",
+        "diagnostics": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\UNet\\gt_free_prediction_diagnostics.csv",
+        "diagnostics_sha256": "303834e906a27b98b50914e51225752fff8b2ce8ba13d4d13bc0d39b2fdc4033",
+        "promises12_gt_access": false
+      },
+      "DeepLabV3_R50": {
+        "status": "PASS",
+        "version": "2026-09-05-Q1X-CM5A-v1-fix1",
+        "family": "DeepLabV3_R50",
+        "rows": 1377,
+        "patients": 50,
+        "checkpoint": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1\\models\\DeepLabV3_R50\\final.pt",
+        "checkpoint_sha256": "03adf2c05250fa65ea25bdfee268734729ec749607559f84fb0b0c7cee07fab0",
+        "source_inference_batch_size": 8,
+        "tent_action": {
+          "name": "A1_TENT_1STEP",
+          "optimizer": "Adam",
+          "lr": 0.001,
+          "weight_decay": 0.0,
+          "steps": 1,
+          "episodic_reset_per_slice": true
+        },
+        "source_masks": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\DeepLabV3_R50\\source_masks_packbits.npy",
+        "source_masks_sha256": "4b8861835ae5e6f46334e0a23e844409ee477fc71ea2c88fffd756897b9e9ead",
+        "tent1_masks": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\DeepLabV3_R50\\tent1_masks_packbits.npy",
+        "tent1_masks_sha256": "113ca68f6187e5645df3df07eaa244921d0dec0352daaffd039c7f96d6aecaea",
+        "diagnostics": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\DeepLabV3_R50\\gt_free_prediction_diagnostics.csv",
+        "diagnostics_sha256": "af4bf0d5425e1259e64aecc7b192367b3d986c3bbf9582cc3fa2973e1a781ac2",
+        "promises12_gt_access": false
+      },
+      "SegFormer_B0": {
+        "status": "PASS",
+        "version": "2026-09-05-Q1X-CM5A-v1-fix1",
+        "family": "SegFormer_B0",
+        "rows": 1377,
+        "patients": 50,
+        "checkpoint": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1\\models\\SegFormer_B0\\final.pt",
+        "checkpoint_sha256": "19271f55a354896f5f27b3705f7f0b5fb4f5a8a3e2cedb8c7dbfba69754669af",
+        "source_inference_batch_size": 8,
+        "tent_action": {
+          "name": "A1_TENT_1STEP",
+          "optimizer": "Adam",
+          "lr": 0.001,
+          "weight_decay": 0.0,
+          "steps": 1,
+          "episodic_reset_per_slice": true
+        },
+        "source_masks": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\SegFormer_B0\\source_masks_packbits.npy",
+        "source_masks_sha256": "6dfad6d4e87dcf0259c14b4d55b5eb64714845864986dbd18a7c55a6484f7a4e",
+        "tent1_masks": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\SegFormer_B0\\tent1_masks_packbits.npy",
+        "tent1_masks_sha256": "37a5cfb05990eea407f04b389c4184ecefacd63ea2b5bf1ccf1f52cfea5aff17",
+        "diagnostics": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1\\predictions\\SegFormer_B0\\gt_free_prediction_diagnostics.csv",
+        "diagnostics_sha256": "39827845c661e3ea878f21384828cd47f4d3ad77504aba87c8743aaf2306915f",
+        "promises12_gt_access": false
+      }
+    }
+  },
+  "next_stage": "CM5B_UNLABELED_SUPPORT_AWARE_OPERATING_POINT_TRANSPORT_LOCK"
+}

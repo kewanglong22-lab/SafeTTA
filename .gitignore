@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+.conda/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local logs / temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Local replay/download staging
+downloads/
+download/
+replay_assets/
+release_assets/
+tmp/
+temp/
+
+# Large archives should be GitHub Release assets, not Git history
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# Model checkpoints are optional external assets, not main repository content
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.safetensors

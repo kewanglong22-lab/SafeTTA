@@ -1,0 +1,20 @@
+===== SAFETTA FINAL LOCAL RELEASE-ASSET COMPLETENESS =====
+Version: 2026-09-06-Q1-SAFETTA-RELEASE-REPLAY-COMPLETENESS-PATCH-v1
+Assembly gate: PASS_REPO_RELEASE_CANDIDATE_ASSEMBLED
+Numeric replay gate: PASS_NUMERIC_REPLAY
+Replay dependencies checked: 82/82
+Failed dependencies: 0
+
+Dependency accounting:
+  PASS_ALREADY_STAGED: 68
+  PASS_COPIED_SMALL_DEPENDENCY: 13
+  PASS_EXTERNALIZED_REQUIRED: 1
+
+Replay-required external assets: 1
+Replay-required external size: 48.24 MiB
+Full-chain optional large assets: 67
+Full-chain optional large size: 12.142 GiB
+Unclassified large assets: 0
+
+GATE=PASS_PUBLIC_RELEASE_ASSET_COMPLETENESS_LOCAL
+NEXT=BUILD_MINIMAL_REPLAY_RELEASE

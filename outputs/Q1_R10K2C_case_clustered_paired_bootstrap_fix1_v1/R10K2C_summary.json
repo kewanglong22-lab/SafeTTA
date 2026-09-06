@@ -1,0 +1,27 @@
+{
+  "decision": "PAIRED_CLUSTER_BOOTSTRAP_CONFIRMS_MACRO_PRIMARY_BENEFIT",
+  "cluster_unit": "sample_id",
+  "cases": 1000,
+  "states_per_target_family_case": 3,
+  "target_families": [
+    "DeepLabV3-R50",
+    "PraNet",
+    "SegFormer-B0"
+  ],
+  "split_seeds": [
+    20260816,
+    20260817,
+    20260818,
+    20260819,
+    20260820
+  ],
+  "bootstrap_replicates": 2000,
+  "bootstrap_seed": 20260826,
+  "primary": "M2_plus_CondDINO_PCA64",
+  "baseline": "M2_backbone",
+  "macro_auc_delta_ci_low_gt_0": true,
+  "macro_auprc_delta_ci_low_gt_0": true,
+  "macro_fpr_delta_ci_high_lt_0": true,
+  "macro_oracle_fpr_delta_ci_high_lt_0": true,
+  "all_family_auc_delta_ci_low_gt_0": false
+}

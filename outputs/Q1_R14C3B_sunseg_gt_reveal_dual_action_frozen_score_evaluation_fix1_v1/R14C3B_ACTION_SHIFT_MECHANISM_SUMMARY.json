@@ -1,0 +1,8 @@
+{
+  "harm_intersection_rows": 254,
+  "harm_union_rows": 2801,
+  "harm_jaccard": 0.09068189932167083,
+  "harm_binary_agreement": 0.7112244897959183,
+  "harm_cohen_kappa": 0.01081315861641853,
+  "delta_dice_spearman": -0.1490652426711197
+}

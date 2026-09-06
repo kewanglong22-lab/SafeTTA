@@ -1,0 +1,63 @@
+{
+  "decision": "POLYPGEN_SOURCE_A1_PREDICTIONS_LOCKED_BEFORE_GT_REVEAL",
+  "script_version": "2026-08-26-Q1-R10L3A-v1-fix2",
+  "build": "Q1_R10L3A_POLYPGEN_SOURCE_A1_PREDICTION_LOCK_FIX2",
+  "r05d3_script_sha256": "df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251",
+  "polypgen_manifest_sha256": "37058a8fcd020307e4a684011864ce9b9858f323ee895af3cfaf237f129a80c0",
+  "polypgen_manifest_lock_sha256": "647cb383d2ff17db7180d31b55db06d0c72979e8856ce5537036800ce99610e2",
+  "independence_lock_sha256": "150db0e18c9a8dd4beb3555d4a6e16a5d522da383dd243fa5689253b4f15b332",
+  "checkpoint_recovery_sha256": "086a1f72e48f0106e49cfaeaeadc9b4f712b9f14d2fd14b0537901037aa18753",
+  "target_dataset": "PolypGen2021_MultiCenterData_v3",
+  "target_component": "unique_static_data_C1_to_C6",
+  "target_cases": 1532,
+  "centers": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+  ],
+  "model_states": 9,
+  "model_case_rows": 13788,
+  "source_prediction_masks": 13788,
+  "a1_prediction_masks": 13788,
+  "all_model_cases_received_a1": true,
+  "mask_height": 352,
+  "mask_width": 352,
+  "packed_bytes_per_mask": 15488,
+  "bitorder": "little",
+  "action": "A1_TENT_1STEP",
+  "optimizer": "Adam",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0,
+  "steps": 1,
+  "episodic_reset": true,
+  "target_gt_path_column_read": false,
+  "target_gt_pixels_decoded": false,
+  "target_outcomes_revealed": false,
+  "safety_estimator_read": false,
+  "safety_scores_generated": false,
+  "artifacts": {
+    "rgb_manifest_no_gt": {
+      "relative_path": "frozen_polypgen_rgb_manifest_no_gt.csv",
+      "sha256": "47834646aa68ac43b5e411ae90d4bc5600c3e8b1a1b9e9d32f360beb4af1b2a5"
+    },
+    "checkpoint_manifest": {
+      "relative_path": "checkpoint_manifest.csv",
+      "sha256": "ff5c44cde845eedf6401e32b46454aa358f632a105043c8aec785221e740015e"
+    },
+    "model_case_prediction_manifest": {
+      "relative_path": "model_case_prediction_manifest.csv",
+      "sha256": "c209dff449acbd3d44410ae71594cc6fa271f3f857639fb2aaeba54c935f78a2"
+    },
+    "prediction_change_summary": {
+      "relative_path": "prediction_change_summary.csv",
+      "sha256": "0550b71b320df4879e901667770437b0a0066be9bd3e44ca9103dbca32d46be2"
+    },
+    "information_boundary_audit": {
+      "relative_path": "information_boundary_audit.json",
+      "sha256": "c09ba8f922a0597dbf1164e587fbca1116b9af88c8a8e125b4720df17abe0681"
+    }
+  }
+}

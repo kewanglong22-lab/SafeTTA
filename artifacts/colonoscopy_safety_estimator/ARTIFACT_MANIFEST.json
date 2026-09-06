@@ -1,0 +1,28 @@
+[
+  {
+    "artifact": "pca64",
+    "source": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L0_final_source_safety_estimator_lock_fix1_v1\\R10L0_final_condDINO_PCA64.joblib",
+    "release_relpath": "artifacts/colonoscopy_safety_estimator/colonoscopy_pca64.joblib",
+    "size_bytes": 401103,
+    "sha256": "2c6c289ce395105a0c79f7b7751df2a195d76a248c22b43e817d71511c4a24f1"
+  },
+  {
+    "artifact": "safety_head",
+    "source": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L0_final_source_safety_estimator_lock_fix1_v1\\R10L0_final_safety_head.joblib",
+    "release_relpath": "artifacts/colonoscopy_safety_estimator/colonoscopy_safety_head.joblib",
+    "size_bytes": 4241,
+    "sha256": "602574418a309400bf7e7fc854267a702496c1bd47e4f07f6f60415ec9bd14ce"
+  },
+  {
+    "artifact": "threshold",
+    "source": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L0_final_source_safety_estimator_lock_fix3_v1\\R10L0_frozen_operating_threshold.json",
+    "release_relpath": "artifacts/colonoscopy_safety_estimator/colonoscopy_frozen_threshold.json",
+    "size_bytes": 356,
+    "sha256": "4a37fb4f9a9b729a9aa6551b1417afea7348e2dfecdfcb6e0e2b5986e748e4d7",
+    "threshold_value": 0.300584763193734,
+    "threshold_verification": {
+      "expected": 0.300584763193734,
+      "exact_numeric_hits": 2
+    }
+  }
+]

@@ -1,0 +1,234 @@
+{
+  "status": "COMPLETE",
+  "decision": "SUNSEG_DUAL_ACTION_GT_OUTCOMES_AND_FROZEN_SCORE_EVALUATION_COMPLETE",
+  "script_version": "2026-09-03-Q1-R14C3B-v1-fix1",
+  "build": "Q1_R14C3B_SUNSEG_GT_REVEAL_DUAL_ACTION_FROZEN_SCORE_EVALUATION_FIX1",
+  "target_dataset": "SUN-SEG",
+  "target_frames": 980,
+  "physical_cases": 49,
+  "model_states": 9,
+  "model_frame_rows": 8820,
+  "evidence_order": [
+    "R14C1 frozen SOURCE/TENT1/PL prediction lock",
+    "R14C2B frozen pre-GT safety-score lock",
+    "R14C3A outcome-semantics lineage preflight",
+    "R14C3B first SUN GT pixel reveal and evaluation"
+  ],
+  "gt_decode": {
+    "native_decode": "PIL convert L",
+    "binary_threshold": "gray > 0",
+    "resize": "nearest neighbor to 352x352",
+    "post_resize_binary": ">0",
+    "adaptive_threshold": false,
+    "morphological_repair": false,
+    "post_reveal_exclusion": false
+  },
+  "outcome_definition": {
+    "source_metric": "historical R05D4 binary_dice",
+    "tent1_delta": "tent1_dice - source_dice",
+    "pl_delta": "pl_dice - source_dice",
+    "harm": "delta_dice <= -0.02",
+    "benefit": "delta_dice >= +0.02",
+    "neutral": "-0.02 < delta_dice < +0.02"
+  },
+  "frozen_safety_evaluation": {
+    "score": "R14C2B frozen_safety_probability",
+    "score_orientation": "higher = higher HARM risk",
+    "operating_threshold": 0.300584763193734,
+    "threshold_changed": false,
+    "primary_level": "macro over 3 model families",
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 20260903,
+    "bootstrap_cluster": "physical_case_cluster_id",
+    "easy_hard_split_stratified": false,
+    "oracle_target_fpr_at_r90": "diagnostic only; not deployed"
+  },
+  "action_outcomes": {
+    "TENT1": {
+      "action": "TENT1",
+      "rows": 8820,
+      "frames": 980,
+      "physical_cases": 49,
+      "states": 9,
+      "harm_rows": 1992,
+      "neutral_rows": 4272,
+      "benefit_rows": 2556,
+      "harm_prevalence": 0.22585034013605443,
+      "benefit_prevalence": 0.2897959183673469,
+      "source_dice_mean": 0.6870084111635587,
+      "source_dice_median": 0.8879886060984363,
+      "adapted_dice_mean": 0.7263974611281063,
+      "adapted_dice_median": 0.8830694256082356,
+      "delta_dice_mean": 0.0393890499645476,
+      "delta_dice_median": 0.0005241678343363976,
+      "delta_dice_min": -0.9200935971235211,
+      "delta_dice_max": 0.9858218366645011,
+      "harm_evaluable": true
+    },
+    "PL": {
+      "action": "PL",
+      "rows": 8820,
+      "frames": 980,
+      "physical_cases": 49,
+      "states": 9,
+      "harm_rows": 1063,
+      "neutral_rows": 6738,
+      "benefit_rows": 1019,
+      "harm_prevalence": 0.12052154195011337,
+      "benefit_prevalence": 0.1155328798185941,
+      "source_dice_mean": 0.6870084111635587,
+      "source_dice_median": 0.8879886060984363,
+      "adapted_dice_mean": 0.6899956861828027,
+      "adapted_dice_median": 0.888044097535775,
+      "delta_dice_mean": 0.00298727501924393,
+      "delta_dice_median": 0.0,
+      "delta_dice_min": -0.8516460905349794,
+      "delta_dice_max": 0.9405512788676434,
+      "harm_evaluable": true
+    }
+  },
+  "action_shift_mechanism": {
+    "harm_intersection_rows": 254,
+    "harm_union_rows": 2801,
+    "harm_jaccard": 0.09068189932167083,
+    "harm_binary_agreement": 0.7112244897959183,
+    "harm_cohen_kappa": 0.01081315861641853,
+    "delta_dice_spearman": -0.1490652426711197
+  },
+  "primary_macro_point": {
+    "TENT1": {
+      "level": "PRIMARY_MACRO_OVER_3_FAMILIES",
+      "group": "MACRO_3_FAMILIES",
+      "families": 3,
+      "frozen_threshold": 0.300584763193734,
+      "harm_prevalence": 0.22585034013605443,
+      "auroc": 0.6760457550591833,
+      "auprc": 0.35284552260899416,
+      "recall": 0.6650329383890052,
+      "fpr": 0.42094478845895306,
+      "specificity": 0.5790552115410469,
+      "empirical_ppv": 0.32104570081880346,
+      "npv": 0.859545565918925,
+      "ppv_at_1pct": 0.016241659434156775,
+      "oracle_target_fpr_at_r90_diagnostic": 0.6854286148169736,
+      "oracle_target_recall_diagnostic": 0.900583086124727,
+      "action": "TENT1"
+    },
+    "PL": {
+      "level": "PRIMARY_MACRO_OVER_3_FAMILIES",
+      "group": "MACRO_3_FAMILIES",
+      "families": 3,
+      "frozen_threshold": 0.300584763193734,
+      "harm_prevalence": 0.12052154195011337,
+      "auroc": 0.6395330845632285,
+      "auprc": 0.15702782566338327,
+      "recall": 0.6658237981949321,
+      "fpr": 0.4575799245526284,
+      "specificity": 0.5424200754473716,
+      "empirical_ppv": 0.16595683345104384,
+      "npv": 0.9239967021888185,
+      "ppv_at_1pct": 0.01443943893520075,
+      "oracle_target_fpr_at_r90_diagnostic": 0.6516839679808625,
+      "oracle_target_recall_diagnostic": 0.9012001057361881,
+      "action": "PL"
+    }
+  },
+  "bootstrap_valid": {
+    "TENT1": 2000,
+    "PL": 2000,
+    "paired_PL_minus_TENT1": 2000
+  },
+  "information_boundary": {
+    "r14c2b_score_lock_completed_before_gt": true,
+    "sun_gt_pixels_first_decoded_in_r14c3b": true,
+    "gt_frames_decoded": 980,
+    "model_inference_run_in_r14c3b": false,
+    "tta_run_in_r14c3b": false,
+    "source_predictions_modified": false,
+    "tent1_predictions_modified": false,
+    "pl_predictions_modified": false,
+    "safety_scores_modified": false,
+    "safety_model_fit_or_refit": false,
+    "score_orientation_changed": false,
+    "threshold_changed": false,
+    "target_calibration": false,
+    "target_feature_selection": false,
+    "target_case_selection": false,
+    "target_state_selection": false,
+    "target_split_selection": false,
+    "post_gt_case_exclusion": false,
+    "source_dice_computed": true,
+    "tent1_dice_computed": true,
+    "pl_dice_computed": true,
+    "tent1_delta_dice_computed": true,
+    "pl_delta_dice_computed": true,
+    "dual_action_outcomes_revealed": true,
+    "oracle_r90_threshold_deployed": false,
+    "oracle_r90_metric_role": "DIAGNOSTIC_ONLY"
+  },
+  "upstream_hashes": {
+    "r14c2b_lock_sha256": "29030a2301178575971c8f5fab2c131d7cc06ffa99dbbd98431c288a3343337d",
+    "r14c2b_score_csv_sha256": "36e0791e44bdfbb29add422d090b7d9ce1ffa63637f7135366765a27d7fb2dd5",
+    "r14c1_lock_sha256": "802e585dc075df23e0eeddf2b7d613d229dd1f7c6ae99aeaa89cf7dd7b358163",
+    "r14c1_global_manifest_sha256": "1ea4fae25a270babb9b1b0b2d2f1c4f694f458079f573b6f070c098ab3a96e40",
+    "sun_final_manifest_sha256": "f38cc8e5af4a007df3394ec95fa621c0b819f488bdd797ddad9338ac12491b4d",
+    "r14c3a_audit_sha256": "7b1d0d65763d58c565701cda2c954cb31c093522774c939d2a0919a7140b4fa9",
+    "r05d4_script_sha256": "f26cf378ceaee69acc4782a551c07d613a1cc882acad938d6151c824e54633ed",
+    "r13c_script_sha256": "f2dd94d59e61be0432a2117e60aca1dc7ec4352af15e0aea0a27afdbf293590b",
+    "r10l3c_script_sha256": "6761de1da2c6ece73dd1b18f566517b0c438c37b060a369084bdf26624375e6f"
+  },
+  "artifacts": {
+    "pre_gt_reveal_upstream_freeze.json": {
+      "sha256": "f0a0ffe3f9efaca34b1266074c8e8cf773bc20e634e32dbe23f55f6216064031",
+      "bytes": 1997
+    },
+    "R14C3B_SUN_GT_DECODE_AUDIT.csv": {
+      "sha256": "4eed03f9704233001a8d49fb8707cc16a46a5088807e957794ad5099e351b64e",
+      "bytes": 380064
+    },
+    "R14C3B_DUAL_ACTION_MODEL_FRAME_OUTCOMES.csv": {
+      "sha256": "f90d52bd6959ad527f4088e77fbdbc4fc08c3ad7f27aea94c1781cd08352f4ad",
+      "bytes": 3255040
+    },
+    "R14C3B_LOCKED_SCORE_DUAL_ACTION_EVALUATION_PANEL.csv": {
+      "sha256": "d3df3995c1470220ed53379bc6623cd55741c394a6459fedf4eaa103fe8192d8",
+      "bytes": 3598058
+    },
+    "R14C3B_FAMILY_ACTION_OUTCOME_SUMMARY.csv": {
+      "sha256": "94b30d094b8f7b9d4c58540dac41dd4d5e8aabdeae3845977f6a640e064c3dcc",
+      "bytes": 1684
+    },
+    "R14C3B_TENT1_TO_PL_HARM_TRANSITION.csv": {
+      "sha256": "da8b90187a9f34ff48da6dd3e53b8af528fcbcc01adfe977ce1e6de5bda26c36",
+      "bytes": 40
+    },
+    "R14C3B_TENT1_TO_PL_TRISTATE_TRANSITION.csv": {
+      "sha256": "36de3d5bb1ba8e482c5cbd564af7fb7b742562c183e3cf7a87f3f2d8132e0376",
+      "bytes": 99
+    },
+    "R14C3B_DUAL_ACTION_FROZEN_SCORE_POINT_METRICS.csv": {
+      "sha256": "d6165f8c50805b96c675c043fd0dc548cf32fe49d9a82e243ee607c2b4f69148",
+      "bytes": 2856
+    },
+    "R14C3B_PHYSICAL_CASE_BOOTSTRAP_CI.csv": {
+      "sha256": "cae72daa50652ac1fabd6fc1adb5d159fe8de2d12639c44d529f07f50171e1b9",
+      "bytes": 2525
+    },
+    "R14C3B_DUAL_ACTION_OUTCOME_SUMMARY.csv": {
+      "sha256": "56478b2b46383fa41be2bbec414953791a405d2a3838cf673f30ddc1dd713dfd",
+      "bytes": 717
+    },
+    "R14C3B_ACTION_SHIFT_MECHANISM_SUMMARY.json": {
+      "sha256": "2957fe36cb65ef0b65d6ef60a24f19773b24ad97f6b1f89ea402095860d7c74d",
+      "bytes": 244
+    },
+    "information_boundary_audit.json": {
+      "sha256": "315dd11fa12a91a12efc2c1e437a139b56800571ecddf97c43f52aa0712c644b",
+      "bytes": 982
+    },
+    "run_log.txt": {
+      "sha256": "247bb81dc5f1b34c96feb512de0cef56f4990551e37a65348fd8811e9bbb26c4",
+      "bytes": 1833
+    }
+  }
+}

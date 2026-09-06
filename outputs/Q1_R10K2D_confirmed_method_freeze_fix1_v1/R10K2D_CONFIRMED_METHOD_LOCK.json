@@ -1,0 +1,145 @@
+{
+  "status": "FROZEN",
+  "decision": "R10K2_PRIMARY_METHOD_FROZEN_FOR_EXTERNAL_VALIDATION",
+  "primary_method": {
+    "name": "M2_plus_CondDINO_PCA64",
+    "input_rgb": true,
+    "pre_adaptation_source_mask": true,
+    "encoder": "facebook/dinov2-base",
+    "encoder_trainable": false,
+    "image_resize": "224x224 direct bicubic",
+    "dinov2_patch_grid": "16x16",
+    "source_mask_alignment": "352x352 -> exact non-overlapping 22x22 occupancy -> 16x16",
+    "semantic_pooling": [
+      "foreground-weighted patch mean 768-D",
+      "background-weighted patch mean 768-D"
+    ],
+    "semantic_concat_dimension": 1536,
+    "pca_dimension": 64,
+    "pca_fit_scope": "source-training rows only",
+    "structural_auxiliary": [
+      "morph_fg_fraction",
+      "morph_boundary_density"
+    ],
+    "safety_head": "median imputation + standard scaling + class-balanced logistic regression",
+    "operating_point": "source-only inner grouped OOF threshold for Recall>=0.90"
+  },
+  "frozen_evaluation_protocol": {
+    "generalization_axis": "leave-one-model-family-out within NeoPolyp",
+    "target_families": [
+      "DeepLabV3-R50",
+      "PraNet",
+      "SegFormer-B0"
+    ],
+    "group_key": "sample_id",
+    "outer_folds": 5,
+    "inner_folds": 4,
+    "split_seeds": [
+      20260816,
+      20260817,
+      20260818,
+      20260819,
+      20260820
+    ],
+    "target_labels_fit": false,
+    "target_features_fit_pca": false,
+    "clustered_bootstrap_unit": "sample_id",
+    "clustered_bootstrap_replicates": 2000
+  },
+  "confirmed_point_estimates": {
+    "baseline_macro_AUROC": 0.8057450779279737,
+    "primary_macro_AUROC": 0.8265634044019272,
+    "baseline_macro_AUPRC": 0.6561178009283178,
+    "primary_macro_AUPRC": 0.7093905766793892,
+    "baseline_macro_transferred_FPR": 0.5603584464842916,
+    "primary_macro_transferred_FPR": 0.4765188071845107,
+    "baseline_macro_PPV1pct": 0.0161559942469392,
+    "primary_macro_PPV1pct": 0.0205493792098687,
+    "baseline_macro_oracle_R90_FPR": 0.5669097458001217,
+    "primary_macro_oracle_R90_FPR": 0.4712085682579675,
+    "cond_only_macro_AUROC": 0.8255078354836274,
+    "cond_only_macro_AUPRC": 0.7080007948623679
+  },
+  "confirmed_paired_macro_delta_ci95": {
+    "AUROC": {
+      "mean": 0.0205893285369065,
+      "low": 0.0099636108299655,
+      "high": 0.0310819330346127
+    },
+    "AUPRC": {
+      "mean": 0.052249182062301,
+      "low": 0.0318034770033695,
+      "high": 0.0731876533315592
+    },
+    "FPR": {
+      "mean": -0.083770970546632,
+      "low": -0.1154702137271395,
+      "high": -0.0520109966129048
+    },
+    "PPV1pct": {
+      "mean": 0.0044224996513628,
+      "low": 0.0030050615352475,
+      "high": 0.0059664420901952
+    },
+    "OracleR90FPR": {
+      "mean": -0.095425428977048,
+      "low": -0.1374791674126971,
+      "high": -0.0504641099400422
+    }
+  },
+  "family_primary_AUROC_delta_ci95": {
+    "DeepLabV3-R50": {
+      "mean": 0.0308657480803027,
+      "low": 0.0154966897755483,
+      "high": 0.0460172469933269
+    },
+    "PraNet": {
+      "mean": 0.0172129182934734,
+      "low": -0.0003653570938828,
+      "high": 0.0346713897808319
+    },
+    "SegFormer-B0": {
+      "mean": 0.0136893192369435,
+      "low": -0.0040236106897555,
+      "high": 0.0306000425679824
+    }
+  },
+  "family_primary_FPR_delta_ci95": {
+    "DeepLabV3-R50": {
+      "mean": -0.1104574367037295,
+      "low": -0.1454850386995599,
+      "high": -0.0763391627312082
+    },
+    "PraNet": {
+      "mean": -0.1961951279277001,
+      "low": -0.2418824134127666,
+      "high": -0.14988101027217
+    },
+    "SegFormer-B0": {
+      "mean": 0.0553396529915335,
+      "low": 0.0246572964116209,
+      "high": 0.0865710035394322
+    }
+  },
+  "claim_boundary": {
+    "supported": "cross-model-family TTA safety-risk ranking within NeoPolyp, with macro clustered inferential support",
+    "not_supported": [
+      "independent external-cohort validation",
+      "uniform per-family AUROC superiority",
+      "uniformly improved transferred high-recall operating point",
+      "automatic clinically reliable safety gate"
+    ],
+    "known_family_caveat": "SegFormer-B0 transferred FPR increases despite improved ranking/oracle-R90 FPR; source-threshold calibration remains architecture dependent."
+  },
+  "post_freeze_rules": [
+    "Do not change DINOv2 model.",
+    "Do not change image resize.",
+    "Do not change source-mask alignment.",
+    "Do not change foreground/background pooling.",
+    "Do not sweep PCA dimension.",
+    "Do not change safety classifier.",
+    "Do not select features using external-cohort labels.",
+    "Do not retune the source-only Recall>=0.90 threshold protocol."
+  ],
+  "next_required_evidence": "independent external-cohort validation with the frozen method"
+}

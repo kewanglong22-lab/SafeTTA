@@ -1,0 +1,111 @@
+{
+  "status": "FROZEN",
+  "decision": "POLYPGEN_FROZEN_SAFETY_SCORES_LOCKED_BEFORE_GT_REVEAL",
+  "script_version": "2026-08-26-Q1-R10L3B-v1-fix1",
+  "build": "Q1_R10L3B_POLYPGEN_FROZEN_SAFETY_SCORE_LOCK_FIX1",
+  "primary_method": "M2_plus_CondDINO_PCA64",
+  "target_dataset": "PolypGen2021_MultiCenterData_v3",
+  "target_component": "R10L1B_unique_static_C1_to_C6",
+  "target_cases": 1532,
+  "model_states": 9,
+  "model_case_rows": 13788,
+  "representation": {
+    "encoder": "facebook/dinov2-base",
+    "encoder_trainable": false,
+    "image_resize": "224x224 direct bicubic",
+    "processor_resize": false,
+    "processor_center_crop": false,
+    "patch_grid": "16x16",
+    "source_mask": "352x352 binary pre-adaptation SOURCE only",
+    "source_mask_alignment": "exact 22x22 block occupancy -> 16x16",
+    "foreground_patch_mean_dim": 768,
+    "background_patch_mean_dim": 768,
+    "feature_lock_precision": "float32 pooling -> float16 storage-equivalent -> float32 PCA input",
+    "conditioned_dim": 1536,
+    "m2": [
+      "morph_fg_fraction",
+      "morph_boundary_density"
+    ],
+    "pca_dim": 64,
+    "final_input_dim": 66
+  },
+  "estimator": {
+    "pca_fit_on_external": false,
+    "safety_head_fit_on_external": false,
+    "frozen_threshold": 0.300584763193734,
+    "probability_rows": 13788,
+    "flagged_rows": 7405
+  },
+  "representation_sentinel": {
+    "development_cases_checked": 8,
+    "float16_locked_cls_max_abs_difference": 0.001953125,
+    "tolerance": 0.0025,
+    "pass": true
+  },
+  "information_boundary": {
+    "polypgen_rgb_pixels_decoded": true,
+    "source_mask_values_accessed": true,
+    "a1_mask_values_accessed": false,
+    "polypgen_gt_path_column_read": false,
+    "polypgen_gt_pixels_decoded": false,
+    "polypgen_outcomes_revealed": false,
+    "external_dice_computed": false,
+    "external_delta_dice_computed": false,
+    "external_harm_label_computed": false,
+    "pca_fit_called": false,
+    "pca_refit_called": false,
+    "safety_head_fit_called": false,
+    "safety_head_refit_called": false,
+    "target_calibration": false,
+    "target_threshold_selection": false,
+    "target_feature_selection": false,
+    "target_score_orientation_change": false,
+    "target_case_selection_from_scores": false,
+    "frozen_threshold": 0.300584763193734
+  },
+  "upstream_hashes": {
+    "r10l3a_lock_sha256": "551a2bb372e1cd36cdbe982661b20f7050617a1398e1a773b88f027f75e3bb53",
+    "r10k2a_script_sha256": "25853e849fecaf847f7ba04dcc2c8b520aa3e248f50af5ac21d19bb0ce4c4778",
+    "r10j1_script_sha256": "88555d55c33a57c76cf68e7605f267c500fe8b44921706300131879ca013dccf",
+    "r10k2d_lock_sha256": "6772fb8d1e18dff517e0e5de5e26f0f055e3cc26f23e492650f14c65d063db3d",
+    "r10l0_lock_sha256": "e67ad3ac9306d44b1e1f2bc13d1633d93c780241090c53c3c702f962a5ec3d6f",
+    "r10l0_pca_sha256": "2c6c289ce395105a0c79f7b7751df2a195d76a248c22b43e817d71511c4a24f1",
+    "r10l0_head_sha256": "602574418a309400bf7e7fc854267a702496c1bd47e4f07f6f60415ec9bd14ce",
+    "r10l0_threshold_sha256": "4a37fb4f9a9b729a9aa6551b1417afea7348e2dfecdfcb6e0e2b5986e748e4d7"
+  },
+  "artifacts": {
+    "R10L3B_external_conditioned_dino_features.npz": {
+      "sha256": "10e0a98c0b6e88c2357f26f1414cb82df1d6d12017f86317f3dd48d2041891b5",
+      "bytes": 38542597
+    },
+    "R10L3B_external_pca64_features.npz": {
+      "sha256": "8f1e2b7198095b5f35f779de3b9c3c61dfef08687cacb18b49ca98fb6e2fa47f",
+      "bytes": 3828357
+    },
+    "R10L3B_FROZEN_POLYPGEN_SAFETY_SCORES.csv": {
+      "sha256": "936b596bc8252bb7c3ec0632d374dd16c7ee5cfd6b94afc22000279c51616f33",
+      "bytes": 6780292
+    },
+    "R10L3B_unlabeled_family_score_summary.csv": {
+      "sha256": "506ac7865a376d851307dbc18dd9110ba92d126664ac51546703e25118b7314a",
+      "bytes": 320
+    },
+    "R10L3B_unlabeled_center_score_summary.csv": {
+      "sha256": "0cb55a5ba03ed1c48b5951e5a8e1bb07ed4a16081aa2a6cd6e9a68163df36fb7",
+      "bytes": 501
+    },
+    "information_boundary_audit.json": {
+      "sha256": "d4728871932619de4626fb162dd26025d5c0aa34d0d24f39897d730008a938d4",
+      "bytes": 738
+    }
+  },
+  "post_score_rules": [
+    "Do not refit PCA on PolypGen.",
+    "Do not refit or recalibrate the safety head on PolypGen.",
+    "Do not change score orientation.",
+    "Do not change the frozen threshold.",
+    "Do not select centers/cases/states based on score performance.",
+    "Do not alter the representation after GT reveal.",
+    "Next stage may reveal GT only after this lock is finalized."
+  ]
+}

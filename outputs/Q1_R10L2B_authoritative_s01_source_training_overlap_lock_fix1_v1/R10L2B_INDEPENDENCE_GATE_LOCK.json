@@ -1,0 +1,17 @@
+{
+  "decision": "POLYPGEN_INDEPENDENCE_GATE_PASS_ALL_9_STATES_S01_TRAIN_VAL_ZERO_EXACT_OVERLAP",
+  "s01_manifest": "F:\\MEDSEG_SAFETTA\\data\\splits\\S01_locked_protocol_manifest_v1.csv",
+  "s01_manifest_sha256": "afb4bc1175af004819538cdbb22ee7a10f1be48035945c7e0d50fd2bbe2e3dc7",
+  "source_train_rows": 1305,
+  "source_val_rows": 145,
+  "source_development_rows": 1450,
+  "source_files_verified_against_manifest_sha": 1450,
+  "polypgen_locked_cases": 1532,
+  "source_train_exact_polypgen_overlaps": 0,
+  "source_val_exact_polypgen_overlaps": 0,
+  "total_source_development_exact_polypgen_overlaps": 0,
+  "frozen_states": 9,
+  "families_explicitly_tied_to_same_s01_manifest": 3,
+  "external_performance_evaluated": false,
+  "model_inference_run": false
+}

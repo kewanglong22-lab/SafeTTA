@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "decision": "PROMISE12_MATCHED_COVERAGE_UTILITY_AUDIT_COMPLETE_READY_FOR_FINAL_SYNTHESIS",
+  "version": "2026-09-05-Q1X-CM7B-v1-fix1",
+  "build": "Q1X_CM7B_PROMISE12_MATCHED_COVERAGE_UTILITY_AUDIT_FIX1",
+  "scope": "POST_GT_FIXED_PROTOCOL_UTILITY_AUDIT",
+  "cm6_lock_sha256": "151b067b73ab690694f40f8f72d06fc0414de56b5763f1bc31a8eb478db4f4a7",
+  "cm7a_lock_sha256": "47fc4257368542f34e3cc348229cd250c8ec2349cba1819731aff60af2190cd7",
+  "frozen_policy": {
+    "threshold": 0.2950987857155136,
+    "rule": "risk_score >= threshold => retain SOURCE; risk_score < threshold => adapt",
+    "cm6_exact_reproduction": true
+  },
+  "matched_random_baseline": {
+    "matching": "exact adapted-row count per model family",
+    "full_target_randomization_reps": 10000,
+    "patient_bootstrap_reps": 2000,
+    "inner_random_draws_per_bootstrap_rep": 10
+  },
+  "point_results": {
+    "SOURCE_ONLY": {
+      "adaptation_coverage": 0.0,
+      "adapted_rows": 0,
+      "prevented_harm_fraction": 1.0,
+      "mean_slice_deployed_dice": 0.6547997766274563,
+      "mean_patient_3d_deployed_dice": 0.7533350561600508
+    },
+    "TENT_ALL": {
+      "adaptation_coverage": 1.0,
+      "adapted_rows": 4131,
+      "prevented_harm_fraction": 0.0,
+      "mean_slice_deployed_dice": 0.5316731096865099,
+      "mean_patient_3d_deployed_dice": 0.705162011296578
+    },
+    "SAFETTA_FIXED_SOURCE_GATE": {
+      "adaptation_coverage": 0.1675139191479061,
+      "adapted_rows": 692,
+      "prevented_harm_fraction": 0.9007633587786259,
+      "mean_slice_deployed_dice": 0.6580831323424625,
+      "mean_patient_3d_deployed_dice": 0.7446111204829475
+    },
+    "family_matched_coverage": {
+      "UNet": {
+        "n": 1377,
+        "k_adapt": 208,
+        "coverage": 0.15105301379811184
+      },
+      "DeepLabV3_R50": {
+        "n": 1377,
+        "k_adapt": 231,
+        "coverage": 0.16775599128540306
+      },
+      "SegFormer_B0": {
+        "n": 1377,
+        "k_adapt": 253,
+        "coverage": 0.18373275236020334
+      }
+    }
+  },
+  "interpretation_boundary": "CM7B is a post-GT fixed-protocol utility audit. It tests whether the prospectively frozen CM6 ranking gate adds utility beyond random selection at exactly matched family-wise adaptation coverage. No target policy is changed.",
+  "changes_after_gt": {
+    "threshold": false,
+    "model": false,
+    "representation": false,
+    "harm_definition": false
+  },
+  "artifacts": {
+    "point_summary": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7B_promise12_matched_coverage_utility_audit_fix1_v1\\CM7B_POINT_UTILITY_SUMMARY.json",
+    "point_summary_sha256": "bda4577e0cc65d156b8645a01bdf41aab54d4a96f6ac4a45ad57e99ebfa33f21",
+    "full_random_replicates": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7B_promise12_matched_coverage_utility_audit_fix1_v1\\CM7B_FULL_TARGET_MATCHED_RANDOMIZATION_REPLICATES.csv",
+    "full_random_replicates_sha256": "33b1dccc1ba03f090d15896d48ada762e84fac5b5e24214653eacdee83d5ee1b",
+    "full_random_summary": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7B_promise12_matched_coverage_utility_audit_fix1_v1\\CM7B_FULL_TARGET_MATCHED_RANDOMIZATION_SUMMARY.csv",
+    "full_random_summary_sha256": "526e0a3442fd0eebdbf94f6a0dff75992d9dcf5f0721565fd5875de6d2463e83",
+    "patient_bootstrap_replicates": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7B_promise12_matched_coverage_utility_audit_fix1_v1\\CM7B_PAIRED_PATIENT_BOOTSTRAP_REPLICATES.csv",
+    "patient_bootstrap_replicates_sha256": "92b35221e3373a4a9b8664075e7034e4856e6fbd66182b3ad6187f81d7b7f511",
+    "patient_bootstrap_summary": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM7B_promise12_matched_coverage_utility_audit_fix1_v1\\CM7B_PAIRED_PATIENT_BOOTSTRAP_SUMMARY.csv",
+    "patient_bootstrap_summary_sha256": "c9c503cc0dd1da9b39c7cdf59a21692c4d7804f0dd2cc6eb6af35d5065dc9010"
+  },
+  "next_stage": "FINAL_CROSS_DATASET_SYNTHESIS_AND_MANUSCRIPT_UPDATE"
+}
