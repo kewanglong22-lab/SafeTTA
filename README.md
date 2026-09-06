@@ -111,3 +111,31 @@ See `LICENSE` and `THIRD_PARTY_NOTICES.md`.
 
 A formal citation entry should be added after final bibliographic information is
 available.
+
+## Full method code
+
+The repository includes the exact retained SafeTTA method implementation and
+final experiment workflow, not only paper-table/statistical replay scripts.
+
+Start with [`METHOD_CODE_INDEX.md`](METHOD_CODE_INDEX.md).
+
+- `method_core/` — prediction-conditioned representation, frozen safety
+  estimator, TTA actions, and MRI safety implementation.
+- `experiments/` — source training, PolypGen, SUN-SEG, Prostate158/PROMISE12,
+  and final paper analyses.
+- `legacy_all_retained_code/` — retained SafeTTA-related historical code for
+  provenance/completeness.
+- `code/` — compact validated public paper-statistic replay scripts.
+
+The public numerical claim remains deterministic reproduction of 44/44
+prespecified paper-level anchors from released frozen intermediate artifacts.
+The repository does not claim bit-identical retraining of every historical
+upstream segmentation checkpoint.
+
+## Portability
+
+Exact frozen scripts may retain historical author-machine paths as defaults.
+All 65 reviewer-facing scripts that contain such defaults expose CLI path
+overrides; no portable wrapper is required. See
+[`PORTABILITY.md`](PORTABILITY.md).
+
