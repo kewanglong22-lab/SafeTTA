@@ -1,0 +1,8 @@
+# SafeTTA reproducibility: preserve frozen Python bytes across platforms.
+# The strict public replay verifies SHA256 of frozen scripts.
+*.py text eol=lf
+
+# Explicit binary artifacts.
+*.joblib -text
+*.npz -text
+*.npy -text

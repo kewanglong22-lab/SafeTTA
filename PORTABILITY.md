@@ -40,3 +40,11 @@ Complete bit-identical retraining of every historical upstream segmentation
 checkpoint is outside the claimed reproducibility scope because complete
 per-image training manifests/checkpoints were not retained for every historical
 source state.
+
+### Cross-platform Git line endings
+
+The public replay verifies the SHA256 of frozen Python implementations.
+`.gitattributes` therefore enforces `LF` checkout for `*.py`, including on
+Windows systems with `core.autocrlf=true`. This prevents line-ending conversion
+from changing frozen script bytes while leaving the Python source semantics
+unchanged.
