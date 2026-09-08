@@ -1,0 +1,47 @@
+{
+  "version": "2026-09-08-Q1-R16A-SOURCE-QUALITY-CONTROL-POLYPGEN-v1-fix2",
+  "input_provenance": {
+    "mode": "SINGLE_TABLE",
+    "table": "F:\\MEDSEG_SAFETTA\\release\\public_v1_fix3\\SafeTTA_public_repro_v1\\outputs\\Q1_R10L3C_polypgen_gt_reveal_prospective_external_evaluation_fix1_v1\\R10L3C_LOCKED_SCORE_GT_EVALUATION_PANEL.csv",
+    "physical_id_column": "sample_id",
+    "family_column": "model_family",
+    "source_dice_column": "source_dice",
+    "risk_column": "frozen_safety_probability",
+    "harm_column": "harm_label",
+    "delta_dice_column": "delta_dice"
+  },
+  "rows": 13788,
+  "physical_images": 1532,
+  "families": [
+    "DeepLabV3-R50",
+    "PraNet",
+    "SegFormer-B0"
+  ],
+  "harm_prevalence": 0.34051348999129677,
+  "risk_coefficient": 0.7341678413573426,
+  "lr_stat": 1387.9630127820037,
+  "lr_p": 8.671615390259372e-304,
+  "auroc_quality": 0.6657075092111135,
+  "auroc_quality_plus_risk": 0.7484760656273763,
+  "delta_auroc": 0.0827685564162628,
+  "auprc_quality": 0.48118667340932275,
+  "auprc_quality_plus_risk": 0.6465720881250027,
+  "delta_auprc": 0.1653854147156799,
+  "risk_only_auroc": 0.6533861258768844,
+  "risk_coefficient_ci95": [
+    0.6605988326617908,
+    0.8042852784896943
+  ],
+  "delta_auroc_ci95": [
+    0.06641462942287411,
+    0.09770740681487351
+  ],
+  "delta_auprc_ci95": [
+    0.1395607048446093,
+    0.18925031121985925
+  ],
+  "bootstrap_requested": 2000,
+  "bootstrap_completed": 2000,
+  "ci_scope": "physical-image uncertainty conditional on frozen model panel",
+  "deployment_boundary": "SOURCE Dice used only for post-reveal explanatory audit"
+}

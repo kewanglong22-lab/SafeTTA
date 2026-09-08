@@ -1,0 +1,35 @@
+{
+  "version": "2026-09-08-Q1-R16A2-CROSSFITTED-FLEXIBLE-SOURCE-QUALITY-CONTROL-v1",
+  "input": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R16A_source_quality_control_polypgen_v1_fix2\\R16A_ANALYSIS_TABLE.csv",
+  "rows": 13788,
+  "physical_images": 1532,
+  "n_splits": 5,
+  "split_seed": 20260908,
+  "spline_n_knots": 5,
+  "spline_degree": 3,
+  "auroc_quality_flex": 0.8124642216209333,
+  "auroc_quality_flex_plus_risk": 0.840718585736995,
+  "delta_auroc": 0.028254364116061637,
+  "auprc_quality_flex": 0.6906152058908481,
+  "auprc_quality_flex_plus_risk": 0.7616977117795529,
+  "delta_auprc": 0.0710825058887048,
+  "logloss_quality_flex": 0.4821647862931035,
+  "logloss_quality_flex_plus_risk": 0.45050837501885876,
+  "delta_logloss_plus_risk_minus_quality": -0.03165641127424473,
+  "delta_auroc_ci95": [
+    0.021739957006751052,
+    0.03437230283724527
+  ],
+  "delta_auprc_ci95": [
+    0.0593796193579917,
+    0.08251102771399267
+  ],
+  "delta_logloss_ci95": [
+    -0.03818278878679793,
+    -0.024795849057854313
+  ],
+  "bootstrap_requested": 2000,
+  "bootstrap_completed": 2000,
+  "gate": "PASS_R16A2_FROZEN_RISK_ADDS_CROSSFITTED_INFORMATION_BEYOND_FLEXIBLE_SOURCE_QUALITY",
+  "interpretation_boundary": "post-reveal cross-fitted explanatory audit; not a deployable target-side calibration model"
+}

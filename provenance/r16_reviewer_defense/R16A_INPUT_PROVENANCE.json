@@ -1,0 +1,10 @@
+{
+  "mode": "SINGLE_TABLE",
+  "table": "F:\\MEDSEG_SAFETTA\\release\\public_v1_fix3\\SafeTTA_public_repro_v1\\outputs\\Q1_R10L3C_polypgen_gt_reveal_prospective_external_evaluation_fix1_v1\\R10L3C_LOCKED_SCORE_GT_EVALUATION_PANEL.csv",
+  "physical_id_column": "sample_id",
+  "family_column": "model_family",
+  "source_dice_column": "source_dice",
+  "risk_column": "frozen_safety_probability",
+  "harm_column": "harm_label",
+  "delta_dice_column": "delta_dice"
+}

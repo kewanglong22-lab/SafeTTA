@@ -1,0 +1,22 @@
+===== SAFETTA R16-A SOURCE-QUALITY CONTROL SUMMARY =====
+Version: 2026-09-08-Q1-R16A-SOURCE-QUALITY-CONTROL-POLYPGEN-v1-fix2
+Reconstruction mode: SINGLE_TABLE
+Rows: 13788
+Physical images: 1532
+Families: ['DeepLabV3-R50', 'PraNet', 'SegFormer-B0']
+HARM prevalence: 0.340513
+
+Quality-only AUROC=0.665708 AUPRC=0.481187
+Quality+risk AUROC=0.748476 AUPRC=0.646572
+Delta AUROC=0.082769 CI95=[0.066415, 0.097707]
+Delta AUPRC=0.165385 CI95=[0.139561, 0.189250]
+z(SafeTTA risk) coefficient=0.734168 CI95=[0.660599, 0.804285]
+Likelihood-ratio stat=1387.963013 p=8.67162e-304
+Risk-only AUROC=0.653386
+
+Bootstrap completed: 2000/2000
+CI scope: physical-image uncertainty conditional on frozen model panel.
+SOURCE Dice is post-reveal explanatory only; it is not a deployable SafeTTA input.
+
+GATE=PASS_R16A_RISK_ADDS_INFORMATION_BEYOND_SOURCE_DICE
+NEXT=COMPLETE_R16B_MATCHED_LEARNED_RELIABILITY_BASELINE

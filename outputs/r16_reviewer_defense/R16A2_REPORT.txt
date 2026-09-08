@@ -1,0 +1,24 @@
+===== SAFETTA R16-A2 FLEXIBLE CROSS-FITTED QUALITY CONTROL SUMMARY =====
+Version: 2026-09-08-Q1-R16A2-CROSSFITTED-FLEXIBLE-SOURCE-QUALITY-CONTROL-v1
+Rows: 13788
+Physical images: 1532
+HARM prevalence: 0.340513
+
+Flexible quality-only OOF AUROC=0.812464
+Flexible quality+risk OOF AUROC=0.840719
+Delta AUROC=0.028254 CI95=[0.021740, 0.034372]
+
+Flexible quality-only OOF AUPRC=0.690615
+Flexible quality+risk OOF AUPRC=0.761698
+Delta AUPRC=0.071083 CI95=[0.059380, 0.082511]
+
+Quality-only OOF log loss=0.482165
+Quality+risk OOF log loss=0.450508
+Delta log loss (risk-quality)=-0.031656 CI95=[-0.038183, -0.024796]
+
+Bootstrap completed: 2000/2000
+CI scope: physical-image uncertainty conditional on frozen model panel.
+All reported AUROC/AUPRC values are grouped out-of-fold, not in-sample.
+SOURCE Dice is post-reveal explanatory only and never a deployable SafeTTA input.
+
+GATE=PASS_R16A2_FROZEN_RISK_ADDS_CROSSFITTED_INFORMATION_BEYOND_FLEXIBLE_SOURCE_QUALITY
