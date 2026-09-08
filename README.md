@@ -76,7 +76,7 @@ the optional compact environment.
 From the repository root:
 
 ```bash
-python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix1.py --root .
+python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root .
 ```
 
 Expected result:
