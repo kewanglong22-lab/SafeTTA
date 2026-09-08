@@ -1,0 +1,129 @@
+{
+  "status": "PASS",
+  "decision": "PASS_R17A_POLYPGEN_CCD_FULL9_CURRENT_ENV_PREGT_SCORE_LOCK_WITH_DISCLOSED_HARD_PARITY_LIMIT",
+  "version": "2026-09-09-Q1-R17A-CCD-POLYPGEN-FULL9-PREGT-SCORE-LOCK-v1-fix2",
+  "dataset": "PolypGen",
+  "information_boundary": {
+    "training": false,
+    "tta": false,
+    "target_gt_loading": false,
+    "harm_outcome_loading": false,
+    "threshold_tuning": false
+  },
+  "ccd": {
+    "definition": "SicTTA official-code-faithful binary instantiation",
+    "rng_seed": 20260908,
+    "rng_stream": "continuous: replay locked six states, then 3 SegFormer states",
+    "sample_pixels": 200,
+    "risk_direction": "higher CCD = higher HARM risk",
+    "helper_script": "code/Q1_R17A_CCD_polypgen_6state_preGT_score_lock_v1.py",
+    "helper_script_sha256": "cac9d2540514a6a76bc625b7b7d3fa6bdc258885c00d028bb3ca765a6f78a79c"
+  },
+  "partial6_replay": {
+    "rows": 9192,
+    "alignment_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+    "excluded_extra_rows": [
+      950,
+      1306,
+      1307,
+      1394,
+      1395
+    ],
+    "ccd_exact_match": true,
+    "ccd_replay_validation": "EXACT_LOCKED_CSV_DECIMAL_SERIALIZATION",
+    "numeric_tolerance_used": false
+  },
+  "frozen_environment": {
+    "packages": {
+      "torch": "2.5.1+cu121",
+      "torchvision": "0.20.1+cu121",
+      "transformers": "5.15.0",
+      "Pillow": "12.2.0",
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "safetensors": "0.8.0",
+      "huggingface-hub": "1.27.0"
+    },
+    "hf_cache_base": "F:\\MEDSEG_SAFETTA\\cache\\huggingface\\models--nvidia--mit-b0",
+    "hf_snapshot": "80983a413c30d36a39c20203974ae7807835e2b4",
+    "hf_config_sha256": "e2378ac7c7a6981d6bdd1d9ccf29b611264c382afce89c561f39c9291164ff91",
+    "hf_preprocessor_sha256": "d96ab2cb112985c19d5ea32f1d1f2369104fc78b1379f5ce26e33ca8646202a7"
+  },
+  "segformer_contract": {
+    "r03_script": "code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py",
+    "r03_sha256": "d737272b756a4d2051f9c74051d7085640eaec9cd8be6dbd951c325af2a17c31",
+    "r05_script": "code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py",
+    "r05_sha256": "df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251",
+    "states": [
+      {
+        "seed": 20260820,
+        "checkpoint_sha256": "9dae2ae907b193ea36c2bccc8e376ddbad1699ba27ae0769cf40bcba13e95605",
+        "hard_lock_npz": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260820_predictions.npz",
+        "hard_lock_npz_sha256": "d36ad27453e0532516f955c5c4d55e7282f38a04426aaf58bfb10bf5c9d089e0",
+        "index_csv": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260820_index.csv",
+        "index_csv_sha256": "d47255986c7951347eb6a4894c52f39e82b567153cee75c5c993d2885e508b5f",
+        "rows": 1532,
+        "historical_hard_mask_exact_matches": 10,
+        "historical_hard_mask_mismatch_samples": 1522,
+        "historical_hard_mask_total_mismatch_pixels": 1894996,
+        "historical_hard_mask_max_mismatch_pixels_per_sample": 4798,
+        "historical_hard_mask_max_abs_foreground_delta": 0,
+        "historical_hard_mask_parity_role": "DIAGNOSTIC_ONLY_NOT_SCORE_ACCEPTANCE_GATE",
+        "parity_csv": "R17A_POLYPGEN_SEGF_20260820_BITEXACT_PARITY.csv",
+        "parity_csv_sha256": "acf133a97ba853e7e3730c8a54c465bc2041d183108c56185ff344e0a015d2ca"
+      },
+      {
+        "seed": 20260821,
+        "checkpoint_sha256": "ad75290168eab7d116aa3de61b3eafc1e986f11fc0bbfa4a6108abbf669a258d",
+        "hard_lock_npz": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260821_predictions.npz",
+        "hard_lock_npz_sha256": "387fbadd066ab9c668bb59895a22fd2dd1580bad6c4225f9a42cd48a4e325dee",
+        "index_csv": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260821_index.csv",
+        "index_csv_sha256": "771e0dc563a54f412e4a160eb3d010b4d0d53ffc9acd56f6446f2de2f7dd5e5c",
+        "rows": 1532,
+        "historical_hard_mask_exact_matches": 20,
+        "historical_hard_mask_mismatch_samples": 1512,
+        "historical_hard_mask_total_mismatch_pixels": 1869805,
+        "historical_hard_mask_max_mismatch_pixels_per_sample": 6428,
+        "historical_hard_mask_max_abs_foreground_delta": 1,
+        "historical_hard_mask_parity_role": "DIAGNOSTIC_ONLY_NOT_SCORE_ACCEPTANCE_GATE",
+        "parity_csv": "R17A_POLYPGEN_SEGF_20260821_BITEXACT_PARITY.csv",
+        "parity_csv_sha256": "5cece27d3f4447c9e369ddb5a12a22038d3a20dae79256d742afebe27be3af0f"
+      },
+      {
+        "seed": 20260822,
+        "checkpoint_sha256": "ea0b3881373e9f966475a082490fabe4b0acae81179b8596c48a06ee2661a34a",
+        "hard_lock_npz": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260822_predictions.npz",
+        "hard_lock_npz_sha256": "a26d7c9eb9cb11055779410106d5f1e0476b3990609a0698ad7005e24b989611",
+        "index_csv": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260822_index.csv",
+        "index_csv_sha256": "9cce1721c1d3e254a2110e29253aad0642d723a4300e4ed7d6cd9619966e08d9",
+        "rows": 1532,
+        "historical_hard_mask_exact_matches": 26,
+        "historical_hard_mask_mismatch_samples": 1506,
+        "historical_hard_mask_total_mismatch_pixels": 1813276,
+        "historical_hard_mask_max_mismatch_pixels_per_sample": 4702,
+        "historical_hard_mask_max_abs_foreground_delta": 0,
+        "historical_hard_mask_parity_role": "DIAGNOSTIC_ONLY_NOT_SCORE_ACCEPTANCE_GATE",
+        "parity_csv": "R17A_POLYPGEN_SEGF_20260822_BITEXACT_PARITY.csv",
+        "parity_csv_sha256": "324de2af598c9934bbca83cec8b9849eaaac31cedf317db4dc47c20be4a0c688"
+      }
+    ],
+    "soft_logit_provenance": "NEW_GT_FREE_REGENERATION_IN_FROZEN_RELEASE_ENVIRONMENT_USING_EXACT_CHECKPOINT_IMAGE_AND_HISTORICAL_CODE",
+    "historical_hard_mask_parity": "DIAGNOSTIC_ONLY",
+    "historical_hard_mask_exact_samples": 56,
+    "historical_hard_mask_mismatch_samples": 4540,
+    "historical_hard_mask_total_mismatch_pixels": 5578077,
+    "bitexact_historical_soft_logits_claimed": false
+  },
+  "manifest": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/frozen_polypgen_rgb_manifest_no_gt.csv",
+  "manifest_sha256": "47834646aa68ac43b5e411ae90d4bc5600c3e8b1a1b9e9d32f360beb4af1b2a5",
+  "rows": 13788,
+  "unique_samples": 1532,
+  "states": 9,
+  "score_table": "R17A_POLYPGEN_CCD_FULL9_PREGT_SCORE_LOCK.csv",
+  "score_table_sha256": "8fca0b2b3ad9dbf9a6b5dacd6b25b33f89f7f58b8838fb6f0c2c0d1d4c270da3",
+  "segformer_score_table": "R17A_POLYPGEN_CCD_SEGF_3STATE_PREGT_SCORE_LOCK.csv",
+  "segformer_score_table_sha256": "56dae3b7d6d5b7e89e24d246e4552e3ea6a08cce6cd5e6ff33461380901b295a",
+  "state_summary": "R17A_POLYPGEN_CCD_FULL9_STATE_SUMMARY.csv",
+  "state_summary_sha256": "9f44731cf1e47a4fca6ad5287207de7faed2832a1a9c7ad28da64b73b00d20cb",
+  "next": "REVIEW_PARITY_AUDIT_THEN_JOIN_ONLY_FROZEN_POLYPGEN_HARM_OUTCOME_AND_EVALUATE_CCD"
+}

@@ -1,0 +1,28 @@
+===== R17A POLYPGEN DEEPLAB3 ADIC + MC PRE-GT SCORE LOCK =====
+Version: 2026-09-09-Q1-R17A-ADIC-MC-DEEPLAB3-PREGT-SCORE-LOCK-v1-fix2
+Dataset: PolypGen
+Family: DeepLabV3-R50
+Rows: 4596
+Physical samples: 1532
+States: 3/3
+Dropout passes: 10
+Native nn.Dropout count/state: 1
+Native dropout p: 0.5
+Deterministic SOURCE parity matches: 4596
+Deterministic SOURCE parity mismatches: 0
+Score table SHA256: 223f1496e9cc56736d752f57f38d8edae64f20c47bcb6d1b48c243775081cd52
+
+Information boundary:
+  Training: NO
+  TTA: NO
+  Target GT loading: NO
+  HARM/outcome loading: NO
+  Threshold tuning: NO
+
+Scores:
+  ADIC quality: higher = better current prediction quality
+  ADIC harm risk: -ADIC quality; higher = higher HARM risk
+  MC predictive entropy: higher = higher HARM risk
+
+GATE=PASS_R17A_POLYPGEN_DEEPLAB3_ADIC_MC_PREGT_SCORE_LOCK
+NEXT=JOIN_ONLY_FROZEN_DEEPLAB3_HARM_OUTCOMES_AND_COMPARE_ADIC_MC_VS_SAFETTA

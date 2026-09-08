@@ -1,0 +1,161 @@
+{
+  "version": "2026-09-08-Q1-R17A-CCD-POLYPGEN-6STATE-PREGT-SCORE-LOCK-v1",
+  "manifest": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/frozen_polypgen_rgb_manifest_no_gt.csv",
+  "manifest_sha256": "47834646aa68ac43b5e411ae90d4bc5600c3e8b1a1b9e9d32f360beb4af1b2a5",
+  "manifest_rows": 1532,
+  "asset_rows_each": 1537,
+  "common_alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+  "excluded_extra_asset_rows": [
+    950,
+    1306,
+    1307,
+    1394,
+    1395
+  ],
+  "states": [
+    {
+      "model_family": "DeepLabV3-R50",
+      "training_seed": 20260817,
+      "embedded_architecture": "deeplab",
+      "source_asset_relpath": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/deeplab_seed20260817/locked_logits.npz",
+      "source_asset_sha256": "ab6ae0850a915c14743385547ef3bc0af048e22162733d6cf8914f58776ce95c",
+      "source_logits_shape": [
+        1537,
+        352,
+        352
+      ],
+      "alignment_strategy": "IMAGE_MEMBER_BASENAME_TO_IMAGE_PATH_BASENAME",
+      "alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+      "excluded_extra_asset_rows": [
+        950,
+        1306,
+        1307,
+        1394,
+        1395
+      ],
+      "excluded_extra_count": 5,
+      "target_manifest_rows": 1532,
+      "target_gt_used": false
+    },
+    {
+      "model_family": "DeepLabV3-R50",
+      "training_seed": 20260818,
+      "embedded_architecture": "deeplab",
+      "source_asset_relpath": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/deeplab_seed20260818/locked_logits.npz",
+      "source_asset_sha256": "4d98ce8cb1644479ff2ea328c79380cf4207f0fb39e420c5eb678d22d01f1e62",
+      "source_logits_shape": [
+        1537,
+        352,
+        352
+      ],
+      "alignment_strategy": "IMAGE_MEMBER_BASENAME_TO_IMAGE_PATH_BASENAME",
+      "alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+      "excluded_extra_asset_rows": [
+        950,
+        1306,
+        1307,
+        1394,
+        1395
+      ],
+      "excluded_extra_count": 5,
+      "target_manifest_rows": 1532,
+      "target_gt_used": false
+    },
+    {
+      "model_family": "DeepLabV3-R50",
+      "training_seed": 20260819,
+      "embedded_architecture": "deeplab",
+      "source_asset_relpath": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/deeplab_seed20260819/locked_logits.npz",
+      "source_asset_sha256": "f0324a394e0068732541b370f21439eb70b86cad9fc30277414825f4bc4a7831",
+      "source_logits_shape": [
+        1537,
+        352,
+        352
+      ],
+      "alignment_strategy": "IMAGE_MEMBER_BASENAME_TO_IMAGE_PATH_BASENAME",
+      "alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+      "excluded_extra_asset_rows": [
+        950,
+        1306,
+        1307,
+        1394,
+        1395
+      ],
+      "excluded_extra_count": 5,
+      "target_manifest_rows": 1532,
+      "target_gt_used": false
+    },
+    {
+      "model_family": "PraNet",
+      "training_seed": 20260817,
+      "embedded_architecture": "pranet",
+      "source_asset_relpath": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/pranet_seed20260817/locked_logits.npz",
+      "source_asset_sha256": "8f4e60b9229334a6e6459affc85b330a8dc9b6115f14e6fe6db877b8ff21b51b",
+      "source_logits_shape": [
+        1537,
+        352,
+        352
+      ],
+      "alignment_strategy": "IMAGE_MEMBER_BASENAME_TO_IMAGE_PATH_BASENAME",
+      "alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+      "excluded_extra_asset_rows": [
+        950,
+        1306,
+        1307,
+        1394,
+        1395
+      ],
+      "excluded_extra_count": 5,
+      "target_manifest_rows": 1532,
+      "target_gt_used": false
+    },
+    {
+      "model_family": "PraNet",
+      "training_seed": 20260818,
+      "embedded_architecture": "pranet",
+      "source_asset_relpath": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/pranet_seed20260818/locked_logits.npz",
+      "source_asset_sha256": "0bd7364b19cd4e2588ecd9edc2119c2938ac0b8ab334649cd4aa1597bc395444",
+      "source_logits_shape": [
+        1537,
+        352,
+        352
+      ],
+      "alignment_strategy": "IMAGE_MEMBER_BASENAME_TO_IMAGE_PATH_BASENAME",
+      "alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+      "excluded_extra_asset_rows": [
+        950,
+        1306,
+        1307,
+        1394,
+        1395
+      ],
+      "excluded_extra_count": 5,
+      "target_manifest_rows": 1532,
+      "target_gt_used": false
+    },
+    {
+      "model_family": "PraNet",
+      "training_seed": 20260819,
+      "embedded_architecture": "pranet",
+      "source_asset_relpath": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/pranet_seed20260819/locked_logits.npz",
+      "source_asset_sha256": "72e2b614678405a08218df30f766c68c92639ca7471f99fbd0692be5d7203722",
+      "source_logits_shape": [
+        1537,
+        352,
+        352
+      ],
+      "alignment_strategy": "IMAGE_MEMBER_BASENAME_TO_IMAGE_PATH_BASENAME",
+      "alignment_mapping_sha256": "f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3",
+      "excluded_extra_asset_rows": [
+        950,
+        1306,
+        1307,
+        1394,
+        1395
+      ],
+      "excluded_extra_count": 5,
+      "target_manifest_rows": 1532,
+      "target_gt_used": false
+    }
+  ]
+}

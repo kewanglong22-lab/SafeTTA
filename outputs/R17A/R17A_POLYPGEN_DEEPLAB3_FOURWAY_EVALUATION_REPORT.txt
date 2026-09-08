@@ -1,0 +1,36 @@
+===== R17A POLYPGEN DEEPLAB3 FOUR-WAY EVALUATION REPORT =====
+Version: 2026-09-09-Q1-R17A-POLYPGEN-DEEPLAB3-FOURWAY-POSTGT-EVALUATION-v1
+Dataset: PolypGen
+Family: DeepLabV3-R50
+Rows: 4596
+Physical samples: 1532
+States: 3/3
+
+POINT METRICS:
+SafeTTA: pooled AUROC=0.616419085 AUPRC=0.491783038 | macro3 AUROC=0.616370607 AUPRC=0.492769742
+SicTTA-CCD: pooled AUROC=0.634544123 AUPRC=0.459995939 | macro3 AUROC=0.634958120 AUPRC=0.459201008
+TEGDA-ADIC: pooled AUROC=0.602545392 AUPRC=0.391803539 | macro3 AUROC=0.602608630 AUPRC=0.393504367
+MC-dropout: pooled AUROC=0.446858833 AUPRC=0.326636094 | macro3 AUROC=0.446499781 AUPRC=0.328112952
+
+PAIRED CLUSTERED BOOTSTRAP DELTAS (SafeTTA - comparator):
+SicTTA-CCD / pooled_auroc: delta=-0.018125038 95%CI=[-0.050926781,+0.016866089] SafeTTA_better=False
+SicTTA-CCD / pooled_auprc: delta=+0.031787099 95%CI=[-0.010142500,+0.073905343] SafeTTA_better=False
+SicTTA-CCD / macro3_auroc: delta=-0.018587513 95%CI=[-0.051338552,+0.016256849] SafeTTA_better=False
+SicTTA-CCD / macro3_auprc: delta=+0.033568734 95%CI=[-0.007102113,+0.075645916] SafeTTA_better=False
+TEGDA-ADIC / pooled_auroc: delta=+0.013873693 95%CI=[-0.004834722,+0.031253515] SafeTTA_better=False
+TEGDA-ADIC / pooled_auprc: delta=+0.099979499 95%CI=[+0.070647117,+0.128461232] SafeTTA_better=True
+TEGDA-ADIC / macro3_auroc: delta=+0.013761977 95%CI=[-0.005060840,+0.031222599] SafeTTA_better=False
+TEGDA-ADIC / macro3_auprc: delta=+0.099265374 95%CI=[+0.070331666,+0.127617036] SafeTTA_better=True
+MC-dropout / pooled_auroc: delta=+0.169560252 95%CI=[+0.133488863,+0.205001145] SafeTTA_better=True
+MC-dropout / pooled_auprc: delta=+0.165146944 95%CI=[+0.123824396,+0.203790049] SafeTTA_better=True
+MC-dropout / macro3_auroc: delta=+0.169870826 95%CI=[+0.133670408,+0.205639312] SafeTTA_better=True
+MC-dropout / macro3_auprc: delta=+0.164656790 95%CI=[+0.123473506,+0.203287687] SafeTTA_better=True
+
+INTERPRETATION:
+- All four methods use exactly the same 4596 model-case rows.
+- No target tuning/recalibration/score reversal was performed.
+- This is a published-baseline sensitivity panel.
+- It does NOT replace the original full 9-state PolypGen primary result.
+
+GATE=PASS_R17A_POLYPGEN_DEEPLAB3_FOURWAY_POSTGT_EVALUATION
+NEXT=REVIEW_FOURWAY_EFFECT_SIZES_AND_FREEZE_R17A_MANUSCRIPT_UPDATE_DECISION

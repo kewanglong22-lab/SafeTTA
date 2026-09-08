@@ -1,0 +1,16 @@
+{
+  "version": "2026-09-09-Q1-R17A-POLYPGEN-SEGF-FIX1-LINEAGE-AUDIT-v1",
+  "fix1_dir": "F:\\MEDSEG_SAFETTA\\outputs\\Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building",
+  "fix1_exists": true,
+  "all_fix1_state_artifacts_present": false,
+  "all_fix1_fix2_npz_sha_equal": false,
+  "all_fix1_fix2_index_sha_equal": false,
+  "fix1_r05d3_script_shas": [],
+  "fix2_r05d3_script_shas": [
+    "df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251"
+  ],
+  "authoritative_r05_sha": "df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251",
+  "soft_asset_count_in_fix1": 0,
+  "segformer_soft_asset_count_in_fix1": 0,
+  "decision": "FIX1_HISTORICAL_ARTIFACTS_INCOMPLETE_OR_MISSING"
+}

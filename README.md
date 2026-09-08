@@ -139,3 +139,32 @@ All 65 reviewer-facing scripts that contain such defaults expose CLI path
 overrides; no portable wrapper is required. See
 [`PORTABILITY.md`](PORTABILITY.md).
 
+<!-- R17A_V14_PUBLICATION_SYNC_BEGIN -->
+## Published reliability-baseline audit (R17A)
+
+The v14 publication audit compares SafeTTA with three published reliability
+baselines: SicTTA-CCD, TEGDA-ADIC, and MC-dropout.
+
+**Locked interpretation.** Current prediction quality and uncertainty are
+associated with adaptation harm, but they are not sufficient proxies for the
+harm caused by a specified future TTA action.
+
+The public R17A package is intended for paper-statistic replay and audit. It
+contains lightweight scripts, frozen tabular results, paired-bootstrap outputs,
+and provenance records only. Large segmentation checkpoints and source datasets
+remain external to the GitHub repository.
+
+Scientific scope guardrails:
+
+- SicTTA-CCD is not described as being significantly worse than SafeTTA on
+  pooled AUROC when the paired clustered-bootstrap confidence interval crosses
+  zero.
+- TEGDA-ADIC is reproduced only where faithful native-dropout support exists.
+- PraNet is excluded from ADIC when native `nn.Dropout` support is absent;
+  dropout is not injected only to create a baseline.
+- SegFormer regenerated CCD states are not mixed with historical harm labels
+  when the regenerated SOURCE state is inconsistent with the historical state.
+
+See `provenance/R17A/` for the frozen anchor manifest and R17B/R17C audit
+records.
+<!-- R17A_V14_PUBLICATION_SYNC_END -->

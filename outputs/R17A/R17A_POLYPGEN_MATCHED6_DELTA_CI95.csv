@@ -1,0 +1,5 @@
+metric,point_delta_safetta_minus_ccd,ci95_low,ci95_high,safetta_significantly_better_95ci,ccd_significantly_better_95ci,bootstrap_reps,bootstrap_seed,cluster,center_stratified
+pooled_auroc,0.024505160087042288,-0.001002442987623378,0.05173708648971065,False,False,2000,20260909,sample_id,True
+pooled_auprc,0.09980946761143639,0.06959937719858562,0.1308349298847328,True,False,2000,20260909,sample_id,True
+macro2_auroc,0.02194715308679729,-0.004600175462182174,0.04992957681724424,False,False,2000,20260909,sample_id,True
+macro2_auprc,0.09671557859859803,0.06632046324664664,0.12786525343120597,True,False,2000,20260909,sample_id,True

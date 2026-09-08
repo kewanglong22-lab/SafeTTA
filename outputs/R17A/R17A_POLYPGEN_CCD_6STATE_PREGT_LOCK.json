@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "decision": "PASS_R17A_POLYPGEN_CCD_6STATE_PREGT_SCORE_LOCK_PARTIAL_PANEL",
+  "version": "2026-09-08-Q1-R17A-CCD-POLYPGEN-6STATE-PREGT-SCORE-LOCK-v1",
+  "dataset": "PolypGen",
+  "target_gt_used": false,
+  "harm_outcome_loaded": false,
+  "tta_run": false,
+  "segmentation_training": false,
+  "ccd_definition": {
+    "source": "SicTTA official-code-faithful",
+    "binary_probability": "[1-sigmoid(logit), sigmoid(logit)]",
+    "sample_pixels": 200,
+    "sampling": "torch.randperm without replacement",
+    "rng_seed": 20260908,
+    "feature_l2_normalization": true,
+    "gram": "P^T P",
+    "softmax_dim": 1,
+    "entropy_eps": 1e-05,
+    "risk_direction": "higher CCD = higher HARM risk"
+  },
+  "panel": {
+    "locked_states": 6,
+    "full_paper_states": 9,
+    "missing_family": "SegFormer-B0",
+    "status": "PARTIAL_6_OF_9"
+  },
+  "rows": 9192,
+  "unique_samples": 1532,
+  "score_table": "R17A_POLYPGEN_CCD_6STATE_PREGT_SCORE_LOCK.csv",
+  "score_table_sha256": "85a2e5d913ddbb88a88c8df09b7ef88822963ea9a1451eda6c6254f95b151786",
+  "state_summary": "R17A_POLYPGEN_CCD_6STATE_SUMMARY.csv",
+  "state_summary_sha256": "2ce757dbbb33ed20d98c07cce0c5fa03afdd5d8395f3f6f9dc64fa64bd86c9e1",
+  "input_asset_lock": "R17A_POLYPGEN_CCD_INPUT_ASSET_LOCK.json",
+  "input_asset_lock_sha256": "280bcac3bef51b39105333308a205faeec7c106497155f116fc09ca9f776bfc3",
+  "next": "RUN_GT_FREE_SEGFOMER_POLYPGEN_CCD_FOR_REMAINING_3_STATES"
+}

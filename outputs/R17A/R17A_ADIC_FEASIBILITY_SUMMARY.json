@@ -1,0 +1,41 @@
+{
+  "version": "2026-09-09-Q1-R17A-ADIC-MATCHED6-NATIVE-DROPOUT-FEASIBILITY-AUDIT-v1",
+  "scope": {
+    "families": [
+      "DeepLabV3-R50",
+      "PraNet"
+    ],
+    "states": 6,
+    "segformer_included": false
+  },
+  "official_tegda_contract": {
+    "stochastic_passes": 10,
+    "native_module_type": "nn.Dropout",
+    "inject_new_dropout": false,
+    "overwrite_dropout_p": false,
+    "bn_or_norm_update": false,
+    "same_passes_can_produce_mc_uncertainty": true
+  },
+  "family_support": [
+    {
+      "family": "DeepLabV3-R50",
+      "code_files_with_dropout_evidence": 3,
+      "candidate_paths": [
+        "code/Q1_R17A_ADIC_matched6_native_dropout_feasibility_audit_v1.py",
+        "code/S05_C_build_deeplab_source_side_safettta_gate_v1.py",
+        "release/SafeTTA_clean_test_v102/legacy_all_retained_code/S05_C_build_deeplab_source_side_safettta_gate_v1.py"
+      ],
+      "decision": "CANDIDATE_NATIVE_DROPOUT_ROUTE"
+    },
+    {
+      "family": "PraNet",
+      "code_files_with_dropout_evidence": 1,
+      "candidate_paths": [
+        "code/Q1_R17A_ADIC_matched6_native_dropout_feasibility_audit_v1.py"
+      ],
+      "decision": "CANDIDATE_NATIVE_DROPOUT_ROUTE"
+    }
+  ],
+  "gate": "READY_FOR_ADIC_MATCHED6_EXACT_MODEL_INSTANTIATION_AUDIT",
+  "next": "INSTANTIATE_EXACT_FROZEN_MODELS_AND_REQUIRE_NATIVE_NN_DROPOUT_PLUS_DETERMINISTIC_SOURCE_PARITY_BEFORE_SCORE_LOCK"
+}

@@ -1,0 +1,490 @@
+{
+  "NeoPolyp": {
+    "decision": "GT_FREE_SOURCE_REINFERENCE_READY",
+    "reason": "no strong direct soft asset; frozen checkpoint and SOURCE inference code are available",
+    "soft_candidate_count": 0,
+    "strong_soft_candidate_count": 0,
+    "manifest_candidate_count": 213,
+    "checkpoint_count": 12,
+    "inference_code_count": 60,
+    "top_soft_candidates": [],
+    "top_checkpoints": [
+      "outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+      "outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+      "outputs/S01_B_pranet_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+      "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+      "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+      "outputs/S05_B_deeplabv3_r50_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+      "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260820/best_model_state.pt",
+      "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260820/last_model_state.pt",
+      "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260821/best_model_state.pt",
+      "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260821/last_model_state.pt",
+      "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260822/best_model_state.pt",
+      "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260822/last_model_state.pt"
+    ],
+    "top_manifests": [
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260817_v1/audit.json",
+        "row_count": "",
+        "columns_or_keys": "script_version|build|seed|manifest_sha256|source_train_n|source_val_n|seen_sanity_images_opened|seen_sanity_masks_opened|unseen_locked_images_opened|unseen_locked_masks_opened|target_metrics_computed|checkpoint_selection_metric|best_epoch|best_source_val_mean_dice|backbone_pretrain_path|backbone_pretrain_sha256|best_checkpoint|best_checkpoint_sha256|parameters_total|parameters_trainable|peak_gpu_memory_gb|training_seconds|decision"
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260817_v1/history.csv",
+        "row_count": 80,
+        "columns_or_keys": "epoch|train_loss|source_val_mean_dice|source_val_median_dice|source_val_mean_iou|epoch_seconds"
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260817_v1/summary.txt",
+        "row_count": "",
+        "columns_or_keys": ""
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260818_v1/audit.json",
+        "row_count": "",
+        "columns_or_keys": "script_version|build|seed|manifest_sha256|source_train_n|source_val_n|seen_sanity_images_opened|seen_sanity_masks_opened|unseen_locked_images_opened|unseen_locked_masks_opened|target_metrics_computed|checkpoint_selection_metric|best_epoch|best_source_val_mean_dice|backbone_pretrain_path|backbone_pretrain_sha256|best_checkpoint|best_checkpoint_sha256|parameters_total|parameters_trainable|peak_gpu_memory_gb|training_seconds|decision"
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260818_v1/history.csv",
+        "row_count": 80,
+        "columns_or_keys": "epoch|train_loss|source_val_mean_dice|source_val_median_dice|source_val_mean_iou|epoch_seconds"
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260818_v1/summary.txt",
+        "row_count": "",
+        "columns_or_keys": ""
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260819_v1/audit.json",
+        "row_count": "",
+        "columns_or_keys": "script_version|build|seed|manifest_sha256|source_train_n|source_val_n|seen_sanity_images_opened|seen_sanity_masks_opened|unseen_locked_images_opened|unseen_locked_masks_opened|target_metrics_computed|checkpoint_selection_metric|best_epoch|best_source_val_mean_dice|backbone_pretrain_path|backbone_pretrain_sha256|best_checkpoint|best_checkpoint_sha256|parameters_total|parameters_trainable|peak_gpu_memory_gb|training_seconds|decision"
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260819_v1/history.csv",
+        "row_count": 80,
+        "columns_or_keys": "epoch|train_loss|source_val_mean_dice|source_val_median_dice|source_val_mean_iou|epoch_seconds"
+      },
+      {
+        "path": "outputs/S01_B_pranet_source_only_seed20260819_v1/summary.txt",
+        "row_count": "",
+        "columns_or_keys": ""
+      },
+      {
+        "path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/audit.json",
+        "row_count": "",
+        "columns_or_keys": "script_version|build|architecture|seed|protocol_sha256|manifest_sha256|source_train_n|source_val_n|seen_sanity_images_opened|seen_sanity_masks_opened|unseen_locked_images_opened|unseen_locked_masks_opened|target_metrics_computed|checkpoint_selection_metric|singleton_safe_batching|train_samples_dropped_per_epoch|training_empty_augmented_masks_allowed|original_source_masks_required_nonempty|source_val_masks_required_nonempty|total_empty_aug_mask_samples|train_min_batch_size|train_max_batch_size|persistent_workers|cublas_workspace_config|best_epoch|best_source_val_mean_dice|backbone_pretrain_descriptor|backbone_cache_path|backbone_cache_sha256|best_checkpoint|best_checkpoint_sha256|parameters_total|parameters_trainable|peak_gpu_memory_gb|training_seconds|decision"
+      },
+      {
+        "path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/history.csv",
+        "row_count": 80,
+        "columns_or_keys": "epoch|train_loss|source_val_mean_dice|source_val_median_dice|source_val_mean_iou|empty_aug_mask_samples|epoch_seconds"
+      },
+      {
+        "path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/summary.txt",
+        "row_count": "",
+        "columns_or_keys": ""
+      }
+    ]
+  },
+  "PolypGen": {
+    "decision": "BLOCKED_AMBIGUOUS_MAPPING",
+    "reason": "cannot yet establish direct soft asset or checkpoint+inference path",
+    "soft_candidate_count": 0,
+    "strong_soft_candidate_count": 0,
+    "manifest_candidate_count": 4068,
+    "checkpoint_count": 0,
+    "inference_code_count": 22,
+    "top_soft_candidates": [],
+    "top_checkpoints": [],
+    "top_manifests": [
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/checkpoint_manifest.csv",
+        "row_count": 9,
+        "columns_or_keys": "model_family|training_seed|model_state_id|checkpoint|checkpoint_sha256"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260817_index.csv",
+        "row_count": 1532,
+        "columns_or_keys": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260817_state_lock.json",
+        "row_count": "",
+        "columns_or_keys": "decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_path_column_read|target_gt_pixels_decoded|target_metrics_computed"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260818_index.csv",
+        "row_count": 1532,
+        "columns_or_keys": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260818_state_lock.json",
+        "row_count": "",
+        "columns_or_keys": "decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_path_column_read|target_gt_pixels_decoded|target_metrics_computed"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260819_index.csv",
+        "row_count": 1532,
+        "columns_or_keys": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260819_state_lock.json",
+        "row_count": "",
+        "columns_or_keys": "decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_path_column_read|target_gt_pixels_decoded|target_metrics_computed"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/pranet_seed20260817_index.csv",
+        "row_count": 1532,
+        "columns_or_keys": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/pranet_seed20260817_state_lock.json",
+        "row_count": "",
+        "columns_or_keys": "decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_path_column_read|target_gt_pixels_decoded|target_metrics_computed"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/pranet_seed20260818_index.csv",
+        "row_count": 1532,
+        "columns_or_keys": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/pranet_seed20260818_state_lock.json",
+        "row_count": "",
+        "columns_or_keys": "decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_path_column_read|target_gt_pixels_decoded|target_metrics_computed"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/pranet_seed20260819_index.csv",
+        "row_count": 1532,
+        "columns_or_keys": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      }
+    ]
+  },
+  "SUNSEG": {
+    "decision": "BLOCKED_AMBIGUOUS_MAPPING",
+    "reason": "cannot yet establish direct soft asset or checkpoint+inference path",
+    "soft_candidate_count": 0,
+    "strong_soft_candidate_count": 0,
+    "manifest_candidate_count": 93,
+    "checkpoint_count": 0,
+    "inference_code_count": 28,
+    "top_soft_candidates": [],
+    "top_checkpoints": [],
+    "top_manifests": [
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1A_CANONICALIZATION_STATE_AUDIT.csv",
+        "row_count": 9,
+        "columns_or_keys": "model_family|training_seed|model_state_id|source_npz_sha256|destination_npz_sha256|npz_bytes_unchanged|source_index_csv_sha256|destination_index_csv_sha256|rows|artifact_path_fields_rewritten|non_path_scientific_fields_changed|destination_state_lock_sha256"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1_SUNSEG_MODEL_FRAME_PREDICTION_MANIFEST.csv",
+        "row_count": 8820,
+        "columns_or_keys": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1_SUNSEG_SOURCE_TENT1_PL_PREDICTION_LOCK.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|cohort|model_panel|actions|runner_fix|historical_implementation_lineage|artifacts|descriptive_prediction_behavior_only|information_boundary|next_stage|canonicalization_decision|canonicalized_from|canonicalization"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260817_source_tent1_pl_index.csv",
+        "row_count": 980,
+        "columns_or_keys": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260817_source_tent1_pl_lock.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|model_family|model_state_id|training_seed|checkpoint_path|checkpoint_sha256|target_cases|physical_cases|mask_shape|packed_bytes|actions|prediction_npz_sha256|index_csv_sha256|historical_lineage|information_boundary|canonicalized_from|canonicalization"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260818_source_tent1_pl_index.csv",
+        "row_count": 980,
+        "columns_or_keys": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260818_source_tent1_pl_lock.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|model_family|model_state_id|training_seed|checkpoint_path|checkpoint_sha256|target_cases|physical_cases|mask_shape|packed_bytes|actions|prediction_npz_sha256|index_csv_sha256|historical_lineage|information_boundary|canonicalized_from|canonicalization"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260819_source_tent1_pl_index.csv",
+        "row_count": 980,
+        "columns_or_keys": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260819_source_tent1_pl_lock.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|model_family|model_state_id|training_seed|checkpoint_path|checkpoint_sha256|target_cases|physical_cases|mask_shape|packed_bytes|actions|prediction_npz_sha256|index_csv_sha256|historical_lineage|information_boundary|canonicalized_from|canonicalization"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/pranet_seed20260817_source_tent1_pl_index.csv",
+        "row_count": 980,
+        "columns_or_keys": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/pranet_seed20260817_source_tent1_pl_lock.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|model_family|model_state_id|training_seed|checkpoint_path|checkpoint_sha256|target_cases|physical_cases|mask_shape|packed_bytes|actions|prediction_npz_sha256|index_csv_sha256|historical_lineage|information_boundary|canonicalized_from|canonicalization"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/pranet_seed20260818_source_tent1_pl_index.csv",
+        "row_count": 980,
+        "columns_or_keys": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      }
+    ]
+  },
+  "Prostate158": {
+    "decision": "DIRECT_SOFT_ASSET_READY",
+    "reason": "soft/logit candidate has array-header evidence and is referenced by retained code",
+    "soft_candidate_count": 18,
+    "strong_soft_candidate_count": 15,
+    "manifest_candidate_count": 192,
+    "checkpoint_count": 40,
+    "inference_code_count": 26,
+    "top_soft_candidates": [
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold2/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[723, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/SegFormer_B0/fold2/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[723, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold2/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[723, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[719, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/SegFormer_B0/fold0/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[719, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold0/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[719, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold1/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[717, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/SegFormer_B0/fold1/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[717, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold1/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[717, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold3/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[709, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/SegFormer_B0/fold3/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[709, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold3/best_oof_prob_f16.npy",
+        "member": "",
+        "shape": "[709, 352, 352]",
+        "dtype": "float16",
+        "code_reference_count": 4,
+        "route_priority": 100
+      }
+    ],
+    "top_checkpoints": [
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold1/last.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold2/last.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold3/last.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/last.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold4/last.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/best.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold1/best.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold2/best.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold3/best.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold4/best.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold4/last.pt",
+      "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold0/last.pt"
+    ],
+    "top_manifests": [
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_BATCH8_MODEL_PREFLIGHT.json",
+        "row_count": "",
+        "columns_or_keys": "status|version|batch_size|input_size|device|gpu|families|segformer_encoder|promises12_gt_access"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_DeepLabV3_R50_FOLD_SUMMARY.csv",
+        "row_count": 5,
+        "columns_or_keys": "family|fold|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_SOURCE_OOF_MODEL_PANEL_SUMMARY.csv",
+        "row_count": 3,
+        "columns_or_keys": "family|mean_fold_patient_dice|std_fold_patient_dice|best_epochs"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_SOURCE_OOF_SEGMENTATION_PANEL_LOCK.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|version|build|cm2b_lock_sha256|source_patient_count|source_slice_count|fold_count|families|batch_size|max_epochs|target_spacing_mm|promises12_gt_access|segformer_encoder_lock|tta|safety_model_fitting|family_oof_artifacts|panel_summary|panel_summary_sha256|source_cache_meta|source_cache_meta_sha256|batch8_preflight|batch8_preflight_sha256|next_stage"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_SegFormer_B0_FOLD_SUMMARY.csv",
+        "row_count": 5,
+        "columns_or_keys": "family|fold|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_UNet_FOLD_SUMMARY.csv",
+        "row_count": 5,
+        "columns_or_keys": "family|fold|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/COMPLETE.json",
+        "row_count": "",
+        "columns_or_keys": "status|version|family|fold|seed|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params|best_checkpoint|best_checkpoint_sha256|oof_prob|oof_prob_sha256|oof_mask|oof_mask_sha256|oof_index|oof_index_sha256|patient_metrics|patient_metrics_sha256"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/best_oof_index.csv",
+        "row_count": 719,
+        "columns_or_keys": "global_index|case_key|fold|slice_index"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/best_patient_metrics.csv",
+        "row_count": 28,
+        "columns_or_keys": "case_key|dice_3d|tp|fp|fn"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/history.csv",
+        "row_count": 26,
+        "columns_or_keys": "epoch|train_loss|val_loss|val_mean_patient_dice|best_mean_patient_dice|bad_epochs"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold1/COMPLETE.json",
+        "row_count": "",
+        "columns_or_keys": "status|version|family|fold|seed|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params|best_checkpoint|best_checkpoint_sha256|oof_prob|oof_prob_sha256|oof_mask|oof_mask_sha256|oof_index|oof_index_sha256|patient_metrics|patient_metrics_sha256"
+      },
+      {
+        "path": "outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold1/best_oof_index.csv",
+        "row_count": 717,
+        "columns_or_keys": "global_index|case_key|fold|slice_index"
+      }
+    ]
+  },
+  "PROMISE12": {
+    "decision": "BLOCKED_AMBIGUOUS_MAPPING",
+    "reason": "cannot yet establish direct soft asset or checkpoint+inference path",
+    "soft_candidate_count": 0,
+    "strong_soft_candidate_count": 0,
+    "manifest_candidate_count": 74,
+    "checkpoint_count": 0,
+    "inference_code_count": 17,
+    "top_soft_candidates": [],
+    "top_checkpoints": [],
+    "top_manifests": [
+      {
+        "path": "outputs/Q1X_CM2A_prostate158_official_manifest_t2_resolver_and_slice_preflight_fix3_v1/CM2A_PROMISE12_IMAGE_ONLY_PATIENT_MANIFEST.csv",
+        "row_count": 50,
+        "columns_or_keys": "patient_id|case_id|image_mhd|image_raw|dim_x|dim_y|dim_z|element_type|element_spacing"
+      },
+      {
+        "path": "outputs/Q1X_CM2A_prostate158_official_manifest_t2_resolver_and_slice_preflight_fix3_v1/CM2A_PROMISE12_IMAGE_ONLY_SLICE_MANIFEST.csv",
+        "row_count": 1377,
+        "columns_or_keys": "sample_id|patient_id|case_id|slice_axis|slice_index|image_mhd|image_raw|dim_x|dim_y|dim_z|gt_used_for_manifest"
+      },
+      {
+        "path": "outputs/Q1X_CM2B_prostate_mri_preprocessing_and_model_protocol_lock_fix1_v1/CM2B_PROMISE12_IMAGE_ONLY_HEADER_AUDIT.csv",
+        "row_count": 50,
+        "columns_or_keys": "patient_id|spacing_x|spacing_y|spacing_z|dim_x|dim_y|dim_z|element_type|gt_header_opened|gt_raw_opened"
+      },
+      {
+        "path": "outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_LOCKED_POLICY_SUMMARY.csv",
+        "row_count": 3,
+        "columns_or_keys": "family|fixed_source_threshold|fixed_source_adaptation_coverage|naive_quantile_threshold|naive_quantile_adaptation_coverage|support_aware_threshold|support_aware_adaptation_coverage"
+      },
+      {
+        "path": "outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_SOURCE_CROSSFIT_DENSITY_RATIO_WEIGHTS.csv",
+        "row_count": 10659,
+        "columns_or_keys": "family|fold|global_index|case_key|slice_index|harmful|neutral|beneficial|source_dice|tent1_dice|delta_dice|score_M2|score_CondDINO|score_Final|domain_q_target_oof|density_ratio_raw|density_ratio_weight"
+      },
+      {
+        "path": "outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_SUPPORT_DIAGNOSTICS.csv",
+        "row_count": 3,
+        "columns_or_keys": "family|domain_oof_auroc|source_weight_ess_all_slices|source_weight_ess_harm_slices|source_weight_ess_harm_patients|source_weight_cap_fraction|target_q_ge_0.99_fraction|raw_weight_p50|raw_weight_p90|raw_weight_p99|normalized_weight_max_before_cap|stabilized_weight_max"
+      },
+      {
+        "path": "outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_TARGET_CROSSFIT_DOMAIN_PROPENSITIES.csv",
+        "row_count": 4131,
+        "columns_or_keys": "family|global_index|case_key|slice_index|risk_score|frozen_source_threshold|fixed_source_gate_retain_source|fixed_source_gate_adapt|source_fg_fraction|tent_fg_fraction|source_tent_mask_disagreement|tent_pre_entropy|tent_post_entropy|tent_entropy_change|domain_q_target_oof|domain_fold"
+      },
+      {
+        "path": "outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_UNLABELED_OPERATING_POINT_TRANSPORT.json",
+        "row_count": "",
+        "columns_or_keys": "status|version|fixed_source_reference|naive_target_quantile_baseline|support_aware_transport|promises12_gt_access"
+      },
+      {
+        "path": "outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_UNLABELED_OPERATING_POINT_TRANSPORT_LOCK.json",
+        "row_count": "",
+        "columns_or_keys": "status|decision|version|build|cm4b_lock_sha256|cm4c_lock_sha256|cm5a_lock_sha256|cm5a_helper_sha256|fix2_schema_correction|scientific_assumption|domain_ratio_estimator|support_gate|fixed_source_reference|naive_target_quantile_baseline|support_aware_transport|information_boundary|locked_cm6_evaluation_plan|artifacts|next_stage"
+      },
+      {
+        "path": "outputs/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix1_v1/CM7A_DINO_CLS_META.json",
+        "row_count": "",
+        "columns_or_keys": "status|version|representation|source_shape|target_shape|source_file|source_sha256|target_file|target_sha256|target_gt_used"
+      },
+      {
+        "path": "outputs/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1/CM7A_DINO_CLS_META.json",
+        "row_count": "",
+        "columns_or_keys": "status|version|representation|source_shape|target_shape|source_file|source_sha256|target_file|target_sha256|target_gt_used"
+      },
+      {
+        "path": "outputs/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2_v1/CM7A_FINAL_VS_BASELINE_PAIRED_DELTA_AUROC_BOOTSTRAP.csv",
+        "row_count": 5,
+        "columns_or_keys": "comparison|baseline|reps_valid|bootstrap_mean_delta_auroc|ci95_low|ci95_high|final_significantly_better_95ci"
+      }
+    ]
+  }
+}

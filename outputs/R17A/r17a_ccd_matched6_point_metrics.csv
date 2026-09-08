@@ -1,0 +1,3 @@
+method,pooled_auroc,pooled_auprc,macro2_auroc,macro2_auprc
+SafeTTA,0.669096725,0.613051022,0.67138535,0.616637379
+SicTTA-CCD,0.644591565,0.513241554,0.649438197,0.519921801

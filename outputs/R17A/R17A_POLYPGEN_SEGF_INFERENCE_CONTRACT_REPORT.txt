@@ -1,0 +1,446 @@
+===== R17A POLYPGEN SEGF INFERENCE CONTRACT REPORT =====
+Version: 2026-09-08-Q1-R17A-CCD-POLYPGEN-SEGF-INFERENCE-CONTRACT-AUDIT-v1
+Root: F:\MEDSEG_SAFETTA
+
+INFORMATION BOUNDARY:
+Training: NO
+Inference: NO
+Target GT loading: NO
+HARM/outcome loading: NO
+
+SCRIPT SHA:
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py | sha256=d737272b756a4d2051f9c74051d7085640eaec9cd8be6dbd951c325af2a17c31 | expected=d737272b756a4d2051f9c74051d7085640eaec9cd8be6dbd951c325af2a17c31 | match=True
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py | sha256=df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251 | expected=df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251 | match=True
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py | sha256=4cae02c30e82781c6e7d3b74b6a312974789213a9cc59a44ca99bbfb94405708 | expected=UNLOCKED_IN_THIS_AUDIT | match=True
+
+EXACT FUNCTION CONTRACTS:
+
+--- code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py :: def segformer_logits_and_z(model, x, F) [L1004-L1017] ---
+def segformer_logits_and_z(model, x, F):
+    outputs = model(pixel_values=x)
+    logits = F.interpolate(
+        outputs.logits,
+        size=(IMAGE_SIZE, IMAGE_SIZE),
+        mode="bilinear",
+        align_corners=False,
+    )
+    if logits.ndim != 4 or logits.shape[1] != 2:
+        raise RuntimeError(
+            f"INVALID_Q1_R03_SEGFORMER_TENT: logits={tuple(logits.shape)}"
+        )
+    z = logits[:, 1] - logits[:, 0]
+    return logits, z
+
+--- code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py :: def build_segformer_context(device) [L1025-L1053] ---
+def build_segformer_context(device):
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    from transformers import AutoImageProcessor, SegformerConfig, SegformerForSemanticSegmentation
+
+    HF_CACHE.mkdir(parents=True, exist_ok=True)
+    os.environ["HF_HOME"] = str(HF_CACHE)
+    os.environ["HUGGINGFACE_HUB_CACHE"] = str(HF_CACHE / "hub")
+
+    processor = AutoImageProcessor.from_pretrained(
+        "nvidia/mit-b0",
+        cache_dir=str(HF_CACHE),
+        do_reduce_labels=False,
+    )
+    mean = np.asarray(processor.image_mean, dtype=np.float32)
+    std = np.asarray(processor.image_std, dtype=np.float32)
+    if mean.shape != (3,) or std.shape != (3,):
+        raise RuntimeError("INVALID_Q1_R03_SEGFORMER_TENT: processor stats")
+
+    config = SegformerConfig.from_pretrained(
+        "nvidia/mit-b0",
+        cache_dir=str(HF_CACHE),
+    )
+    config.num_labels = 2
+    config.id2label = {0: "background", 1: "foreground"}
+    config.label2id = {"background": 0, "foreground": 1}
+
+    return torch, nn, F, SegformerForSemanticSegmentation, config, mean, std
+
+--- code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py :: def load_segformer_state(seed, device, SegformerForSemanticSegmentation, config, torch) [L1056-L1078] ---
+def load_segformer_state(
+    seed,
+    device,
+    SegformerForSemanticSegmentation,
+    config,
+    torch,
+):
+    path, expected_sha = SEGFORMER_CHECKPOINTS[seed]
+    validate_sha(path, expected_sha, f"SegFormer checkpoint seed {seed}")
+    payload = robust_torch_load(path, map_location="cpu")
+    if int(payload.get("seed", -1)) != seed:
+        raise RuntimeError("INVALID_Q1_R03_SEGFORMER_TENT: checkpoint seed")
+    if payload.get("architecture") != "SegFormer-B0":
+        raise RuntimeError("INVALID_Q1_R03_SEGFORMER_TENT: architecture")
+    state = payload.get("state_dict")
+    if not isinstance(state, dict) or not state:
+        raise RuntimeError("INVALID_Q1_R03_SEGFORMER_TENT: state_dict")
+
+    model = SegformerForSemanticSegmentation(config)
+    result = model.load_state_dict(state, strict=True)
+    if result.missing_keys or result.unexpected_keys:
+        raise RuntimeError("INVALID_Q1_R03_SEGFORMER_TENT: strict load")
+    return model.to(device)
+
+--- code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py :: def build_segformer_rows(source_rows, device, cache_dir, resume) [L1081-L1245] ---
+def build_segformer_rows(source_rows, device, cache_dir, resume):
+    (
+        torch, nn, F, SegformerForSemanticSegmentation,
+        config, mean, std,
+    ) = build_segformer_context(device)
+
+    all_rows = []
+    parameter_names_reference = None
+    dropout_names_reference = None
+    bn_count_reference = None
+    per_seed_audit = {}
+
+    for seed in SEGFORMER_SEEDS:
+        sha = SEGFORMER_CHECKPOINTS[seed][1]
+        if resume:
+            cached = load_state_cache(cache_dir, "SegFormer-B0", seed, sha)
+            if cached is not None:
+                print(f"[RESUME] SegFormer-B0 seed={seed} rows={len(cached)}")
+                all_rows.extend(cached)
+                continue
+
+        random.seed(seed)
+        np.random.seed(seed % (2**32 - 1))
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+        model = load_segformer_state(
+            seed, device, SegformerForSemanticSegmentation, config, torch
+        )
+        (
+            params, param_names, bn_modules, bn_original_track,
+            dropout_modules, dropout_names,
+        ) = configure_segformer_tent(model, nn)
+        source_values = snapshot_params(params)
+
+        if parameter_names_reference is None:
+            parameter_names_reference = list(param_names)
+            dropout_names_reference = list(dropout_names)
+            bn_count_reference = len(bn_modules)
+        else:
+            if list(param_names) != parameter_names_reference:
+                raise RuntimeError(
+                    "INVALID_Q1_R03_SEGFORMER_TENT: parameter schema differs by seed"
+                )
+            if list(dropout_names) != dropout_names_reference:
+                raise RuntimeError(
+                    "INVALID_Q1_R03_SEGFORMER_TENT: dropout schema differs by seed"
+                )
+            if len(bn_modules) != bn_count_reference:
+                raise RuntimeError(
+                    "INVALID_Q1_R03_SEGFORMER_TENT: BN schema differs by seed"
+                )
+
+        state_rows = []
+        pbar = tqdm(
+            total=EXPECTED_ROWS_PER_STATE,
+            desc=f"Q1-R03 SegFormer A1 seed {seed}",
+            unit="case",
+            dynamic_ncols=True,
+        )
+
+        for src in source_rows:
+            image_path = DATA_ROOT / Path(src["image_relpath"])
+            with Image.open(image_path) as im:
+                native = im.convert("RGB")
+            gt = load_native_gt(src)
+
+            for perturbation in PERTURBATIONS:
+                # Use frozen S03 perturbation implementation exactly.
+                # Imported lazily here to avoid target/helper coupling.
+                pranet_helper = import_module(
+                    PRANET_HELPER,
+                    "q1_r03_pranet_perturb_helper",
+                ) if "q1_r03_pranet_perturb_helper" not in sys.modules else sys.modules[
+                    "q1_r03_pranet_perturb_helper"
+                ]
+                perturbed = pranet_helper.apply_perturbation(
+                    native, perturbation, src["sample_id"]
+                )
+                x = segformer_tensor(perturbed, mean, std, torch).to(
+                    device, non_blocking=True
+                )
+
+                # Untouched source prediction.
+                restore_params(params, source_values, torch)
+                segformer_source_mode(
+                    model, bn_modules, bn_original_track, dropout_modules
+                )
+                with torch.no_grad():
+                    _, z_source_t = segformer_logits_and_z(model, x, F)
+                z_source = z_source_t[0].detach().float().cpu().numpy()
+
+                # Episodic A1 TENT.
+                restore_params(params, source_values, torch)
+                segformer_tent_mode(model, bn_modules, dropout_modules)
+                optimizer = torch.optim.Adam(
+                    params, lr=TENT_LR, weight_decay=TENT_WEIGHT_DECAY
+                )
+                optimizer.zero_grad(set_to_none=True)
+                logits_pre, _ = segformer_logits_and_z(model, x, F)
+                loss = categorical_entropy(logits_pre, torch)
+                if not torch.isfinite(loss):
+                    raise RuntimeError(
+                        "INVALID_Q1_R03_SEGFORMER_TENT: non-finite entropy"
+                    )
+                loss.backward()
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+
+                with torch.no_grad():
+                    _, z_action_t = segformer_logits_and_z(model, x, F)
+                z_action = z_action_t[0].detach().float().cpu().numpy()
+                tent_loss = float(loss.detach().cpu())
+
+                source_dice = dice_from_z352(z_source, gt, torch, F)
+                action_dice = dice_from_z352(z_action, gt, torch, F)
+                features = extract_source_features(z_source, tent_loss)
+
+                row = make_common_row(
+                    "SegFormer-B0",
+                    seed,
+                    sha,
+                    src["sample_id"],
+                    fold_for_sample(src["sample_id"]),
+                    perturbation,
+                    source_dice,
+                    action_dice,
+                    features,
+                )
+                state_rows.append(row)
+                pbar.update(1)
+                pbar.set_postfix(dDice=f"{row['delta_dice']:+.3f}")
+
+                del optimizer, logits_pre, loss, z_source_t, z_action_t
+
+        pbar.close()
+        restore_params(params, source_values, torch)
+        validate_state_rows(state_rows, "SegFormer-B0", seed, sha)
+        save_state_cache(cache_dir, "SegFormer-B0", seed, sha, state_rows)
+        all_rows.extend(state_rows)
+
+        per_seed_audit[str(seed)] = {
+            "trainable_norm_affine_tensor_count": len(params),
+            "trainable_norm_affine_names": list(param_names),
+            "batchnorm_module_count": len(bn_modules),
+            "dropout_module_count": len(dropout_modules),
+            "dropout_names": list(dropout_names),
+            "rows": len(state_rows),
+        }
+
+        del model, params, source_values, bn_modules, dropout_modules
+        torch.cuda.empty_cache()
+
+    return all_rows, {
+        "parameter_names_reference": parameter_names_reference,
+        "dropout_names_reference": dropout_names_reference,
+        "batchnorm_module_count": bn_count_reference,
+        "per_seed": per_seed_audit,
+        "tent_lr": TENT_LR,
+        "tent_weight_decay": TENT_WEIGHT_DECAY,
+        "tent_steps": 1,
+        "adapted_module_types": ["LayerNorm", "BatchNorm2d"],
+        "dropout_rule": "eval_during_tent",
+        "batchnorm_rule": "current_sample_stats_during_tent",
+    }
+
+--- code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py :: def run_segformer_state(state, targets, device, r03, seg_context) [L599-L748] ---
+def run_segformer_state(state, targets, device, r03, seg_context=None):
+    if seg_context is None:
+        seg_context = r03.build_segformer_context(device)
+
+    (
+        torch,
+        nn,
+        F,
+        SegformerForSemanticSegmentation,
+        config,
+        mean,
+        std,
+    ) = seg_context
+
+    seed = int(state["training_seed"])
+    set_runtime_seed(seed)
+
+    model = r03.load_segformer_state(
+        seed,
+        device,
+        SegformerForSemanticSegmentation,
+        config,
+        torch,
+    )
+
+    (
+        params,
+        param_names,
+        bn_modules,
+        bn_original_track,
+        dropout_modules,
+        dropout_names,
+    ) = r03.configure_segformer_tent(model, nn)
+
+    source_values = r03.snapshot_params(params)
+
+    source_pack = np.empty((EXPECTED_CASES, PACKED_BYTES), dtype=np.uint8)
+    a1_pack = np.empty_like(source_pack)
+    index_rows = []
+
+    pbar = tqdm(
+        enumerate(targets),
+        total=EXPECTED_CASES,
+        desc=f"D3 SegFormer seed {seed}",
+        unit="img",
+        dynamic_ncols=True,
+    )
+
+    for i, target in pbar:
+        with Image.open(target["image_path"]) as im:
+            native = im.convert("RGB")
+
+        x = r03.segformer_tensor(native, mean, std, torch).to(
+            device,
+            non_blocking=True,
+        )
+
+        # Frozen SOURCE.
+        r03.restore_params(params, source_values, torch)
+        r03.segformer_source_mode(
+            model,
+            bn_modules,
+            bn_original_track,
+            dropout_modules,
+        )
+        with torch.no_grad():
+            _, z_source_t = r03.segformer_logits_and_z(model, x, F)
+
+        # Frozen one-step episodic A1.
+        r03.restore_params(params, source_values, torch)
+        r03.segformer_tent_mode(
+            model,
+            bn_modules,
+            dropout_modules,
+        )
+
+        optimizer = torch.optim.Adam(
+            params,
+            lr=TENT_LR,
+            weight_decay=TENT_WEIGHT_DECAY,
+        )
+        optimizer.zero_grad(set_to_none=True)
+
+        logits_pre, _ = r03.segformer_logits_and_z(model, x, F)
+        loss = r03.categorical_entropy(logits_pre, torch)
+        if not torch.isfinite(loss):
+            raise RuntimeError("Non-finite SegFormer A1 entropy loss.")
+
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+
+        with torch.no_grad():
+            _, z_a1_t = r03.segformer_logits_and_z(model, x, F)
+
+        z_source = z_source_t[0].detach().float().cpu().numpy()
+        z_a1 = z_a1_t[0].detach().float().cpu().numpy()
+
+        sm = logit_to_mask(z_source)
+        am = logit_to_mask(z_a1)
+
+        source_pack[i] = pack_mask(sm)
+        a1_pack[i] = pack_mask(am)
+
+        changed = int(np.count_nonzero(sm != am))
+        index_rows.append({
+            "row_index": i,
+            "sample_id": target["sample_id"],
+            "image_path": target["image_path"],
+            "image_raw_sha256": target["image_raw_sha256"],
+            "model_family": state["model_family"],
+            "model_state_id": state["model_state_id"],
+            "training_seed": seed,
+            "checkpoint_sha256": state["checkpoint_sha256"],
+            "source_foreground_pixels": int(sm.sum()),
+            "a1_foreground_pixels": int(am.sum()),
+            "changed_pixels": changed,
+        })
+        pbar.set_postfix(chg=changed)
+
+        del (
+            optimizer,
+            logits_pre,
+            loss,
+            z_source_t,
+            z_a1_t,
+            z_source,
+            z_a1,
+            sm,
+            am,
+            x,
+        )
+
+    r03.restore_params(params, source_values, torch)
+
+    del (
+        model,
+        params,
+        source_values,
+        param_names,
+        bn_modules,
+        bn_original_track,
+        dropout_modules,
+        dropout_names,
+    )
+
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+
+    return source_pack, a1_pack, index_rows, seg_context
+
+CHECKPOINTS:
+seed=20260820 path=outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260820/best_model_state.pt sha256=9dae2ae907b193ea36c2bccc8e376ddbad1699ba27ae0769cf40bcba13e95605 container=state_dict keys=208
+  TOP_KEYS=script_version|architecture|pretrained_model|seed|epoch|val_mean_image_dice|val_loss|image_size|num_labels|state_dict
+  STATE_KEYS=segformer.stages.0.patch_embeddings.proj.weight | segformer.stages.0.patch_embeddings.proj.bias | segformer.stages.0.patch_embeddings.layer_norm.weight | segformer.stages.0.patch_embeddings.layer_norm.bias | segformer.stages.0.blocks.0.layernorm_before.weight | segformer.stages.0.blocks.0.layernorm_before.bias | segformer.stages.0.blocks.0.attention.q_proj.weight | segformer.stages.0.blocks.0.attention.q_proj.bias | segformer.stages.0.blocks.0.attention.k_proj.weight | segformer.stages.0.blocks.0.attention.k_proj.bias | segformer.stages.0.blocks.0.attention.v_proj.weight | segformer.stages.0.blocks.0.attention.v_proj.bias | segformer.stages.0.blocks.0.attention.o_proj.weight | segformer.stages.0.blocks.0.attention.o_proj.bias | segformer.stages.0.blocks.0.attention.sequence_reduction.sequence_reduction.weight | segformer.stages.0.blocks.0.attention.sequence_reduction.sequence_reduction.bias | segformer.stages.0.blocks.0.attention.sequence_reduction.layer_norm.weight | segformer.stages.0.blocks.0.attention.sequence_reduction.layer_norm.bias | segformer.stages.0.blocks.0.layernorm_after.weight | segformer.stages.0.blocks.0.layernorm_after.bias | segformer.stages.0.blocks.0.mlp.fc1.weight | segformer.stages.0.blocks.0.mlp.fc1.bias | segformer.stages.0.blocks.0.mlp.dwconv.dwconv.weight | segformer.stages.0.blocks.0.mlp.dwconv.dwconv.bias | segformer.stages.0.blocks.0.mlp.fc2.weight | segformer.stages.0.blocks.0.mlp.fc2.bias | segformer.stages.0.blocks.1.layernorm_before.weight | segformer.stages.0.blocks.1.layernorm_before.bias | segformer.stages.0.blocks.1.attention.q_proj.weight | segformer.stages.0.blocks.1.attention.q_proj.bias | segformer.stages.0.blocks.1.attention.k_proj.weight | segformer.stages.0.blocks.1.attention.k_proj.bias | segformer.stages.0.blocks.1.attention.v_proj.weight | segformer.stages.0.blocks.1.attention.v_proj.bias | segformer.stages.0.blocks.1.attention.o_proj.weight | segformer.stages.0.blocks.1.attention.o_proj.bias | segformer.stages.0.blocks.1.attention.sequence_reduction.sequence_reduction.weight | segformer.stages.0.blocks.1.attention.sequence_reduction.sequence_reduction.bias | segformer.stages.0.blocks.1.attention.sequence_reduction.layer_norm.weight | segformer.stages.0.blocks.1.attention.sequence_reduction.layer_norm.bias | segformer.stages.0.blocks.1.layernorm_after.weight | segformer.stages.0.blocks.1.layernorm_after.bias | segformer.stages.0.blocks.1.mlp.fc1.weight | segformer.stages.0.blocks.1.mlp.fc1.bias | segformer.stages.0.blocks.1.mlp.dwconv.dwconv.weight | segformer.stages.0.blocks.1.mlp.dwconv.dwconv.bias | segformer.stages.0.blocks.1.mlp.fc2.weight | segformer.stages.0.blocks.1.mlp.fc2.bias | segformer.stages.0.layer_norm.weight | segformer.stages.0.layer_norm.bias | segformer.stages.1.patch_embeddings.proj.weight | segformer.stages.1.patch_embeddings.proj.bias | segformer.stages.1.patch_embeddings.layer_norm.weight | segformer.stages.1.patch_embeddings.layer_norm.bias | segformer.stages.1.blocks.0.layernorm_before.weight | segformer.stages.1.blocks.0.layernorm_before.bias | segformer.stages.1.blocks.0.attention.q_proj.weight | segformer.stages.1.blocks.0.attention.q_proj.bias | segformer.stages.1.blocks.0.attention.k_proj.weight | segformer.stages.1.blocks.0.attention.k_proj.bias | segformer.stages.1.blocks.0.attention.v_proj.weight | segformer.stages.1.blocks.0.attention.v_proj.bias | segformer.stages.1.blocks.0.attention.o_proj.weight | segformer.stages.1.blocks.0.attention.o_proj.bias | se
+seed=20260821 path=outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260821/best_model_state.pt sha256=ad75290168eab7d116aa3de61b3eafc1e986f11fc0bbfa4a6108abbf669a258d container=state_dict keys=208
+  TOP_KEYS=script_version|architecture|pretrained_model|seed|epoch|val_mean_image_dice|val_loss|image_size|num_labels|state_dict
+  STATE_KEYS=segformer.stages.0.patch_embeddings.proj.weight | segformer.stages.0.patch_embeddings.proj.bias | segformer.stages.0.patch_embeddings.layer_norm.weight | segformer.stages.0.patch_embeddings.layer_norm.bias | segformer.stages.0.blocks.0.layernorm_before.weight | segformer.stages.0.blocks.0.layernorm_before.bias | segformer.stages.0.blocks.0.attention.q_proj.weight | segformer.stages.0.blocks.0.attention.q_proj.bias | segformer.stages.0.blocks.0.attention.k_proj.weight | segformer.stages.0.blocks.0.attention.k_proj.bias | segformer.stages.0.blocks.0.attention.v_proj.weight | segformer.stages.0.blocks.0.attention.v_proj.bias | segformer.stages.0.blocks.0.attention.o_proj.weight | segformer.stages.0.blocks.0.attention.o_proj.bias | segformer.stages.0.blocks.0.attention.sequence_reduction.sequence_reduction.weight | segformer.stages.0.blocks.0.attention.sequence_reduction.sequence_reduction.bias | segformer.stages.0.blocks.0.attention.sequence_reduction.layer_norm.weight | segformer.stages.0.blocks.0.attention.sequence_reduction.layer_norm.bias | segformer.stages.0.blocks.0.layernorm_after.weight | segformer.stages.0.blocks.0.layernorm_after.bias | segformer.stages.0.blocks.0.mlp.fc1.weight | segformer.stages.0.blocks.0.mlp.fc1.bias | segformer.stages.0.blocks.0.mlp.dwconv.dwconv.weight | segformer.stages.0.blocks.0.mlp.dwconv.dwconv.bias | segformer.stages.0.blocks.0.mlp.fc2.weight | segformer.stages.0.blocks.0.mlp.fc2.bias | segformer.stages.0.blocks.1.layernorm_before.weight | segformer.stages.0.blocks.1.layernorm_before.bias | segformer.stages.0.blocks.1.attention.q_proj.weight | segformer.stages.0.blocks.1.attention.q_proj.bias | segformer.stages.0.blocks.1.attention.k_proj.weight | segformer.stages.0.blocks.1.attention.k_proj.bias | segformer.stages.0.blocks.1.attention.v_proj.weight | segformer.stages.0.blocks.1.attention.v_proj.bias | segformer.stages.0.blocks.1.attention.o_proj.weight | segformer.stages.0.blocks.1.attention.o_proj.bias | segformer.stages.0.blocks.1.attention.sequence_reduction.sequence_reduction.weight | segformer.stages.0.blocks.1.attention.sequence_reduction.sequence_reduction.bias | segformer.stages.0.blocks.1.attention.sequence_reduction.layer_norm.weight | segformer.stages.0.blocks.1.attention.sequence_reduction.layer_norm.bias | segformer.stages.0.blocks.1.layernorm_after.weight | segformer.stages.0.blocks.1.layernorm_after.bias | segformer.stages.0.blocks.1.mlp.fc1.weight | segformer.stages.0.blocks.1.mlp.fc1.bias | segformer.stages.0.blocks.1.mlp.dwconv.dwconv.weight | segformer.stages.0.blocks.1.mlp.dwconv.dwconv.bias | segformer.stages.0.blocks.1.mlp.fc2.weight | segformer.stages.0.blocks.1.mlp.fc2.bias | segformer.stages.0.layer_norm.weight | segformer.stages.0.layer_norm.bias | segformer.stages.1.patch_embeddings.proj.weight | segformer.stages.1.patch_embeddings.proj.bias | segformer.stages.1.patch_embeddings.layer_norm.weight | segformer.stages.1.patch_embeddings.layer_norm.bias | segformer.stages.1.blocks.0.layernorm_before.weight | segformer.stages.1.blocks.0.layernorm_before.bias | segformer.stages.1.blocks.0.attention.q_proj.weight | segformer.stages.1.blocks.0.attention.q_proj.bias | segformer.stages.1.blocks.0.attention.k_proj.weight | segformer.stages.1.blocks.0.attention.k_proj.bias | segformer.stages.1.blocks.0.attention.v_proj.weight | segformer.stages.1.blocks.0.attention.v_proj.bias | segformer.stages.1.blocks.0.attention.o_proj.weight | segformer.stages.1.blocks.0.attention.o_proj.bias | se
+seed=20260822 path=outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260822/best_model_state.pt sha256=ea0b3881373e9f966475a082490fabe4b0acae81179b8596c48a06ee2661a34a container=state_dict keys=208
+  TOP_KEYS=script_version|architecture|pretrained_model|seed|epoch|val_mean_image_dice|val_loss|image_size|num_labels|state_dict
+  STATE_KEYS=segformer.stages.0.patch_embeddings.proj.weight | segformer.stages.0.patch_embeddings.proj.bias | segformer.stages.0.patch_embeddings.layer_norm.weight | segformer.stages.0.patch_embeddings.layer_norm.bias | segformer.stages.0.blocks.0.layernorm_before.weight | segformer.stages.0.blocks.0.layernorm_before.bias | segformer.stages.0.blocks.0.attention.q_proj.weight | segformer.stages.0.blocks.0.attention.q_proj.bias | segformer.stages.0.blocks.0.attention.k_proj.weight | segformer.stages.0.blocks.0.attention.k_proj.bias | segformer.stages.0.blocks.0.attention.v_proj.weight | segformer.stages.0.blocks.0.attention.v_proj.bias | segformer.stages.0.blocks.0.attention.o_proj.weight | segformer.stages.0.blocks.0.attention.o_proj.bias | segformer.stages.0.blocks.0.attention.sequence_reduction.sequence_reduction.weight | segformer.stages.0.blocks.0.attention.sequence_reduction.sequence_reduction.bias | segformer.stages.0.blocks.0.attention.sequence_reduction.layer_norm.weight | segformer.stages.0.blocks.0.attention.sequence_reduction.layer_norm.bias | segformer.stages.0.blocks.0.layernorm_after.weight | segformer.stages.0.blocks.0.layernorm_after.bias | segformer.stages.0.blocks.0.mlp.fc1.weight | segformer.stages.0.blocks.0.mlp.fc1.bias | segformer.stages.0.blocks.0.mlp.dwconv.dwconv.weight | segformer.stages.0.blocks.0.mlp.dwconv.dwconv.bias | segformer.stages.0.blocks.0.mlp.fc2.weight | segformer.stages.0.blocks.0.mlp.fc2.bias | segformer.stages.0.blocks.1.layernorm_before.weight | segformer.stages.0.blocks.1.layernorm_before.bias | segformer.stages.0.blocks.1.attention.q_proj.weight | segformer.stages.0.blocks.1.attention.q_proj.bias | segformer.stages.0.blocks.1.attention.k_proj.weight | segformer.stages.0.blocks.1.attention.k_proj.bias | segformer.stages.0.blocks.1.attention.v_proj.weight | segformer.stages.0.blocks.1.attention.v_proj.bias | segformer.stages.0.blocks.1.attention.o_proj.weight | segformer.stages.0.blocks.1.attention.o_proj.bias | segformer.stages.0.blocks.1.attention.sequence_reduction.sequence_reduction.weight | segformer.stages.0.blocks.1.attention.sequence_reduction.sequence_reduction.bias | segformer.stages.0.blocks.1.attention.sequence_reduction.layer_norm.weight | segformer.stages.0.blocks.1.attention.sequence_reduction.layer_norm.bias | segformer.stages.0.blocks.1.layernorm_after.weight | segformer.stages.0.blocks.1.layernorm_after.bias | segformer.stages.0.blocks.1.mlp.fc1.weight | segformer.stages.0.blocks.1.mlp.fc1.bias | segformer.stages.0.blocks.1.mlp.dwconv.dwconv.weight | segformer.stages.0.blocks.1.mlp.dwconv.dwconv.bias | segformer.stages.0.blocks.1.mlp.fc2.weight | segformer.stages.0.blocks.1.mlp.fc2.bias | segformer.stages.0.layer_norm.weight | segformer.stages.0.layer_norm.bias | segformer.stages.1.patch_embeddings.proj.weight | segformer.stages.1.patch_embeddings.proj.bias | segformer.stages.1.patch_embeddings.layer_norm.weight | segformer.stages.1.patch_embeddings.layer_norm.bias | segformer.stages.1.blocks.0.layernorm_before.weight | segformer.stages.1.blocks.0.layernorm_before.bias | segformer.stages.1.blocks.0.attention.q_proj.weight | segformer.stages.1.blocks.0.attention.q_proj.bias | segformer.stages.1.blocks.0.attention.k_proj.weight | segformer.stages.1.blocks.0.attention.k_proj.bias | segformer.stages.1.blocks.0.attention.v_proj.weight | segformer.stages.1.blocks.0.attention.v_proj.bias | segformer.stages.1.blocks.0.attention.o_proj.weight | segformer.stages.1.blocks.0.attention.o_proj.bias | se
+
+POLYPGEN FROZEN HARD LOCKS:
+seed=20260820 npz=outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260820_predictions.npz sha256=d36ad27453e0532516f955c5c4d55e7282f38a04426aaf58bfb10bf5c9d089e0
+  source_hard_mask_members=source_masks_packed.npy
+  index_csvs=outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260820_index.csv
+  npz_members=[{"member": "source_masks_packed.npy", "shape": [1532, 15488], "dtype": "uint8"}, {"member": "a1_masks_packed.npy", "shape": [1532, 15488], "dtype": "uint8"}]
+seed=20260821 npz=outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260821_predictions.npz sha256=387fbadd066ab9c668bb59895a22fd2dd1580bad6c4225f9a42cd48a4e325dee
+  source_hard_mask_members=source_masks_packed.npy
+  index_csvs=outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260821_index.csv
+  npz_members=[{"member": "source_masks_packed.npy", "shape": [1532, 15488], "dtype": "uint8"}, {"member": "a1_masks_packed.npy", "shape": [1532, 15488], "dtype": "uint8"}]
+seed=20260822 npz=outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260822_predictions.npz sha256=a26d7c9eb9cb11055779410106d5f1e0476b3990609a0698ad7005e24b989611
+  source_hard_mask_members=source_masks_packed.npy
+  index_csvs=outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260822_index.csv
+  npz_members=[{"member": "source_masks_packed.npy", "shape": [1532, 15488], "dtype": "uint8"}, {"member": "a1_masks_packed.npy", "shape": [1532, 15488], "dtype": "uint8"}]
+
+IMPLEMENTATION RULE FOR NEXT RUNNER:
+- Reuse the exact extracted SegFormer helpers; do not hand-reimplement preprocessing.
+- Load only the three SHA-locked SOURCE checkpoints above.
+- Use frozen PolypGen no-GT manifest/image paths only.
+- Before accepting any soft logits, threshold the re-inferred SOURCE prediction
+  using the historical code's exact rule and require parity with the frozen
+  pre-GT SegFormer SOURCE hard-mask lock.
+- If parity fails, STOP and do not write CCD scores.
+- After parity passes, compute CCD from the same pre-threshold SOURCE logits,
+  serialize the 3-state score table, and SHA-lock it before any HARM join.
+
+GATE=PASS_R17A_POLYPGEN_SEGF_INFERENCE_CONTRACT_AUDIT
+NEXT=BUILD_BITEXACT_VALIDATED_SEGFOMER_POLYPGEN_CCD_RUNNER

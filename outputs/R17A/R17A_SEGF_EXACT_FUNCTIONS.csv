@@ -1,0 +1,689 @@
+﻿path,function,start_line,end_line,source
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,segformer_tensor,901,909,"def segformer_tensor(image, mean, std, torch):
+    resized = image.convert(""RGB"").resize(
+        (IMAGE_SIZE, IMAGE_SIZE),
+        resample=Image.Resampling.BILINEAR,
+    )
+    arr = np.asarray(resized, dtype=np.float32) / 255.0
+    arr = (arr - mean[None, None, :]) / std[None, None, :]
+    arr = np.transpose(arr, (2, 0, 1)).copy()
+    return torch.from_numpy(arr).unsqueeze(0)"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,configure_segformer_tent,939,970,"def configure_segformer_tent(model, nn):
+    model.requires_grad_(False)
+    params = []
+    names = []
+    bn_modules = []
+    bn_original_track = {}
+    dropout_modules = []
+    dropout_names = []
+
+    for name, module in model.named_modules():
+        if isinstance(module, (nn.Dropout, nn.Dropout2d, nn.AlphaDropout)):
+            dropout_modules.append(module)
+            dropout_names.append(name)
+
+        if isinstance(module, nn.BatchNorm2d):
+            bn_modules.append(module)
+            bn_original_track[id(module)] = bool(module.track_running_stats)
+
+        if isinstance(module, (nn.LayerNorm, nn.BatchNorm2d)):
+            for suffix in (""weight"", ""bias""):
+                p = getattr(module, suffix, None)
+                if p is not None:
+                    p.requires_grad_(True)
+                    params.append(p)
+                    names.append(f""{name}.{suffix}"")
+
+    if not params:
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: no norm affine params"")
+    if len(names) != len(set(names)):
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: duplicate params"")
+
+    return params, names, bn_modules, bn_original_track, dropout_modules, dropout_names"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,segformer_source_mode,984,992,"def segformer_source_mode(
+    model, bn_modules, bn_original_track, dropout_modules
+):
+    model.eval()
+    for module in bn_modules:
+        module.track_running_stats = bn_original_track[id(module)]
+        module.eval()
+    for module in dropout_modules:
+        module.eval()"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,segformer_logits_and_z,1004,1017,"def segformer_logits_and_z(model, x, F):
+    outputs = model(pixel_values=x)
+    logits = F.interpolate(
+        outputs.logits,
+        size=(IMAGE_SIZE, IMAGE_SIZE),
+        mode=""bilinear"",
+        align_corners=False,
+    )
+    if logits.ndim != 4 or logits.shape[1] != 2:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_SEGFORMER_TENT: logits={tuple(logits.shape)}""
+        )
+    z = logits[:, 1] - logits[:, 0]
+    return logits, z"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,build_segformer_context,1025,1053,"def build_segformer_context(device):
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    from transformers import AutoImageProcessor, SegformerConfig, SegformerForSemanticSegmentation
+
+    HF_CACHE.mkdir(parents=True, exist_ok=True)
+    os.environ[""HF_HOME""] = str(HF_CACHE)
+    os.environ[""HUGGINGFACE_HUB_CACHE""] = str(HF_CACHE / ""hub"")
+
+    processor = AutoImageProcessor.from_pretrained(
+        ""nvidia/mit-b0"",
+        cache_dir=str(HF_CACHE),
+        do_reduce_labels=False,
+    )
+    mean = np.asarray(processor.image_mean, dtype=np.float32)
+    std = np.asarray(processor.image_std, dtype=np.float32)
+    if mean.shape != (3,) or std.shape != (3,):
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: processor stats"")
+
+    config = SegformerConfig.from_pretrained(
+        ""nvidia/mit-b0"",
+        cache_dir=str(HF_CACHE),
+    )
+    config.num_labels = 2
+    config.id2label = {0: ""background"", 1: ""foreground""}
+    config.label2id = {""background"": 0, ""foreground"": 1}
+
+    return torch, nn, F, SegformerForSemanticSegmentation, config, mean, std"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,load_segformer_state,1056,1078,"def load_segformer_state(
+    seed,
+    device,
+    SegformerForSemanticSegmentation,
+    config,
+    torch,
+):
+    path, expected_sha = SEGFORMER_CHECKPOINTS[seed]
+    validate_sha(path, expected_sha, f""SegFormer checkpoint seed {seed}"")
+    payload = robust_torch_load(path, map_location=""cpu"")
+    if int(payload.get(""seed"", -1)) != seed:
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: checkpoint seed"")
+    if payload.get(""architecture"") != ""SegFormer-B0"":
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: architecture"")
+    state = payload.get(""state_dict"")
+    if not isinstance(state, dict) or not state:
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: state_dict"")
+
+    model = SegformerForSemanticSegmentation(config)
+    result = model.load_state_dict(state, strict=True)
+    if result.missing_keys or result.unexpected_keys:
+        raise RuntimeError(""INVALID_Q1_R03_SEGFORMER_TENT: strict load"")
+    return model.to(device)"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,logit_to_mask,364,372,"def logit_to_mask(z) -> np.ndarray:
+    arr = np.asarray(z)
+    if arr.shape != (MASK_H, MASK_W):
+        raise RuntimeError(
+            f""Unexpected binary logit shape={arr.shape}; expected={(MASK_H, MASK_W)}""
+        )
+    if not np.isfinite(arr).all():
+        raise RuntimeError(""Non-finite binary logit."")
+    return (arr >= 0.0).astype(np.uint8)"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,pack_mask,375,384,"def pack_mask(mask: np.ndarray) -> np.ndarray:
+    m = np.asarray(mask, dtype=np.uint8)
+    if m.shape != (MASK_H, MASK_W):
+        raise RuntimeError(""Mask shape mismatch before pack."")
+    if not np.isin(m, (0, 1)).all():
+        raise RuntimeError(""Mask is not binary."")
+    packed = np.packbits(m.reshape(-1), bitorder=BITORDER)
+    if packed.shape != (PACKED_BYTES,):
+        raise RuntimeError(""Packed mask byte count mismatch."")
+    return packed"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,run_segformer_state,599,748,"def run_segformer_state(state, targets, device, r03, seg_context=None):
+    if seg_context is None:
+        seg_context = r03.build_segformer_context(device)
+
+    (
+        torch,
+        nn,
+        F,
+        SegformerForSemanticSegmentation,
+        config,
+        mean,
+        std,
+    ) = seg_context
+
+    seed = int(state[""training_seed""])
+    set_runtime_seed(seed)
+
+    model = r03.load_segformer_state(
+        seed,
+        device,
+        SegformerForSemanticSegmentation,
+        config,
+        torch,
+    )
+
+    (
+        params,
+        param_names,
+        bn_modules,
+        bn_original_track,
+        dropout_modules,
+        dropout_names,
+    ) = r03.configure_segformer_tent(model, nn)
+
+    source_values = r03.snapshot_params(params)
+
+    source_pack = np.empty((EXPECTED_CASES, PACKED_BYTES), dtype=np.uint8)
+    a1_pack = np.empty_like(source_pack)
+    index_rows = []
+
+    pbar = tqdm(
+        enumerate(targets),
+        total=EXPECTED_CASES,
+        desc=f""D3 SegFormer seed {seed}"",
+        unit=""img"",
+        dynamic_ncols=True,
+    )
+
+    for i, target in pbar:
+        with Image.open(target[""image_path""]) as im:
+            native = im.convert(""RGB"")
+
+        x = r03.segformer_tensor(native, mean, std, torch).to(
+            device,
+            non_blocking=True,
+        )
+
+        # Frozen SOURCE.
+        r03.restore_params(params, source_values, torch)
+        r03.segformer_source_mode(
+            model,
+            bn_modules,
+            bn_original_track,
+            dropout_modules,
+        )
+        with torch.no_grad():
+            _, z_source_t = r03.segformer_logits_and_z(model, x, F)
+
+        # Frozen one-step episodic A1.
+        r03.restore_params(params, source_values, torch)
+        r03.segformer_tent_mode(
+            model,
+            bn_modules,
+            dropout_modules,
+        )
+
+        optimizer = torch.optim.Adam(
+            params,
+            lr=TENT_LR,
+            weight_decay=TENT_WEIGHT_DECAY,
+        )
+        optimizer.zero_grad(set_to_none=True)
+
+        logits_pre, _ = r03.segformer_logits_and_z(model, x, F)
+        loss = r03.categorical_entropy(logits_pre, torch)
+        if not torch.isfinite(loss):
+            raise RuntimeError(""Non-finite SegFormer A1 entropy loss."")
+
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+
+        with torch.no_grad():
+            _, z_a1_t = r03.segformer_logits_and_z(model, x, F)
+
+        z_source = z_source_t[0].detach().float().cpu().numpy()
+        z_a1 = z_a1_t[0].detach().float().cpu().numpy()
+
+        sm = logit_to_mask(z_source)
+        am = logit_to_mask(z_a1)
+
+        source_pack[i] = pack_mask(sm)
+        a1_pack[i] = pack_mask(am)
+
+        changed = int(np.count_nonzero(sm != am))
+        index_rows.append({
+            ""row_index"": i,
+            ""sample_id"": target[""sample_id""],
+            ""image_path"": target[""image_path""],
+            ""image_raw_sha256"": target[""image_raw_sha256""],
+            ""model_family"": state[""model_family""],
+            ""model_state_id"": state[""model_state_id""],
+            ""training_seed"": seed,
+            ""checkpoint_sha256"": state[""checkpoint_sha256""],
+            ""source_foreground_pixels"": int(sm.sum()),
+            ""a1_foreground_pixels"": int(am.sum()),
+            ""changed_pixels"": changed,
+        })
+        pbar.set_postfix(chg=changed)
+
+        del (
+            optimizer,
+            logits_pre,
+            loss,
+            z_source_t,
+            z_a1_t,
+            z_source,
+            z_a1,
+            sm,
+            am,
+            x,
+        )
+
+    r03.restore_params(params, source_values, torch)
+
+    del (
+        model,
+        params,
+        source_values,
+        param_names,
+        bn_modules,
+        bn_original_track,
+        dropout_modules,
+        dropout_names,
+    )
+
+    if device.type == ""cuda"":
+        torch.cuda.empty_cache()
+
+    return source_pack, a1_pack, index_rows, seg_context"
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,load_upstream_locks,215,260,"def load_upstream_locks():
+    for label, p in {
+        ""PolypGen manifest"": POLYPGEN_MANIFEST,
+        ""PolypGen manifest lock"": POLYPGEN_MANIFEST_LOCK,
+        ""independence lock"": INDEPENDENCE_LOCK,
+        ""checkpoint recovery"": CHECKPOINT_RECOVERY,
+        ""authoritative R05D3 script"": R05D3_SCRIPT,
+    }.items():
+        print(f""{label} exists:"", p.exists(), p)
+        if not p.exists():
+            raise FileNotFoundError(p)
+
+    r05d3_sha = validate_sha(
+        R05D3_SCRIPT,
+        EXPECTED_R05D3_SCRIPT_SHA256,
+        ""authoritative R05D3 script"",
+    )
+
+    pg_lock = json.loads(
+        POLYPGEN_MANIFEST_LOCK.read_text(encoding=""utf-8"")
+    )
+    if pg_lock.get(""decision"") != EXPECTED_POLYPGEN_MANIFEST_DECISION:
+        raise RuntimeError(
+            f""Unexpected PolypGen manifest decision: {pg_lock.get('decision')}""
+        )
+
+    indep = json.loads(INDEPENDENCE_LOCK.read_text(encoding=""utf-8""))
+    if indep.get(""decision"") != EXPECTED_INDEPENDENCE_DECISION:
+        raise RuntimeError(
+            f""PolypGen independence gate not passed: {indep.get('decision')}""
+        )
+
+    if int(indep.get(""source_train_exact_polypgen_overlaps"", -1)) != 0:
+        raise RuntimeError(""Source-train PolypGen overlap is not zero."")
+    if int(indep.get(""source_val_exact_polypgen_overlaps"", -1)) != 0:
+        raise RuntimeError(""Source-val PolypGen overlap is not zero."")
+    if int(indep.get(""frozen_states"", -1)) != 9:
+        raise RuntimeError(""Independence lock does not certify 9 states."")
+
+    return {
+        ""r05d3_script_sha256"": r05d3_sha,
+        ""polypgen_manifest_sha256"": sha256_file(POLYPGEN_MANIFEST),
+        ""polypgen_manifest_lock_sha256"": sha256_file(POLYPGEN_MANIFEST_LOCK),
+        ""independence_lock_sha256"": sha256_file(INDEPENDENCE_LOCK),
+        ""checkpoint_recovery_sha256"": sha256_file(CHECKPOINT_RECOVERY),
+    }"
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,load_targets_and_verify_rgb,263,317,"def load_targets_and_verify_rgb():
+    # Deliberately do NOT read gt_path or gt_sha256.
+    cols = [
+        ""external_case_id"",
+        ""center"",
+        ""sample_id"",
+        ""image_path"",
+        ""image_sha256"",
+    ]
+    df = pd.read_csv(
+        POLYPGEN_MANIFEST,
+        usecols=cols,
+        low_memory=False,
+    )
+
+    if len(df) != EXPECTED_CASES:
+        raise RuntimeError(
+            f""PolypGen rows={len(df)} expected={EXPECTED_CASES}""
+        )
+    if df[""external_case_id""].astype(str).nunique() != EXPECTED_CASES:
+        raise RuntimeError(""external_case_id is not unique."")
+    if df[""image_sha256""].astype(str).nunique() != EXPECTED_CASES:
+        raise RuntimeError(""PolypGen RGB SHA256 is not unique."")
+    if set(df[""center""].astype(str)) != {
+        ""C1"", ""C2"", ""C3"", ""C4"", ""C5"", ""C6""
+    }:
+        raise RuntimeError(""All six PolypGen centers are not represented."")
+
+    verified = []
+    for r in tqdm(
+        df.itertuples(index=False),
+        total=len(df),
+        desc=""Verifying frozen PolypGen RGB"",
+        unit=""image"",
+        dynamic_ncols=True,
+    ):
+        p = Path(str(r.image_path))
+        if not p.exists():
+            raise FileNotFoundError(p)
+        actual = sha256_file(p).lower()
+        expected = str(r.image_sha256).strip().lower()
+        if actual != expected:
+            raise RuntimeError(
+                f""PolypGen RGB SHA mismatch for {r.external_case_id}: ""
+                f""expected={expected} actual={actual}""
+            )
+        verified.append({
+            ""sample_id"": str(r.external_case_id),
+            ""original_polypgen_sample_id"": str(r.sample_id),
+            ""center"": str(r.center),
+            ""image_path"": str(p),
+            ""image_raw_sha256"": actual,
+        })
+
+    return verified"
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,validate_cached_rows_for_target,516,547,"def validate_cached_rows_for_target(rows, state, targets):
+    if len(rows) != EXPECTED_CASES:
+        return False
+
+    expected_ids = [t[""sample_id""] for t in targets]
+    observed_ids = [str(r.get(""sample_id"", """")) for r in rows]
+    if observed_ids != expected_ids:
+        return False
+
+    for i, row in enumerate(rows):
+        target = targets[i]
+        try:
+            if int(row.get(""row_index"", -1)) != i:
+                return False
+            if str(row.get(""model_family"", """")) != state[""model_family""]:
+                return False
+            if str(row.get(""model_state_id"", """")) != state[""model_state_id""]:
+                return False
+            if int(row.get(""training_seed"", -1)) != int(state[""training_seed""]):
+                return False
+            if str(row.get(""checkpoint_sha256"", """")).lower() != str(
+                state[""checkpoint_sha256""]
+            ).lower():
+                return False
+            if str(row.get(""image_raw_sha256"", """")).lower() != str(
+                target[""image_raw_sha256""]
+            ).lower():
+                return False
+        except Exception:
+            return False
+
+    return True"
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,bootstrap_verified_fix1_states,560,641,"def bootstrap_verified_fix1_states(
+    fix1_build_dir,
+    new_state_dir,
+    panel,
+    targets,
+    upstream,
+):
+    """"""
+    Preserve expensive completed Fix1 states without modifying the old partial
+    run. Only a full NPZ+index+sidecar triple that passes the same SHA/lineage
+    checks is imported into Fix2.
+    """"""
+    imported = []
+
+    if not fix1_build_dir.exists():
+        print(""Fix1 partial build exists: False"", fix1_build_dir)
+        return imported
+
+    old_state_dir = fix1_build_dir / ""state_predictions""
+    print(""Fix1 partial build exists: True"", fix1_build_dir)
+    print(""Fix1 state cache dir exists:"", old_state_dir.exists(), old_state_dir)
+
+    if not old_state_dir.exists():
+        return imported
+
+    for state in panel:
+        old_npz, old_idx, old_side = state_paths(old_state_dir, state)
+
+        if not sidecar_is_complete(
+            old_side,
+            old_npz,
+            old_idx,
+            state,
+            upstream,
+        ):
+            continue
+
+        with old_idx.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+
+        if not validate_cached_rows_for_target(
+            rows,
+            state,
+            targets,
+        ):
+            raise RuntimeError(
+                f""Fix1 cached rows failed target/state validation: ""
+                f""{state['model_state_id']}""
+            )
+
+        new_npz, new_idx, new_side = state_paths(new_state_dir, state)
+
+        hardlink_or_copy(old_npz, new_npz)
+        hardlink_or_copy(old_idx, new_idx)
+        hardlink_or_copy(old_side, new_side)
+
+        if not sidecar_is_complete(
+            new_side,
+            new_npz,
+            new_idx,
+            state,
+            upstream,
+        ):
+            raise RuntimeError(
+                f""Imported Fix1 cache failed Fix2 verification: ""
+                f""{state['model_state_id']}""
+            )
+
+        imported.append(state[""model_state_id""])
+        print(""[BOOTSTRAP VERIFIED]"", state[""model_state_id""])
+
+    print(
+        ""Verified Fix1 states imported into Fix2:"",
+        len(imported),
+        ""/"",
+        EXPECTED_STATES,
+    )
+    return imported"
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,run_state,645,832,"def run_state(
+    r05d3,
+    r03,
+    state,
+    targets,
+    device,
+    state_dir,
+    upstream,
+    resume,
+    seg_context=None,
+):
+    npz_path, index_path, sidecar_path = state_paths(state_dir, state)
+
+    if resume and sidecar_is_complete(
+        sidecar_path,
+        npz_path,
+        index_path,
+        state,
+        upstream,
+    ):
+        print(
+            f""[RESUME VERIFIED] {state['model_state_id']} ""
+            f""seed={state['training_seed']}""
+        )
+        with index_path.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+
+        if not validate_cached_rows_for_target(
+            rows,
+            state,
+            targets,
+        ):
+            raise RuntimeError(
+                f""Cached rows failed target/state validation: ""
+                f""{state['model_state_id']}""
+            )
+
+        return (
+            npz_path,
+            index_path,
+            sidecar_path,
+            rows,
+            seg_context,
+        )
+
+    # Delete only this incomplete state artifact set.
+    for p in [npz_path, index_path, sidecar_path]:
+        if p.exists():
+            p.unlink()
+
+    family = state[""model_family""]
+
+    # Fix2: the authoritative R05D3 SegFormer runner intentionally returns
+    # FOUR values:
+    #   SOURCE packed masks, A1 packed masks, index rows, seg_context
+    #
+    # PraNet and DeepLab return three. Do not flatten this difference because
+    # seg_context is deliberately reused across the three SegFormer states.
+    if family == ""SegFormer-B0"":
+        result = r05d3.run_segformer_state(
+            state,
+            targets,
+            device,
+            r03,
+            seg_context=seg_context,
+        )
+        if not isinstance(result, tuple) or len(result) != 4:
+            raise RuntimeError(
+                ""Authoritative SegFormer runner return schema changed; ""
+                f""expected 4 values, got ""
+                f""{len(result) if isinstance(result, tuple) else type(result)}""
+            )
+        (
+            source_pack,
+            a1_pack,
+            rows,
+            seg_context,
+        ) = result
+    elif family == ""PraNet"":
+        result = invoke_runner(
+            r05d3.run_pranet_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative PraNet runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    elif family == ""DeepLabV3-R50"":
+        result = invoke_runner(
+            r05d3.run_deeplab_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative DeepLab runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    else:
+        raise RuntimeError(f""Unexpected family: {family}"")
+
+    source_pack, a1_pack = validate_prediction_arrays(
+        r05d3,
+        source_pack,
+        a1_pack,
+    )
+
+    if len(rows) != EXPECTED_CASES:
+        raise RuntimeError(
+            f""{state['model_state_id']} index rows={len(rows)} ""
+            f""expected={EXPECTED_CASES}""
+        )
+
+    expected_ids = [t[""sample_id""] for t in targets]
+    observed_ids = [str(r[""sample_id""]) for r in rows]
+    if observed_ids != expected_ids:
+        raise RuntimeError(
+            f""{state['model_state_id']} target order changed.""
+        )
+
+    for i, row in enumerate(rows):
+        target = targets[i]
+        if str(row[""image_raw_sha256""]).lower() != str(
+            target[""image_raw_sha256""]
+        ).lower():
+            raise RuntimeError(
+                f""{state['model_state_id']} image SHA mismatch at row {i}""
+            )
+        if row[""model_state_id""] != state[""model_state_id""]:
+            raise RuntimeError(""State ID mismatch in prediction index."")
+        if str(row[""checkpoint_sha256""]).lower() != state[
+            ""checkpoint_sha256""
+        ].lower():
+            raise RuntimeError(""Checkpoint SHA mismatch in prediction index."")
+
+    np.savez_compressed(
+        npz_path,
+        source_masks_packed=source_pack,
+        a1_masks_packed=a1_pack,
+    )
+
+    fields = list(rows[0].keys())
+    write_csv(index_path, rows, fields)
+
+    sidecar = {
+        ""decision"": ""STATE_COMPLETE"",
+        ""model_family"": family,
+        ""model_state_id"": state[""model_state_id""],
+        ""training_seed"": int(state[""training_seed""]),
+        ""checkpoint_sha256"": state[""checkpoint_sha256""],
+        ""target_cases"": EXPECTED_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""tent_lr"": 1e-3,
+        ""tent_weight_decay"": 0.0,
+        ""tent_steps"": 1,
+        ""episodic_reset"": True,
+        ""polypgen_manifest_sha256"": upstream[""polypgen_manifest_sha256""],
+        ""independence_lock_sha256"": upstream[""independence_lock_sha256""],
+        ""r05d3_script_sha256"": upstream[""r05d3_script_sha256""],
+        ""npz_sha256"": sha256_file(npz_path),
+        ""index_sha256"": sha256_file(index_path),
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_metrics_computed"": False,
+    }
+    write_json(sidecar_path, sidecar)
+
+    return (
+        npz_path,
+        index_path,
+        sidecar_path,
+        rows,
+        seg_context,
+    )"

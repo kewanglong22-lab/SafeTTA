@@ -1,0 +1,71 @@
+﻿script,line,source
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,516,"dropout_names,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,517,"dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,549,"dropout_modules=dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,589,"dropout_names,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,590,"dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,629,"dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,630,"dropout_names,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,662,"dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,672,"dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,741,"dropout_modules,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,742,"dropout_names,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,1031,"dp, _, _, unsafe, _, dropouts"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,1041,"dropout_modules=dropouts,"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,1048,"del dm, dp, dv, unsafe, dropouts, dx, dsrc, da1, dloss"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,788,# track_running_stats=False while preserving the singleton-unsafe ASPP
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,790,# model.eval() without undoing those normalization flags.
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,792,# Therefore a plain checkpoint model.eval() is NOT guaranteed to
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,800,"parity_dropout_names,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,801,"parity_dropout_modules,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,803,model.eval()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,880,"parity_dropout_names,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,881,"parity_dropout_modules,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,945,dropout_modules = []
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,946,dropout_names = []
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,949,"if isinstance(module, (nn.Dropout, nn.Dropout2d, nn.AlphaDropout)):"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,950,dropout_modules.append(module)
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,951,dropout_names.append(name)
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,953,"if isinstance(module, nn.BatchNorm2d):"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,955,bn_original_track[id(module)] = bool(module.track_running_stats)
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,957,"if isinstance(module, (nn.LayerNorm, nn.BatchNorm2d)):"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,970,"return params, names, bn_modules, bn_original_track, dropout_modules, dropout_names"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,985,"model, bn_modules, bn_original_track, dropout_modules"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,987,model.eval()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,989,module.track_running_stats = bn_original_track[id(module)]
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,990,module.eval()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,991,for module in dropout_modules:
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,992,module.eval()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,995,"def segformer_tent_mode(model, bn_modules, dropout_modules):"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,996,model.train()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,998,module.track_running_stats = False
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,999,module.train()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1000,for module in dropout_modules:
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1001,module.eval()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1089,dropout_names_reference = None
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1112,"dropout_modules, dropout_names,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1118,dropout_names_reference = list(dropout_names)
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1125,if list(dropout_names) != dropout_names_reference:
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1127,"""INVALID_Q1_R03_SEGFORMER_TENT: dropout schema differs by seed"""
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1167,"model, bn_modules, bn_original_track, dropout_modules"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1175,"segformer_tent_mode(model, bn_modules, dropout_modules)"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1225,"""batchnorm_module_count"": len(bn_modules),"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1226,"""dropout_module_count"": len(dropout_modules),"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1227,"""dropout_names"": list(dropout_names),"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1231,"del model, params, source_values, bn_modules, dropout_modules"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1236,"""dropout_names_reference"": dropout_names_reference,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1237,"""batchnorm_module_count"": bn_count_reference,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1242,"""adapted_module_types"": [""LayerNorm"", ""BatchNorm2d""],"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1243,"""dropout_rule"": ""eval_during_tent"","
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1244,"""batchnorm_rule"": ""current_sample_stats_during_tent"","
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1374,"dropout_names,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1375,"dropout_modules,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1379,"# configure_singleton_safe_tent() first, then model.eval()."
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1380,model.eval()
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1424,# model.eval() exactly matches source_and_tent_logits source branch.
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1462,"dropout_modules,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1491,"dropout_modules, dropout_names,"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1495,"segformer_source_mode(model, bn_modules, bn_original_track, dropout_modules)"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1508,"print(f""segformer_batchnorm_modules={len(bn_modules)}"")"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1509,"print(f""segformer_dropout_modules={len(dropout_modules)}"")"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,1516,"del model, dummy, logits, z, params, bn_modules, dropout_modules"

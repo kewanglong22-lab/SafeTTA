@@ -1,0 +1,22 @@
+===== R17A PUBLISHED RELIABILITY BASELINE ASSET AUDIT REPORT =====
+Version: 2026-09-08-Q1-R17A-PUBLISHED-RELIABILITY-BASELINE-ASSET-AUDIT-v1
+Root: F:\MEDSEG_SAFETTA
+
+GROUP SUMMARY:
+checkpoint_assets: 40 files, 6.84 GiB
+harm_outcome_tables: 334 files, 265.31 MiB
+polypgen_assets: 4149 files, 2.93 GiB
+promise_assets: 122 files, 523.33 MiB
+prostate158_assets: 263 files, 14.50 GiB
+sun_assets: 195 files, 268.53 MiB
+
+Dropout-related Python files: 20
+
+DECISION RULE:
+- CCD is feasible if exact frozen SOURCE probability/logit alignment exists.
+- ADIC is feasible only if a faithful architecture-specific dropout path can be established without changing SOURCE weights or using target GT.
+- If ADIC cannot be made faithful, do NOT invent a TEGDA-like approximation.
+- Preserve PolypGen/SUN/PROMISE12 locked prediction assets and final SOURCE checkpoints until R17A is closed.
+
+GATE=READY_FOR_R17A_IMPLEMENTATION_FEASIBILITY_REVIEW
+NEXT=REVIEW_ASSET_AND_DROPOUT_AUDIT_THEN_IMPLEMENT_CCD_FIRST

@@ -1,0 +1,41 @@
+{
+  "version": "2026-09-09-Q1-R17A-ADIC-MATCHED6-EXACT-MODEL-INSTANTIATION-AUDIT-v1",
+  "information_boundary": {
+    "training": false,
+    "target_inference": false,
+    "target_gt_loading": false,
+    "harm_outcome_loading": false,
+    "model_modification": false
+  },
+  "official_tegda_fidelity": {
+    "required_native_type": "torch.nn.Dropout",
+    "new_dropout_injected": false,
+    "dropout_p_rewritten": false
+  },
+  "families": [
+    {
+      "model_family": "DeepLabV3-R50",
+      "states": 3,
+      "exact_nn_dropout_counts_by_seed_unique": [
+        1
+      ],
+      "exact_nn_dropout_p_schema_unique": [
+        "0.5"
+      ],
+      "decision": "SUPPORTED_NATIVE_NN_DROPOUT"
+    },
+    {
+      "model_family": "PraNet",
+      "states": 3,
+      "exact_nn_dropout_counts_by_seed_unique": [
+        0
+      ],
+      "exact_nn_dropout_p_schema_unique": [
+        ""
+      ],
+      "decision": "UNSUPPORTED_NO_NATIVE_NN_DROPOUT"
+    }
+  ],
+  "gate": "PARTIAL_ADIC_SUPPORT_FAMILY_SPECIFIC",
+  "next": "BUILD_ADIC_MC_SCORE_LOCK_ONLY_FOR_SUPPORTED_FAMILY_AND_KEEP_UNSUPPORTED_FAMILY_EXCLUDED"
+}

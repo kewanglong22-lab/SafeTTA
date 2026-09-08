@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "decision": "PASS_R17A_POLYPGEN_DEEPLAB3_FOURWAY_POSTGT_EVALUATION",
+  "version": "2026-09-09-Q1-R17A-POLYPGEN-DEEPLAB3-FOURWAY-POSTGT-EVALUATION-v1",
+  "dataset": "PolypGen",
+  "scope": {
+    "model_family": "DeepLabV3-R50",
+    "training_seeds": [
+      20260817,
+      20260818,
+      20260819
+    ],
+    "states": 3,
+    "physical_samples": 1532,
+    "rows": 4596,
+    "methods": [
+      "SafeTTA",
+      "SicTTA-CCD",
+      "TEGDA-ADIC",
+      "MC-dropout"
+    ],
+    "full_9state_primary_result_replaced": false
+  },
+  "frozen_inputs": {
+    "ccd_score_table": "outputs/Q1_R17A_CCD_polypgen_6state_preGT_score_lock_v1/R17A_POLYPGEN_CCD_6STATE_PREGT_SCORE_LOCK.csv",
+    "ccd_score_sha256": "85a2e5d913ddbb88a88c8df09b7ef88822963ea9a1451eda6c6254f95b151786",
+    "adic_mc_score_table": "outputs/Q1_R17A_ADIC_MC_deeplab3_preGT_score_lock_v1_fix2/R17A_POLYPGEN_DEEPLAB3_ADIC_MC_PREGT_SCORE_LOCK.csv",
+    "adic_mc_score_sha256": "223f1496e9cc56736d752f57f38d8edae64f20c47bcb6d1b48c243775081cd52",
+    "r10l3c_panel": "outputs/Q1_R10L3C_polypgen_gt_reveal_prospective_external_evaluation_fix1_v1/R10L3C_LOCKED_SCORE_GT_EVALUATION_PANEL.csv",
+    "r10l3c_panel_sha256": "c484d10c4196359f62a34c0b0fa34ae817a1fdf9d451abb1a37c333d92576a67",
+    "fourway_matched_panel": "R17A_POLYPGEN_DEEPLAB3_FOURWAY_MATCHED_PANEL.csv",
+    "fourway_matched_panel_sha256": "8d7be5d81ed2ae9f964d1f866ef6e85d29d0cc76077845c38f039cfa495b8656"
+  },
+  "evaluation": {
+    "harm_label": "frozen R10L3C harm_label",
+    "fixed_directions": {
+      "SafeTTA": "higher = higher HARM risk",
+      "SicTTA-CCD": "higher = higher HARM risk",
+      "TEGDA-ADIC": "adic_harm_risk=-adic_quality; higher = higher HARM risk",
+      "MC-dropout": "higher predictive entropy = higher HARM risk"
+    },
+    "target_recalibration": false,
+    "target_threshold_selection": false,
+    "target_feature_selection": false,
+    "target_score_reversal": false,
+    "paired_bootstrap_cluster": "sample_id",
+    "paired_bootstrap_center_stratified": true,
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260909
+  },
+  "artifacts": {
+    "R17A_POLYPGEN_DEEPLAB3_FOURWAY_POINT_METRICS.csv": "a8e4f30756102bf6c80d9f2e5e17e78745d2701c45efcfe80a3a73c8ffd91f56",
+    "R17A_POLYPGEN_DEEPLAB3_FOURWAY_PER_SEED_METRICS.csv": "a21e6c44f5435780f13c4658ee669f9681a69906dca60d3b694826eb425f08f5",
+    "R17A_POLYPGEN_DEEPLAB3_FOURWAY_PAIRED_BOOTSTRAP.csv": "6a5fea3d13d13f80f1ba3d3456fedbfb1a4d3380a65b91409bf1305d5f63a45d",
+    "R17A_POLYPGEN_DEEPLAB3_FOURWAY_DELTA_CI95.csv": "7ed11e6040d43e7844a38d68d5b298d31bec714620ef74f6bb8d5d991613d01a"
+  },
+  "interpretation": "Published-baseline sensitivity panel on the exact common DeepLabV3-R50 3-state subset. Do not replace the manuscript's original 9-state PolypGen primary result."
+}

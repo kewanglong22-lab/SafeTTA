@@ -1,0 +1,60 @@
+===== R17A CCD DATASET MAPPING FREEZE AUDIT REPORT =====
+Version: 2026-09-08-Q1-R17A-CCD-DATASET-MAPPING-FREEZE-AUDIT-v1
+Root: F:\MEDSEG_SAFETTA
+
+DATASET DECISIONS:
+NeoPolyp: GT_FREE_SOURCE_REINFERENCE_READY | soft=0 strong_soft=0 manifests=213 ckpt=12 inference_code=60
+  CKPT: outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt
+  CKPT: outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt
+  CKPT: outputs/S01_B_pranet_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt
+  CKPT: outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt
+  CKPT: outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt
+  MANIFEST: outputs/S01_B_pranet_source_only_seed20260817_v1/audit.json :: rows= cols=script_version|build|seed|manifest_sha256|source_train_n|source_val_n|seen_sanity_images_opened|seen_sanity_masks_opened|unseen_locked_images_opened|unseen_locked_masks_opened|target_metrics_computed|checkpoint_selection_metric|best_epoch|best_source_val_mean_dice|backbone_pretrain_path|backbone_pre
+  MANIFEST: outputs/S01_B_pranet_source_only_seed20260817_v1/history.csv :: rows=80 cols=epoch|train_loss|source_val_mean_dice|source_val_median_dice|source_val_mean_iou|epoch_seconds
+  MANIFEST: outputs/S01_B_pranet_source_only_seed20260817_v1/summary.txt :: rows= cols=
+  MANIFEST: outputs/S01_B_pranet_source_only_seed20260818_v1/audit.json :: rows= cols=script_version|build|seed|manifest_sha256|source_train_n|source_val_n|seen_sanity_images_opened|seen_sanity_masks_opened|unseen_locked_images_opened|unseen_locked_masks_opened|target_metrics_computed|checkpoint_selection_metric|best_epoch|best_source_val_mean_dice|backbone_pretrain_path|backbone_pre
+  MANIFEST: outputs/S01_B_pranet_source_only_seed20260818_v1/history.csv :: rows=80 cols=epoch|train_loss|source_val_mean_dice|source_val_median_dice|source_val_mean_iou|epoch_seconds
+PolypGen: BLOCKED_AMBIGUOUS_MAPPING | soft=0 strong_soft=0 manifests=4068 ckpt=0 inference_code=22
+  MANIFEST: outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/checkpoint_manifest.csv :: rows=9 cols=model_family|training_seed|model_state_id|checkpoint|checkpoint_sha256
+  MANIFEST: outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260817_index.csv :: rows=1532 cols=row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels
+  MANIFEST: outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260817_state_lock.json :: rows= cols=decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_p
+  MANIFEST: outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260818_index.csv :: rows=1532 cols=row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels
+  MANIFEST: outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/state_predictions/deeplabv3_r50_seed20260818_state_lock.json :: rows= cols=decision|model_family|model_state_id|training_seed|checkpoint_sha256|target_cases|mask_height|mask_width|packed_bytes_per_mask|bitorder|action|tent_lr|tent_weight_decay|tent_steps|episodic_reset|polypgen_manifest_sha256|independence_lock_sha256|r05d3_script_sha256|npz_sha256|index_sha256|target_gt_p
+SUNSEG: BLOCKED_AMBIGUOUS_MAPPING | soft=0 strong_soft=0 manifests=93 ckpt=0 inference_code=28
+  MANIFEST: outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1A_CANONICALIZATION_STATE_AUDIT.csv :: rows=9 cols=model_family|training_seed|model_state_id|source_npz_sha256|destination_npz_sha256|npz_bytes_unchanged|source_index_csv_sha256|destination_index_csv_sha256|rows|artifact_path_fields_rewritten|non_path_scientific_fields_changed|destination_state_lock_sha256
+  MANIFEST: outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1_SUNSEG_MODEL_FRAME_PREDICTION_MANIFEST.csv :: rows=8820 cols=row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pi
+  MANIFEST: outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1_SUNSEG_SOURCE_TENT1_PL_PREDICTION_LOCK.json :: rows= cols=status|decision|cohort|model_panel|actions|runner_fix|historical_implementation_lineage|artifacts|descriptive_prediction_behavior_only|information_boundary|next_stage|canonicalization_decision|canonicalized_from|canonicalization
+  MANIFEST: outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260817_source_tent1_pl_index.csv :: rows=980 cols=row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pi
+  MANIFEST: outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260817_source_tent1_pl_lock.json :: rows= cols=status|decision|model_family|model_state_id|training_seed|checkpoint_path|checkpoint_sha256|target_cases|physical_cases|mask_shape|packed_bytes|actions|prediction_npz_sha256|index_csv_sha256|historical_lineage|information_boundary|canonicalized_from|canonicalization
+Prostate158: DIRECT_SOFT_ASSET_READY | soft=18 strong_soft=15 manifests=192 ckpt=40 inference_code=26
+  SOFT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold2/best_oof_prob_f16.npy :: member= shape=[723, 352, 352] dtype=float16 code_refs=4 priority=100
+  SOFT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/SegFormer_B0/fold2/best_oof_prob_f16.npy :: member= shape=[723, 352, 352] dtype=float16 code_refs=4 priority=100
+  SOFT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/UNet/fold2/best_oof_prob_f16.npy :: member= shape=[723, 352, 352] dtype=float16 code_refs=4 priority=100
+  SOFT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/best_oof_prob_f16.npy :: member= shape=[719, 352, 352] dtype=float16 code_refs=4 priority=100
+  SOFT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/SegFormer_B0/fold0/best_oof_prob_f16.npy :: member= shape=[719, 352, 352] dtype=float16 code_refs=4 priority=100
+  CKPT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold1/last.pt
+  CKPT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold2/last.pt
+  CKPT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold3/last.pt
+  CKPT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold0/last.pt
+  CKPT: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/models/DeepLabV3_R50/fold4/last.pt
+  MANIFEST: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_BATCH8_MODEL_PREFLIGHT.json :: rows= cols=status|version|batch_size|input_size|device|gpu|families|segformer_encoder|promises12_gt_access
+  MANIFEST: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_DeepLabV3_R50_FOLD_SUMMARY.csv :: rows=5 cols=family|fold|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params
+  MANIFEST: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_SOURCE_OOF_MODEL_PANEL_SUMMARY.csv :: rows=3 cols=family|mean_fold_patient_dice|std_fold_patient_dice|best_epochs
+  MANIFEST: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_SOURCE_OOF_SEGMENTATION_PANEL_LOCK.json :: rows= cols=status|decision|version|build|cm2b_lock_sha256|source_patient_count|source_slice_count|fold_count|families|batch_size|max_epochs|target_spacing_mm|promises12_gt_access|segformer_encoder_lock|tta|safety_model_fitting|family_oof_artifacts|panel_summary|panel_summary_sha256|source_cache_meta|source_cac
+  MANIFEST: outputs/Q1X_CM3_source_oof_segmentation_training_and_prediction_lock_fix3_v1/CM3_SegFormer_B0_FOLD_SUMMARY.csv :: rows=5 cols=family|fold|best_epoch|best_mean_patient_dice|val_patient_count|val_slice_count|params|trainable_params
+PROMISE12: BLOCKED_AMBIGUOUS_MAPPING | soft=0 strong_soft=0 manifests=74 ckpt=0 inference_code=17
+  MANIFEST: outputs/Q1X_CM2A_prostate158_official_manifest_t2_resolver_and_slice_preflight_fix3_v1/CM2A_PROMISE12_IMAGE_ONLY_PATIENT_MANIFEST.csv :: rows=50 cols=patient_id|case_id|image_mhd|image_raw|dim_x|dim_y|dim_z|element_type|element_spacing
+  MANIFEST: outputs/Q1X_CM2A_prostate158_official_manifest_t2_resolver_and_slice_preflight_fix3_v1/CM2A_PROMISE12_IMAGE_ONLY_SLICE_MANIFEST.csv :: rows=1377 cols=sample_id|patient_id|case_id|slice_axis|slice_index|image_mhd|image_raw|dim_x|dim_y|dim_z|gt_used_for_manifest
+  MANIFEST: outputs/Q1X_CM2B_prostate_mri_preprocessing_and_model_protocol_lock_fix1_v1/CM2B_PROMISE12_IMAGE_ONLY_HEADER_AUDIT.csv :: rows=50 cols=patient_id|spacing_x|spacing_y|spacing_z|dim_x|dim_y|dim_z|element_type|gt_header_opened|gt_raw_opened
+  MANIFEST: outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_LOCKED_POLICY_SUMMARY.csv :: rows=3 cols=family|fixed_source_threshold|fixed_source_adaptation_coverage|naive_quantile_threshold|naive_quantile_adaptation_coverage|support_aware_threshold|support_aware_adaptation_coverage
+  MANIFEST: outputs/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2_v1/CM5B_SOURCE_CROSSFIT_DENSITY_RATIO_WEIGHTS.csv :: rows=10659 cols=family|fold|global_index|case_key|slice_index|harmful|neutral|beneficial|source_dice|tent1_dice|delta_dice|score_M2|score_CondDINO|score_Final|domain_q_target_oof|density_ratio_raw|density_ratio_weight
+
+IMPORTANT:
+- This report does not compute CCD.
+- Direct soft assets still need exact model-state/sample-axis confirmation in the next score-lock script.
+- GT-free re-inference is allowed only with frozen SOURCE checkpoints and pre-existing inference code.
+- Hard masks are not accepted as SicTTA CCD inputs.
+- No target GT was opened.
+
+GATE=BLOCKED_R17A_CCD_MAPPING_FOR_PolypGen_SUNSEG_PROMISE12
+NEXT=RESOLVE_ONLY_BLOCKED_DATASETS_BEFORE_SCORE_GENERATION

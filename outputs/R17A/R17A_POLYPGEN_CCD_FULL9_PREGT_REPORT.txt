@@ -1,0 +1,25 @@
+===== R17A POLYPGEN CCD FULL 9-STATE PRE-GT SCORE LOCK =====
+Version: 2026-09-09-Q1-R17A-CCD-POLYPGEN-FULL9-PREGT-SCORE-LOCK-v1-fix2
+Dataset: PolypGen
+Rows: 13788
+Unique samples: 1532
+States: 9/9
+CCD RNG seed: 20260908
+Partial 6-state locked CSV decimal replay exact: True
+Partial alignment SHA256: f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3
+SegFormer historical hard-mask exact samples: 56
+SegFormer historical hard-mask mismatch samples: 4540
+SegFormer historical hard-mask total mismatch pixels: 5578077
+Historical soft-logit bit-exact reconstruction claimed: NO
+SegFormer soft logits: NEW GT-free regeneration in frozen release environment
+Full score SHA256: 8fca0b2b3ad9dbf9a6b5dacd6b25b33f89f7f58b8838fb6f0c2c0d1d4c270da3
+
+Information boundary:
+  Training: NO
+  TTA: NO
+  Target GT loading: NO
+  HARM/outcome loading: NO
+  Threshold tuning: NO
+
+GATE=PASS_R17A_POLYPGEN_CCD_FULL9_CURRENT_ENV_PREGT_SCORE_LOCK_WITH_DISCLOSED_HARD_PARITY_LIMIT
+NEXT=REVIEW_PARITY_AUDIT_THEN_JOIN_ONLY_FROZEN_POLYPGEN_HARM_OUTCOME_AND_EVALUATE_CCD

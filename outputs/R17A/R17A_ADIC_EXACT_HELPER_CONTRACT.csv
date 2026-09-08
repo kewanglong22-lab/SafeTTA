@@ -1,0 +1,3957 @@
+﻿model_family,script,function,start_line,end_line,source
+DeepLabV3-R50,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,validate_upstream,280,335,"def validate_upstream():
+    validate_sha(PROTOCOL, EXPECTED_PROTOCOL_SHA256, ""D3 protocol"")
+    validate_sha(R05D1_LOCK, EXPECTED_R05D1_LOCK_SHA256, ""D1 lock"")
+    validate_sha(R05D2_LOCK, EXPECTED_R05D2_LOCK_SHA256, ""D2 lock"")
+    validate_sha(R05D2_SCRIPT, EXPECTED_R05D2_SCRIPT_SHA256, ""D2 script"")
+    validate_sha(R03_LOCK, EXPECTED_R03_LOCK_SHA256, ""R03 lock"")
+    validate_sha(R03_SCRIPT, EXPECTED_R03_SCRIPT_SHA256, ""R03 script"")
+    validate_sha(PRANET_HELPER, EXPECTED_PRANET_HELPER_SHA256, ""PraNet helper"")
+    validate_sha(DEEPLAB_HELPER, EXPECTED_DEEPLAB_HELPER_SHA256, ""DeepLab helper"")
+
+    d1 = json.loads(R05D1_LOCK.read_text(encoding=""utf-8""))
+    d2 = json.loads(R05D2_LOCK.read_text(encoding=""utf-8""))
+    r03_lock = json.loads(R03_LOCK.read_text(encoding=""utf-8""))
+
+    if d1.get(""decision"") != EXPECTED_R05D1_DECISION:
+        raise RuntimeError(f""Unexpected D1 decision: {d1.get('decision')}"")
+    if int(d1.get(""eligible_confirmatory_cases"", -1)) != EXPECTED_CASES:
+        raise RuntimeError(""D1 eligible target count changed."")
+    if int(d1.get(""exact_overlap_exclusions"", -1)) != 0:
+        raise RuntimeError(""D1 overlap exclusion count changed."")
+    if bool(d1.get(""target_gt_pixels_decoded"", True)):
+        raise RuntimeError(""D1 reports target GT decoding."")
+
+    if d2.get(""decision"") != EXPECTED_R05D2_DECISION:
+        raise RuntimeError(f""Unexpected D2 decision: {d2.get('decision')}"")
+    if int(d2.get(""target_cases"", -1)) != EXPECTED_CASES:
+        raise RuntimeError(""D2 target count changed."")
+    if int(d2.get(""model_states"", -1)) != EXPECTED_STATES:
+        raise RuntimeError(""D2 model-state count changed."")
+    if int(d2.get(""model_case_rows"", -1)) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(""D2 model-case row count changed."")
+    if bool(d2.get(""target_gt_pixels_decoded"", True)):
+        raise RuntimeError(""D2 reports target GT decoding."")
+    if bool(d2.get(""target_outcomes_revealed"", True)):
+        raise RuntimeError(""D2 reports target outcome reveal."")
+    if bool(d2.get(""predictor_fit_or_modified"", True)):
+        raise RuntimeError(""D2 reports predictor modification."")
+
+    # IMPORTANT: only hash the frozen D2 table; never parse probability rows.
+    d2_table = artifact_path_from_lock(
+        R05D2_DIR,
+        d2,
+        ""target_paot_probabilities"",
+    )
+    validate_sha(d2_table, EXPECTED_D2_TABLE_SHA256, ""D2 PAOT table"")
+
+    d1_manifest = artifact_path_from_lock(
+        R05D1_DIR,
+        d1,
+        ""frozen_confirmatory_manifest"",
+    )
+
+    if r03_lock.get(""decision"") != EXPECTED_R03_DECISION:
+        raise RuntimeError(f""Unexpected R03 decision: {r03_lock.get('decision')}"")
+
+    return d1, d2, r03_lock, d1_manifest, d2_table"
+DeepLabV3-R50,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,run_deeplab_state,498,596,"def run_deeplab_state(state, targets, device):
+    helper = import_module(
+        DEEPLAB_HELPER,
+        f""q1_r05d3_deeplab_{state['training_seed']}"",
+    )
+    training = helper.import_training_helper()
+
+    # Exact deterministic convention inherited from R03/S05-C.
+    helper.seed_everything(20260817)
+
+    seed = int(state[""training_seed""])
+    model = helper.load_model(training, seed, device)
+
+    (
+        params,
+        trainable_bn_names,
+        unsafe_bn_names,
+        unsafe_bn_modules,
+        dropout_names,
+        dropout_modules,
+    ) = helper.configure_singleton_safe_tent(model)
+
+    source_values = helper.snapshot_params(params)
+
+    source_pack = np.empty((EXPECTED_CASES, PACKED_BYTES), dtype=np.uint8)
+    a1_pack = np.empty_like(source_pack)
+    index_rows = []
+
+    pbar = tqdm(
+        enumerate(targets),
+        total=EXPECTED_CASES,
+        desc=f""D3 DeepLab seed {seed}"",
+        unit=""img"",
+        dynamic_ncols=True,
+    )
+
+    for i, target in pbar:
+        with Image.open(target[""image_path""]) as im:
+            native = im.convert(""RGB"")
+
+        x = helper.image_to_model_tensor(training, native).to(
+            device,
+            non_blocking=True,
+        )
+
+        z_source, z_a1, adapt_loss = helper.source_and_tent_logits(
+            helper=training,
+            model=model,
+            params=params,
+            source_values=source_values,
+            unsafe_bn_modules=unsafe_bn_modules,
+            dropout_modules=dropout_modules,
+            x=x,
+        )
+
+        if not math.isfinite(float(adapt_loss)):
+            raise RuntimeError(""Non-finite DeepLab A1 entropy loss."")
+
+        sm = logit_to_mask(z_source)
+        am = logit_to_mask(z_a1)
+
+        source_pack[i] = pack_mask(sm)
+        a1_pack[i] = pack_mask(am)
+
+        changed = int(np.count_nonzero(sm != am))
+        index_rows.append({
+            ""row_index"": i,
+            ""sample_id"": target[""sample_id""],
+            ""image_path"": target[""image_path""],
+            ""image_raw_sha256"": target[""image_raw_sha256""],
+            ""model_family"": state[""model_family""],
+            ""model_state_id"": state[""model_state_id""],
+            ""training_seed"": seed,
+            ""checkpoint_sha256"": state[""checkpoint_sha256""],
+            ""source_foreground_pixels"": int(sm.sum()),
+            ""a1_foreground_pixels"": int(am.sum()),
+            ""changed_pixels"": changed,
+        })
+        pbar.set_postfix(chg=changed)
+
+        del x, z_source, z_a1, adapt_loss, sm, am
+
+    helper.restore_params(params, source_values)
+
+    del (
+        model,
+        params,
+        source_values,
+        trainable_bn_names,
+        unsafe_bn_names,
+        unsafe_bn_modules,
+        dropout_names,
+        dropout_modules,
+    )
+
+    if device.type == ""cuda"":
+        __import__(""torch"").cuda.empty_cache()
+
+    return source_pack, a1_pack, index_rows"
+DeepLabV3-R50,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,preflight,999,1141,"def preflight():
+    _, _, _, manifest_path, _ = validate_upstream()
+    targets, d2helper = load_frozen_targets(manifest_path)
+    panel, r03 = build_frozen_panel(d2helper)
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for Q1-R05D3."")
+    device = torch.device(""cuda"")
+
+    dummy_rgb = Image.new(""RGB"", (352, 352), color=(127, 127, 127))
+
+    # PraNet dummy SOURCE+A1.
+    ps = next(s for s in panel if s[""model_family""] == ""PraNet"")
+    ph = import_module(PRANET_HELPER, ""q1_r05d3_preflight_pranet"")
+    pt = ph.import_training_helper()
+    pm = ph.load_model(pt, int(ps[""training_seed""]), device)
+    pp = ph.configure_tent(pm)
+    pv = ph.snapshot_params(pp)
+    px = ph.image_to_model_tensor(pt, dummy_rgb).to(device)
+    psrc, pa1 = ph.source_and_tent_logits(pm, pp, pv, px)
+    if psrc.shape != (MASK_H, MASK_W) or pa1.shape != (MASK_H, MASK_W):
+        raise RuntimeError(""PraNet dummy SOURCE/A1 shape failed."")
+    del pm, pp, pv, px, psrc, pa1
+
+    # DeepLab dummy SOURCE+A1.
+    ds = next(s for s in panel if s[""model_family""] == ""DeepLabV3-R50"")
+    dh = import_module(DEEPLAB_HELPER, ""q1_r05d3_preflight_deeplab"")
+    dt = dh.import_training_helper()
+    dh.seed_everything(20260817)
+    dm = dh.load_model(dt, int(ds[""training_seed""]), device)
+    (
+        dp, _, _, unsafe, _, dropouts
+    ) = dh.configure_singleton_safe_tent(dm)
+    dv = dh.snapshot_params(dp)
+    dx = dh.image_to_model_tensor(dt, dummy_rgb).to(device)
+    dsrc, da1, dloss = dh.source_and_tent_logits(
+        helper=dt,
+        model=dm,
+        params=dp,
+        source_values=dv,
+        unsafe_bn_modules=unsafe,
+        dropout_modules=dropouts,
+        x=dx,
+    )
+    if dsrc.shape != (MASK_H, MASK_W) or da1.shape != (MASK_H, MASK_W):
+        raise RuntimeError(""DeepLab dummy SOURCE/A1 shape failed."")
+    if not math.isfinite(float(dloss)):
+        raise RuntimeError(""DeepLab dummy entropy loss is non-finite."")
+    del dm, dp, dv, unsafe, dropouts, dx, dsrc, da1, dloss
+
+    # SegFormer dummy SOURCE+A1.
+    segctx = r03.build_segformer_context(device)
+    (
+        torch2,
+        nn,
+        F,
+        SegformerForSemanticSegmentation,
+        config,
+        mean,
+        std,
+    ) = segctx
+
+    ss = next(s for s in panel if s[""model_family""] == ""SegFormer-B0"")
+    sm = r03.load_segformer_state(
+        int(ss[""training_seed""]),
+        device,
+        SegformerForSemanticSegmentation,
+        config,
+        torch2,
+    )
+    (
+        sp,
+        _,
+        sbn,
+        sbn_orig,
+        sdrop,
+        _,
+    ) = r03.configure_segformer_tent(sm, nn)
+    sv = r03.snapshot_params(sp)
+    sx = r03.segformer_tensor(dummy_rgb, mean, std, torch2).to(device)
+
+    r03.restore_params(sp, sv, torch2)
+    r03.segformer_source_mode(sm, sbn, sbn_orig, sdrop)
+    with torch2.no_grad():
+        _, szsrc = r03.segformer_logits_and_z(sm, sx, F)
+
+    r03.restore_params(sp, sv, torch2)
+    r03.segformer_tent_mode(sm, sbn, sdrop)
+
+    opt = torch2.optim.Adam(
+        sp,
+        lr=TENT_LR,
+        weight_decay=TENT_WEIGHT_DECAY,
+    )
+    opt.zero_grad(set_to_none=True)
+    slogits, _ = r03.segformer_logits_and_z(sm, sx, F)
+    sloss = r03.categorical_entropy(slogits, torch2)
+    sloss.backward()
+    opt.step()
+    opt.zero_grad(set_to_none=True)
+
+    with torch2.no_grad():
+        _, sza1 = r03.segformer_logits_and_z(sm, sx, F)
+
+    if tuple(szsrc[0].shape) != (MASK_H, MASK_W):
+        raise RuntimeError(""SegFormer dummy SOURCE shape failed."")
+    if tuple(sza1[0].shape) != (MASK_H, MASK_W):
+        raise RuntimeError(""SegFormer dummy A1 shape failed."")
+
+    del (
+        sm,
+        sp,
+        sbn,
+        sbn_orig,
+        sdrop,
+        sv,
+        sx,
+        opt,
+        slogits,
+        sloss,
+        szsrc,
+        sza1,
+    )
+    torch.cuda.empty_cache()
+
+    print(""===== Q1-R05D3 PREFLIGHT ====="")
+    print(f""protocol_sha256={EXPECTED_PROTOCOL_SHA256}"")
+    print(f""r05d1_lock_sha256={EXPECTED_R05D1_LOCK_SHA256}"")
+    print(f""r05d2_lock_sha256={EXPECTED_R05D2_LOCK_SHA256}"")
+    print(f""d2_probability_table_sha256={EXPECTED_D2_TABLE_SHA256}"")
+    print(f""target_cases={len(targets)}"")
+    print(f""model_states={len(panel)}"")
+    print(f""expected_model_cases={EXPECTED_MODEL_CASES}"")
+    print(""action=A1_TENT_1STEP"")
+    print(""all_model_cases_receive_A1=YES"")
+    print(""D2_probability_values_read=NO"")
+    print(""PAOT_gating=NO"")
+    print(""target_GT_pixels_decoded=NO"")
+    print(""dummy_PraNet_SOURCE_A1=PASS"")
+    print(""dummy_DeepLab_SOURCE_A1=PASS"")
+    print(""dummy_SegFormer_SOURCE_A1=PASS"")
+    print(""PREFLIGHT_PASS"")"
+DeepLabV3-R50,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,run,1148,1577,"def run(args):
+    d1, d2, r03_lock, manifest_path, _ = validate_upstream()
+    targets, d2helper = load_frozen_targets(manifest_path)
+    panel, r03 = build_frozen_panel(d2helper)
+
+    if args.output_dir.exists():
+        raise FileExistsError(
+            f""Final Q1-R05D3 output already exists: {args.output_dir}""
+        )
+
+    build_dir = Path(str(args.output_dir) + ""__building"")
+    if build_dir.exists() and not args.resume:
+        raise FileExistsError(
+            f""Partial Q1-R05D3 output exists: {build_dir}. ""
+            ""Use --resume only after a technical interruption.""
+        )
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    state_dir = build_dir / ""state_predictions""
+    state_dir.mkdir(parents=True, exist_ok=True)
+
+    protocol_copy = build_dir / ""preregistered_protocol_copy.md""
+    if not protocol_copy.exists():
+        shutil.copy2(PROTOCOL, protocol_copy)
+    validate_sha(protocol_copy, EXPECTED_PROTOCOL_SHA256, ""D3 protocol copy"")
+
+    target_manifest_sha = sha256_file(manifest_path)
+    order_sha = target_order_sha(targets)
+
+    gt_rule_path = build_dir / ""frozen_d4_gt_and_metric_rule.json""
+    if not gt_rule_path.exists():
+        write_json(gt_rule_path, GT_RULE)
+
+    checkpoint_manifest_path = build_dir / ""checkpoint_manifest.csv""
+    if not checkpoint_manifest_path.exists():
+        write_csv(
+            checkpoint_manifest_path,
+            panel,
+            [
+                ""model_family"",
+                ""training_seed"",
+                ""model_state_id"",
+                ""checkpoint"",
+                ""checkpoint_sha256"",
+            ],
+        )
+
+    upstream = {
+        ""script_version"": VERSION,
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""r05d1_lock_sha256"": EXPECTED_R05D1_LOCK_SHA256,
+        ""r05d1_decision"": d1.get(""decision""),
+        ""r05d2_lock_sha256"": EXPECTED_R05D2_LOCK_SHA256,
+        ""r05d2_decision"": d2.get(""decision""),
+        ""r05d2_probability_table_sha256"": EXPECTED_D2_TABLE_SHA256,
+        ""r05d2_probability_table_verified_by_hash_only"": True,
+        ""r03_lock_sha256"": EXPECTED_R03_LOCK_SHA256,
+        ""r03_decision"": r03_lock.get(""decision""),
+        ""target_manifest_sha256"": target_manifest_sha,
+        ""target_id_order_sha256"": order_sha,
+        ""target_cases"": len(targets),
+        ""model_states"": len(panel),
+        ""expected_model_cases"": EXPECTED_MODEL_CASES,
+        ""target_gt_pixels_decoded"": False,
+        ""paot_probability_values_read"": False,
+        ""paot_gating_used"": False,
+        ""target_fit_or_tuning"": False,
+    }
+    upstream_path = build_dir / ""upstream_audit.json""
+    write_json(upstream_path, upstream)
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for Q1-R05D3 formal run."")
+    device = torch.device(""cuda"")
+
+    print(""===== Q1-R05D3 SOURCE + A1 PREDICTION GENERATION ====="")
+    print(f""Device={device}"")
+    print(f""Target cases={len(targets)}"")
+    print(f""Model states={len(panel)}"")
+    print(f""Expected model-cases={EXPECTED_MODEL_CASES}"")
+    print(""Action=A1_TENT_1STEP"")
+    print(""D2 probability values read=NO"")
+    print(""PAOT gating=NO"")
+    print(""Target GT pixels decoded=NO"")
+    print()
+
+    global_rows = []
+    seg_context = None
+
+    for state_idx, state in enumerate(panel, start=1):
+        print(
+            f""[STATE {state_idx}/{len(panel)}] ""
+            f""{state['model_state_id']} ""
+            f""checkpoint={state['checkpoint_sha256'][:12]}...""
+        )
+
+        cached_rows = load_state(
+            state_dir,
+            state,
+            targets,
+            target_manifest_sha,
+            order_sha,
+            allow_orphan_cleanup=bool(args.resume),
+        )
+
+        pred_path, index_path, _ = state_paths(state_dir, state)
+
+        if cached_rows is not None:
+            print(f""[RESUME] verified state rows={len(cached_rows)}"")
+            global_rows.extend(
+                global_rows_from_state(cached_rows, pred_path, index_path)
+            )
+            continue
+
+        if state[""model_family""] == ""PraNet"":
+            source_pack, a1_pack, index_rows = run_pranet_state(
+                state,
+                targets,
+                device,
+            )
+        elif state[""model_family""] == ""DeepLabV3-R50"":
+            source_pack, a1_pack, index_rows = run_deeplab_state(
+                state,
+                targets,
+                device,
+            )
+        elif state[""model_family""] == ""SegFormer-B0"":
+            (
+                source_pack,
+                a1_pack,
+                index_rows,
+                seg_context,
+            ) = run_segformer_state(
+                state,
+                targets,
+                device,
+                r03,
+                seg_context=seg_context,
+            )
+        else:
+            raise RuntimeError(f""Unknown family: {state['model_family']}"")
+
+        validate_prediction_arrays(source_pack, a1_pack)
+        validate_index_rows(index_rows, state, targets)
+
+        pred_path, index_path, _ = save_state(
+            state_dir,
+            state,
+            targets,
+            source_pack,
+            a1_pack,
+            index_rows,
+            target_manifest_sha,
+            order_sha,
+        )
+
+        verified_rows = load_state(
+            state_dir,
+            state,
+            targets,
+            target_manifest_sha,
+            order_sha,
+            allow_orphan_cleanup=False,
+        )
+        if verified_rows is None:
+            raise RuntimeError(""Newly saved state failed verification."")
+
+        global_rows.extend(
+            global_rows_from_state(verified_rows, pred_path, index_path)
+        )
+
+        print(f""[PASS] locked state rows={len(verified_rows)}"")
+
+        del source_pack, a1_pack, index_rows, verified_rows
+        torch.cuda.empty_cache()
+
+    if len(global_rows) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(
+            f""Global rows={len(global_rows)} expected={EXPECTED_MODEL_CASES}""
+        )
+
+    unique_keys = {
+        (r[""model_state_id""], r[""sample_id""])
+        for r in global_rows
+    }
+    if len(unique_keys) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(""Duplicate/missing model-case keys."")
+
+    state_counts = Counter(r[""model_state_id""] for r in global_rows)
+    if len(state_counts) != EXPECTED_STATES:
+        raise RuntimeError(""Global state count mismatch."")
+    if any(v != EXPECTED_CASES for v in state_counts.values()):
+        raise RuntimeError(f""Per-state count mismatch: {dict(state_counts)}"")
+
+    global_rows.sort(
+        key=lambda r: (
+            r[""model_family""],
+            int(r[""training_seed""]),
+            r[""sample_id""],
+        )
+    )
+
+    global_manifest_path = build_dir / ""model_case_prediction_manifest.csv""
+    write_csv(global_manifest_path, global_rows, GLOBAL_FIELDS)
+
+    # Prediction-only descriptive summary; never used for selection.
+    grouped = defaultdict(list)
+    for row in global_rows:
+        grouped[(row[""model_family""], row[""model_state_id""])].append(row)
+        grouped[(row[""model_family""], ""ALL_3_STATES"")].append(row)
+        grouped[(""ALL_ARCHITECTURES"", ""ALL_9_STATES"")].append(row)
+
+    summary_rows = []
+    for (family, state_id), rows in sorted(grouped.items()):
+        src = np.asarray(
+            [int(r[""source_foreground_pixels""]) / MASK_PIXELS for r in rows],
+            dtype=np.float64,
+        )
+        a1 = np.asarray(
+            [int(r[""a1_foreground_pixels""]) / MASK_PIXELS for r in rows],
+            dtype=np.float64,
+        )
+        chg = np.asarray(
+            [int(r[""changed_pixels""]) / MASK_PIXELS for r in rows],
+            dtype=np.float64,
+        )
+        summary_rows.append({
+            ""model_family"": family,
+            ""model_state_id"": state_id,
+            ""rows"": len(rows),
+            ""source_fg_fraction_mean"": float(src.mean()),
+            ""a1_fg_fraction_mean"": float(a1.mean()),
+            ""changed_fraction_mean"": float(chg.mean()),
+            ""changed_fraction_q50"": float(np.quantile(chg, 0.50)),
+            ""changed_fraction_q90"": float(np.quantile(chg, 0.90)),
+            ""zero_change_fraction"": float(np.mean(chg == 0.0)),
+        })
+
+    summary_path = build_dir / ""prediction_change_summary.csv""
+    write_csv(
+        summary_path,
+        summary_rows,
+        [
+            ""model_family"",
+            ""model_state_id"",
+            ""rows"",
+            ""source_fg_fraction_mean"",
+            ""a1_fg_fraction_mean"",
+            ""changed_fraction_mean"",
+            ""changed_fraction_q50"",
+            ""changed_fraction_q90"",
+            ""zero_change_fraction"",
+        ],
+    )
+
+    boundary = {
+        ""target_image_pixels_decoded"": True,
+        ""target_gt_paths_present_as_provenance_strings"": True,
+        ""target_gt_pixels_decoded"": False,
+        ""source_inference_run"": True,
+        ""a1_tent_1step_run"": True,
+        ""a1_optimizer"": ""Adam"",
+        ""a1_lr"": TENT_LR,
+        ""a1_weight_decay"": TENT_WEIGHT_DECAY,
+        ""a1_steps_per_model_case"": TENT_STEPS,
+        ""episodic_reset"": True,
+        ""model_case_units_receiving_a1"": EXPECTED_MODEL_CASES,
+        ""d2_probability_table_sha_verified"": True,
+        ""d2_probability_values_read"": False,
+        ""paot_probability_threshold_selected"": False,
+        ""paot_gating_used"": False,
+        ""predictor_fit_or_modified"": False,
+        ""target_normalization_fit"": False,
+        ""target_calibration"": False,
+        ""target_hyperparameter_sweep"": False,
+        ""target_case_exclusion_from_prediction_behavior"": False,
+        ""target_dice_computed"": False,
+        ""target_delta_dice_computed"": False,
+        ""target_outcome_labels_computed"": False,
+    }
+    boundary_path = build_dir / ""information_boundary_audit.json""
+    write_json(boundary_path, boundary)
+
+    decision_path = build_dir / ""decision.txt""
+    decision_path.write_text(DECISION_READY + ""\n"", encoding=""utf-8"")
+
+    run_lines = [
+        ""===== Q1-R05D3 NEOPOLYP SOURCE + A1 PREDICTION LOCK ====="",
+        f""Script version: {VERSION}"",
+        f""Build: {BUILD}"",
+        """",
+        ""Frozen target:"",
+        f""  NeoPolyp cases={EXPECTED_CASES}"",
+        ""  exact overlap exclusions=0"",
+        """",
+        ""Frozen panel/action:"",
+        ""  PraNet states=3"",
+        ""  DeepLabV3-R50 states=3"",
+        ""  SegFormer-B0 states=3"",
+        f""  total states={EXPECTED_STATES}"",
+        ""  action=A1_TENT_1STEP"",
+        ""  optimizer=Adam"",
+        f""  lr={TENT_LR}"",
+        f""  weight_decay={TENT_WEIGHT_DECAY}"",
+        ""  steps=1"",
+        ""  episodic reset=YES"",
+        """",
+        ""Prediction lock:"",
+        f""  model-case rows={len(global_rows)}"",
+        f""  SOURCE masks={len(global_rows)}"",
+        f""  A1 masks={len(global_rows)}"",
+        f""  mask resolution={MASK_H}x{MASK_W}"",
+        f""  packed bytes/mask={PACKED_BYTES}"",
+        f""  bitorder={BITORDER}"",
+        """",
+        ""Information boundary:"",
+        ""  target image pixels decoded=YES"",
+        ""  target GT pixels decoded=NO"",
+        ""  D2 probability table SHA verified=YES"",
+        ""  D2 probability values read=NO"",
+        ""  PAOT gating used=NO"",
+        f""  all {EXPECTED_MODEL_CASES} model-case units received A1=YES"",
+        ""  predictor fit/modified=NO"",
+        ""  target tuning/calibration=NO"",
+        ""  target Dice/DeltaDice/outcomes=NO"",
+        """",
+        ""Future D4 GT rule frozen:"",
+        ""  black background -> binary background"",
+        ""  green non-neoplastic -> binary foreground"",
+        ""  red neoplastic -> binary foreground"",
+        ""  RGB assignment=nearest fixed prototype"",
+        ""  GT resize=352x352 nearest"",
+        ""  HARM <= -0.02"",
+        ""  BENEFIT >= +0.02"",
+        """",
+        ""Decision:"",
+        f""  {DECISION_READY}"",
+        """",
+        ""Next:"",
+        ""  Q1-R05D4 GT reveal + PAOT confirmatory evaluation"",
+    ]
+    run_log_path = build_dir / ""run_log.txt""
+    run_log_path.write_text(
+        ""\n"".join(run_lines) + ""\n"",
+        encoding=""utf-8"",
+    )
+
+    artifacts = {
+        ""protocol_copy"": protocol_copy,
+        ""upstream_audit"": upstream_path,
+        ""checkpoint_manifest"": checkpoint_manifest_path,
+        ""model_case_prediction_manifest"": global_manifest_path,
+        ""prediction_change_summary"": summary_path,
+        ""frozen_d4_gt_and_metric_rule"": gt_rule_path,
+        ""information_boundary_audit"": boundary_path,
+        ""decision"": decision_path,
+        ""run_log"": run_log_path,
+    }
+
+    for state in panel:
+        pred_path, index_path, state_lock_path = state_paths(state_dir, state)
+        if not pred_path.exists() or not index_path.exists() or not state_lock_path.exists():
+            raise RuntimeError(f""Missing state artifacts: {state['model_state_id']}"")
+        token = state_token(state)
+        artifacts[f""state_npz__{token}""] = pred_path
+        artifacts[f""state_index__{token}""] = index_path
+        artifacts[f""state_lock__{token}""] = state_lock_path
+
+    lock = {
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""r05d1_lock_sha256"": EXPECTED_R05D1_LOCK_SHA256,
+        ""r05d2_lock_sha256"": EXPECTED_R05D2_LOCK_SHA256,
+        ""r05d2_probability_table_sha256"": EXPECTED_D2_TABLE_SHA256,
+        ""r03_lock_sha256"": EXPECTED_R03_LOCK_SHA256,
+        ""target_manifest_sha256"": target_manifest_sha,
+        ""target_id_order_sha256"": order_sha,
+        ""target_cases"": EXPECTED_CASES,
+        ""model_states"": EXPECTED_STATES,
+        ""model_case_rows"": EXPECTED_MODEL_CASES,
+        ""source_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""a1_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""optimizer"": ""Adam"",
+        ""lr"": TENT_LR,
+        ""weight_decay"": TENT_WEIGHT_DECAY,
+        ""steps"": TENT_STEPS,
+        ""episodic_reset"": True,
+        ""all_model_cases_received_a1"": True,
+        ""d2_probability_values_read"": False,
+        ""paot_gating_used"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_outcomes_revealed"": False,
+        ""frozen_d4_gt_rule"": GT_RULE,
+        ""decision"": DECISION_READY,
+        ""artifacts"": {
+            name: {
+                ""relative_path"": str(path.relative_to(build_dir)),
+                ""sha256"": sha256_file(path),
+            }
+            for name, path in artifacts.items()
+        },
+    }
+
+    final_lock_path = (
+        build_dir / ""Q1_R05D3_NEOPOLYP_SOURCE_A1_PREDICTION_LOCK.json""
+    )
+    write_json(final_lock_path, lock)
+    lock_sha = sha256_file(final_lock_path)
+
+    for name, meta in lock[""artifacts""].items():
+        path = build_dir / meta[""relative_path""]
+        if sha256_file(path) != meta[""sha256""]:
+            raise RuntimeError(f""Artifact changed before commit: {name}"")
+
+    build_dir.rename(args.output_dir)
+
+    print()
+    print((args.output_dir / ""run_log.txt"").read_text(encoding=""utf-8""))
+    print(
+        ""Q1-R05D3 LOCK:"",
+        args.output_dir / ""Q1_R05D3_NEOPOLYP_SOURCE_A1_PREDICTION_LOCK.json"",
+    )
+    print(""Q1-R05D3 LOCK SHA256:"", lock_sha)"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,validate_upstream,388,466,"def validate_upstream():
+    validate_sha(PROTOCOL, EXPECTED_PROTOCOL_SHA256, ""Q1-R03 protocol"")
+    validate_sha(R02_LOCK, EXPECTED_R02_LOCK_SHA256, ""Q1-R02 lock"")
+    r02 = json.loads(R02_LOCK.read_text(encoding=""utf-8""))
+    if r02.get(""decision"") != EXPECTED_R02_DECISION:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_UPSTREAM_PROVENANCE: R02 decision={r02.get('decision')}""
+        )
+
+    validate_sha(
+        Q1_S00A_LOCK, EXPECTED_Q1_S00A_LOCK_SHA256, ""Q1-S00A lock""
+    )
+    validate_sha(
+        S07B_TABLE, EXPECTED_S07B_TABLE_SHA256, ""S07-B utility table""
+    )
+    validate_sha(
+        PRANET_HELPER, EXPECTED_PRANET_HELPER_SHA256, ""PraNet S03 helper""
+    )
+    validate_sha(
+        PRANET_TRAINING_HELPER,
+        EXPECTED_PRANET_TRAINING_HELPER_SHA256,
+        ""PraNet training helper"",
+    )
+    validate_sha(
+        DEEPLAB_HELPER, EXPECTED_DEEPLAB_HELPER_SHA256, ""DeepLab S05-C helper""
+    )
+    validate_sha(
+        DEEPLAB_TRAINING_HELPER,
+        EXPECTED_DEEPLAB_TRAINING_HELPER_SHA256,
+        ""DeepLab training helper"",
+    )
+
+    q1_lock = json.loads(Q1_S00A_LOCK.read_text(encoding=""utf-8""))
+    feature_art = q1_lock.get(""artifacts"", {}).get(""gradient_probe_features"", {})
+    feature_expected = feature_art.get(""sha256"")
+    if not feature_expected:
+        raise RuntimeError(
+            ""INVALID_Q1_R03_UPSTREAM_PROVENANCE: Q1-S00A lock lacks feature SHA""
+        )
+    validate_sha(Q1_S00A_FEATURES, feature_expected, ""Q1-S00A B0 table"")
+
+    if not DEEPLAB_AUDIT.exists():
+        raise FileNotFoundError(DEEPLAB_AUDIT)
+    deep_audit = json.loads(DEEPLAB_AUDIT.read_text(encoding=""utf-8""))
+    deep_table_expected = deep_audit.get(""source_training_table_sha256"")
+    if not deep_table_expected:
+        raise RuntimeError(
+            ""INVALID_Q1_R03_UPSTREAM_PROVENANCE: S05-C audit lacks table SHA""
+        )
+    validate_sha(DEEPLAB_TABLE, deep_table_expected, ""S05-C frozen table"")
+
+    panel = []
+    for family, mapping in (
+        (""PraNet"", PRANET_CHECKPOINTS),
+        (""DeepLabV3-R50"", DEEPLAB_CHECKPOINTS),
+        (""SegFormer-B0"", SEGFORMER_CHECKPOINTS),
+    ):
+        for seed, (path, sha) in mapping.items():
+            validate_sha(path, sha, f""{family} checkpoint seed {seed}"")
+            panel.append({
+                ""model_family"": family,
+                ""seed"": seed,
+                ""model_state_id"": f""{family}::{seed}"",
+                ""checkpoint"": str(path),
+                ""checkpoint_sha256"": sha,
+            })
+
+    if len(panel) != 9 or len({r[""checkpoint_sha256""] for r in panel}) != 9:
+        raise RuntimeError(""INVALID_Q1_R03_PANEL_CHECKPOINT"")
+
+    return panel, {
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""manifest_sha256"": EXPECTED_MANIFEST_SHA256,
+        ""r02_lock_sha256"": EXPECTED_R02_LOCK_SHA256,
+        ""q1_s00a_lock_sha256"": EXPECTED_Q1_S00A_LOCK_SHA256,
+        ""q1_s00a_feature_sha256"": feature_expected,
+        ""s07b_table_sha256"": EXPECTED_S07B_TABLE_SHA256,
+        ""deeplab_table_sha256"": deep_table_expected,
+    }"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,build_deeplab_rows,734,894,"def build_deeplab_rows(source_rows, device, cache_dir, resume):
+    import torch
+
+    helper = import_module(
+        DEEPLAB_HELPER,
+        ""q1_r03_s05c_helper"",
+    )
+    training = import_module(
+        DEEPLAB_TRAINING_HELPER,
+        ""q1_r03_s05b_training_helper"",
+    )
+
+    frozen_rows, frozen_fields = read_csv(DEEPLAB_TABLE)
+    required = {
+        ""seed"", ""sample_id"", ""fold"", ""perturbation"",
+        ""source_dice"", ""tent_dice"", ""delta_dice"",
+        ""harmful"", ""beneficial"", ""tent_adapt_loss"",
+    }
+    if not required.issubset(frozen_fields):
+        raise RuntimeError(""INVALID_Q1_R03_DEEPLAB_REPRODUCTION: frozen schema"")
+
+    frozen = {
+        (int(r[""seed""]), r[""sample_id""], r[""perturbation""]): r
+        for r in frozen_rows
+    }
+    if len(frozen) != EXPECTED_ROWS_PER_FAMILY:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_DEEPLAB_REPRODUCTION: frozen rows={len(frozen)}""
+        )
+
+    # FIX2: reproduce the exact frozen S05-C runtime state.
+    # S05-C calls seed_everything(20260817) once before generating all
+    # three seed tables; this enables deterministic algorithms and freezes
+    # cuDNN benchmark/deterministic flags.
+    helper.seed_everything(20260817)
+
+    all_rows = []
+    max_source_dice_diff = 0.0
+
+    for seed in DEEPLAB_SEEDS:
+        sha = DEEPLAB_CHECKPOINTS[seed][1]
+        if resume:
+            cached = load_state_cache(cache_dir, ""DeepLabV3-R50"", seed, sha)
+            if cached is not None:
+                print(f""[RESUME] DeepLabV3-R50 seed={seed} rows={len(cached)}"")
+                all_rows.extend(cached)
+                continue
+
+        model = helper.load_model(training, seed, device)
+
+        # FIX1 — exact S05-C source-forward parity.
+        #
+        # The frozen S05-C table was produced only after
+        # configure_singleton_safe_tent() had changed ordinary BN modules to
+        # track_running_stats=False while preserving the singleton-unsafe ASPP
+        # BN on source running statistics.  Its SOURCE branch then called
+        # model.eval() without undoing those normalization flags.
+        #
+        # Therefore a plain checkpoint model.eval() is NOT guaranteed to
+        # reproduce the frozen S05-C source logit.  Apply the exact frozen
+        # normalization configuration first, then evaluate source-only.
+        (
+            parity_params,
+            parity_trainable_bn_names,
+            parity_unsafe_bn_names,
+            parity_unsafe_bn_modules,
+            parity_dropout_names,
+            parity_dropout_modules,
+        ) = helper.configure_singleton_safe_tent(model)
+        model.eval()
+        state_rows = []
+
+        pbar = tqdm(
+            total=EXPECTED_ROWS_PER_STATE,
+            desc=f""Q1-R03 DeepLab exact-B0 seed {seed}"",
+            unit=""case"",
+            dynamic_ncols=True,
+        )
+
+        for src in source_rows:
+            image_path = DATA_ROOT / Path(src[""image_relpath""])
+            with Image.open(image_path) as im:
+                native = im.convert(""RGB"")
+            gt = helper.load_gt(src)
+
+            for perturbation in PERTURBATIONS:
+                key = (seed, src[""sample_id""], perturbation)
+                fr = frozen.get(key)
+                if fr is None:
+                    raise RuntimeError(
+                        f""INVALID_Q1_R03_DEEPLAB_REPRODUCTION: missing frozen {key}""
+                    )
+
+                perturbed = helper.apply_perturbation(
+                    native, perturbation, src[""sample_id""]
+                )
+                x = helper.image_to_model_tensor(training, perturbed).to(
+                    device, non_blocking=True
+                )
+                with torch.no_grad():
+                    z = training.deeplab_logits(model, x).detach()
+                z_np = z[0, 0].float().cpu().numpy()
+
+                source_dice = helper.dice_from_logit(z_np, gt)
+                diff = abs(source_dice - float(fr[""source_dice""]))
+                max_source_dice_diff = max(max_source_dice_diff, diff)
+                if diff > 1e-6:
+                    raise RuntimeError(
+                        ""INVALID_Q1_R03_DEEPLAB_REPRODUCTION: ""
+                        f""seed={seed} sample={src['sample_id']} ""
+                        f""pert={perturbation} source_dice_diff={diff}""
+                    )
+
+                features = extract_source_features(
+                    z_np, float(fr[""tent_adapt_loss""])
+                )
+                action_dice = float(fr[""tent_dice""])
+                row = make_common_row(
+                    ""DeepLabV3-R50"",
+                    seed,
+                    sha,
+                    src[""sample_id""],
+                    int(fr[""fold""]),
+                    perturbation,
+                    source_dice,
+                    action_dice,
+                    features,
+                )
+                if abs(row[""delta_dice""] - float(fr[""delta_dice""])) > 1e-6:
+                    raise RuntimeError(
+                        ""INVALID_Q1_R03_DEEPLAB_REPRODUCTION: delta mismatch""
+                    )
+                state_rows.append(row)
+                pbar.update(1)
+
+        pbar.close()
+        validate_state_rows(state_rows, ""DeepLabV3-R50"", seed, sha)
+        save_state_cache(cache_dir, ""DeepLabV3-R50"", seed, sha, state_rows)
+        all_rows.extend(state_rows)
+
+        del (
+            model,
+            parity_params,
+            parity_trainable_bn_names,
+            parity_unsafe_bn_names,
+            parity_unsafe_bn_modules,
+            parity_dropout_names,
+            parity_dropout_modules,
+        )
+        if device.type == ""cuda"":
+            torch.cuda.empty_cache()
+
+    return all_rows, {
+        ""rows"": len(all_rows),
+        ""max_abs_source_dice_reproduction_error"": max_source_dice_diff,
+        ""new_adaptation_step"": False,
+        ""new_source_forward_for_exact_b0"": True,
+        ""source_forward_parity_rule"": (
+            ""configure_singleton_safe_tent_then_model_eval_exact_S05C_source_branch""
+        ),
+    }"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,distribution_summary,1252,1278,"def distribution_summary(rows):
+    out = []
+    groups = [(""ALL"", rows)]
+    for family in (""PraNet"", ""DeepLabV3-R50"", ""SegFormer-B0""):
+        groups.append((family, [r for r in rows if r[""model_family""] == family]))
+
+    for name, rr in groups:
+        d = np.asarray([float(r[""delta_dice""]) for r in rr], dtype=np.float64)
+        src = np.asarray([float(r[""source_dice""]) for r in rr], dtype=np.float64)
+        act = np.asarray([float(r[""action_dice""]) for r in rr], dtype=np.float64)
+        out.append({
+            ""group"": name,
+            ""rows"": len(rr),
+            ""source_dice_mean"": float(src.mean()),
+            ""action_dice_mean"": float(act.mean()),
+            ""delta_dice_mean"": float(d.mean()),
+            ""delta_dice_std"": float(d.std()),
+            ""delta_dice_q10"": float(np.quantile(d, 0.10)),
+            ""delta_dice_q50"": float(np.quantile(d, 0.50)),
+            ""delta_dice_q90"": float(np.quantile(d, 0.90)),
+            ""harm_fraction"": float(np.mean(d <= HARM_THRESHOLD)),
+            ""neutral_fraction"": float(
+                np.mean((d > HARM_THRESHOLD) & (d < BENEFIT_THRESHOLD))
+            ),
+            ""benefit_fraction"": float(np.mean(d >= BENEFIT_THRESHOLD)),
+        })
+    return out"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,validate_global_rows,1281,1324,"def validate_global_rows(rows):
+    if len(rows) != EXPECTED_TOTAL_ROWS:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_CARDINALITY: total={len(rows)} ""
+            f""expected={EXPECTED_TOTAL_ROWS}""
+        )
+
+    states = Counter(r[""model_state_id""] for r in rows)
+    if len(states) != 9 or any(v != EXPECTED_ROWS_PER_STATE for v in states.values()):
+        raise RuntimeError(f""INVALID_Q1_R03_CARDINALITY: states={dict(states)}"")
+
+    families = Counter(r[""model_family""] for r in rows)
+    expected_family = {
+        ""PraNet"": EXPECTED_ROWS_PER_FAMILY,
+        ""DeepLabV3-R50"": EXPECTED_ROWS_PER_FAMILY,
+        ""SegFormer-B0"": EXPECTED_ROWS_PER_FAMILY,
+    }
+    if dict(families) != expected_family:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_CARDINALITY: families={dict(families)}""
+        )
+
+    global_keys = {
+        (
+            r[""model_state_id""],
+            r[""sample_id""],
+            r[""perturbation""],
+        )
+        for r in rows
+    }
+    if len(global_keys) != EXPECTED_TOTAL_ROWS:
+        raise RuntimeError(""INVALID_Q1_R03_CARDINALITY: duplicate global key"")
+
+    groups = defaultdict(set)
+    for r in rows:
+        groups[r[""sample_id""]].add(int(r[""fold""]))
+    if len(groups) != SOURCE_VAL_N:
+        raise RuntimeError(""INVALID_Q1_R03_GROUP_FOLD: group count"")
+    if any(len(v) != 1 for v in groups.values()):
+        raise RuntimeError(""INVALID_Q1_R03_GROUP_FOLD: fold leakage"")
+
+    fold_counts = Counter(next(iter(v)) for v in groups.values())
+    if dict(sorted(fold_counts.items())) != EXPECTED_FOLD_GROUP_COUNTS:
+        raise RuntimeError(""INVALID_Q1_R03_GROUP_FOLD: fold counts"")"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,run_deeplab_parity_only,1332,1465,"def run_deeplab_parity_only():
+    """"""
+    Technical diagnostic only.
+
+    Reproduce the first frozen source-val sample under all 10 perturbations
+    for DeepLab seed 20260817. No adaptation optimizer step is executed.
+    No target rows are opened.
+    """"""
+    panel, provenance = validate_upstream()
+    source_rows = load_source_val_rows()
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for DeepLab parity diagnostic."")
+
+    device = torch.device(""cuda"")
+    helper = import_module(
+        DEEPLAB_HELPER,
+        ""q1_r03_s05c_helper_parity_only"",
+    )
+    training = import_module(
+        DEEPLAB_TRAINING_HELPER,
+        ""q1_r03_s05b_training_helper_parity_only"",
+    )
+
+    # Exact frozen S05-C runtime.
+    helper.seed_everything(20260817)
+
+    frozen_rows, frozen_fields = read_csv(DEEPLAB_TABLE)
+    frozen = {
+        (int(r[""seed""]), r[""sample_id""], r[""perturbation""]): r
+        for r in frozen_rows
+    }
+
+    seed = 20260817
+    src = source_rows[0]
+    model = helper.load_model(training, seed, device)
+    (
+        params,
+        trainable_bn_names,
+        unsafe_bn_names,
+        unsafe_bn_modules,
+        dropout_names,
+        dropout_modules,
+    ) = helper.configure_singleton_safe_tent(model)
+
+    # Exact frozen source branch state:
+    # configure_singleton_safe_tent() first, then model.eval().
+    model.eval()
+
+    image_path = DATA_ROOT / Path(src[""image_relpath""])
+    with Image.open(image_path) as im:
+        native = im.convert(""RGB"")
+    gt = helper.load_gt(src)
+
+    rows = []
+    max_diff = 0.0
+
+    print(""===== Q1-R03 FIX2 DEEPLAB PARITY ONLY ====="")
+    print(f""seed={seed}"")
+    print(f""sample_id={src['sample_id']}"")
+    print(f""CUBLAS_WORKSPACE_CONFIG={os.environ.get('CUBLAS_WORKSPACE_CONFIG')}"")
+    print(f""deterministic_algorithms={torch.are_deterministic_algorithms_enabled()}"")
+    print(f""cudnn_benchmark={torch.backends.cudnn.benchmark}"")
+    print(f""cudnn_deterministic={torch.backends.cudnn.deterministic}"")
+    print(""optimizer_step=NO"")
+    print(""target_rows_opened=NO"")
+    print()
+
+    for perturbation in tqdm(
+        PERTURBATIONS,
+        desc=""DeepLab parity diagnostic"",
+        unit=""pert"",
+        dynamic_ncols=True,
+    ):
+        key = (seed, src[""sample_id""], perturbation)
+        fr = frozen.get(key)
+        if fr is None:
+            raise RuntimeError(f""Missing frozen S05-C row: {key}"")
+
+        perturbed = helper.apply_perturbation(
+            native,
+            perturbation,
+            src[""sample_id""],
+        )
+        x = helper.image_to_model_tensor(training, perturbed).to(
+            device,
+            non_blocking=True,
+        )
+
+        # Restore source affine values is unnecessary before the first source
+        # forward because no optimizer step occurs in this diagnostic.
+        # model.eval() exactly matches source_and_tent_logits source branch.
+        with torch.no_grad():
+            z = training.deeplab_logits(model, x).detach()
+        z_np = z[0, 0].float().cpu().numpy()
+
+        reproduced = helper.dice_from_logit(z_np, gt)
+        frozen_dice = float(fr[""source_dice""])
+        diff = abs(reproduced - frozen_dice)
+        max_diff = max(max_diff, diff)
+
+        rows.append({
+            ""perturbation"": perturbation,
+            ""frozen_source_dice"": frozen_dice,
+            ""reproduced_source_dice"": reproduced,
+            ""abs_diff"": diff,
+        })
+
+        print(
+            f""{perturbation}: frozen={frozen_dice:.12f} ""
+            f""reproduced={reproduced:.12f} diff={diff:.3e}""
+        )
+
+    print()
+    print(f""max_abs_source_dice_error={max_diff:.12g}"")
+    if max_diff > 1e-6:
+        raise RuntimeError(
+            ""INVALID_Q1_R03_DEEPLAB_REPRODUCTION: parity-only max error ""
+            f""{max_diff} exceeds frozen tolerance 1e-6""
+        )
+
+    print(""DEEPLAB_PARITY_PASS"")
+    print(""optimizer_step=NO"")
+    print(""target_rows_opened=NO"")
+
+    del (
+        model,
+        params,
+        unsafe_bn_modules,
+        dropout_modules,
+    )
+    torch.cuda.empty_cache()
+    return 0"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,run,1520,1726,"def run(args):
+    panel, provenance = validate_upstream()
+    source_rows = load_source_val_rows()
+    fold_rows = build_fold_audit(source_rows)
+
+    if args.output_dir.exists():
+        raise FileExistsError(f""Final Q1-R03 output exists: {args.output_dir}"")
+
+    build_dir = Path(str(args.output_dir) + ""__building"")
+    if build_dir.exists() and not args.resume:
+        raise FileExistsError(
+            f""Partial Q1-R03 output exists: {build_dir}. Use --resume only after ""
+            ""a technical interruption.""
+        )
+    build_dir.mkdir(parents=True, exist_ok=True)
+    cache_dir = build_dir / ""state_cache""
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for Q1-R03."")
+    device = torch.device(""cuda"")
+
+    protocol_copy = build_dir / ""preregistered_protocol_copy.md""
+    if not protocol_copy.exists():
+        shutil.copy2(PROTOCOL, protocol_copy)
+    validate_sha(protocol_copy, EXPECTED_PROTOCOL_SHA256, ""protocol copy"")
+
+    panel_path = build_dir / ""panel_checkpoint_manifest.csv""
+    write_csv(
+        panel_path,
+        panel,
+        [
+            ""model_family"",
+            ""seed"",
+            ""model_state_id"",
+            ""checkpoint"",
+            ""checkpoint_sha256"",
+        ],
+    )
+
+    fold_path = build_dir / ""source_group_fold_audit.csv""
+    write_csv(fold_path, fold_rows, [""source_group_id"", ""fold""])
+
+    print(""===== Q1-R03 NINE-STATE SOURCE UTILITY ASSET ====="")
+    print(f""Device={device}"")
+    print(f""Source groups={SOURCE_VAL_N}"")
+    print(f""Perturbations={len(PERTURBATIONS)}"")
+    print(""Model states=9"")
+    print(f""Expected rows={EXPECTED_TOTAL_ROWS}"")
+    print(""Target data=NO"")
+    print(""Utility predictor fitted=NO"")
+    print()
+
+    pranet_rows, pranet_audit = build_pranet_rows()
+    write_json(build_dir / ""pranet_reuse_audit.json"", pranet_audit)
+    print(f""[PASS] PraNet frozen reuse rows={len(pranet_rows)}"")
+
+    deep_rows, deep_audit = build_deeplab_rows(
+        source_rows, device, cache_dir, args.resume
+    )
+    write_json(build_dir / ""deeplab_reuse_and_b0_audit.json"", deep_audit)
+    print(
+        ""[PASS] DeepLab exact-B0 rows=""
+        f""{len(deep_rows)} max_source_dice_error=""
+        f""{deep_audit['max_abs_source_dice_reproduction_error']:.3e}""
+    )
+
+    seg_rows, seg_audit = build_segformer_rows(
+        source_rows, device, cache_dir, args.resume
+    )
+    write_json(build_dir / ""segformer_tent_parameter_audit.json"", seg_audit)
+    print(f""[PASS] SegFormer A1 rows={len(seg_rows)}"")
+
+    all_rows = pranet_rows + deep_rows + seg_rows
+    validate_global_rows(all_rows)
+    all_rows.sort(
+        key=lambda r: (
+            r[""model_family""],
+            int(r[""training_seed""]),
+            r[""sample_id""],
+            r[""perturbation""],
+        )
+    )
+
+    table_path = build_dir / ""nine_state_source_utility_table.csv""
+    write_csv(table_path, all_rows, COMMON_FIELDS)
+    table_sha = file_sha256(table_path)
+
+    dist = distribution_summary(all_rows)
+    dist_path = build_dir / ""architecture_distribution_summary.csv""
+    write_csv(dist_path, dist, list(dist[0].keys()))
+
+    provenance_payload = {
+        **provenance,
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        ""target_data_used"": False,
+        ""utility_predictor_fitted"": False,
+        ""threshold_selected"": False,
+        ""hyperparameter_sweep"": False,
+        ""source_val_groups"": SOURCE_VAL_N,
+        ""perturbations"": list(PERTURBATIONS),
+        ""action"": A1_ACTION,
+        ""model_states"": 9,
+        ""rows"": len(all_rows),
+        ""table_sha256"": table_sha,
+    }
+    provenance_path = build_dir / ""provenance_audit.json""
+    write_json(provenance_path, provenance_payload)
+
+    decision_path = build_dir / ""decision.txt""
+    decision_path.write_text(DECISION_READY + ""\n"", encoding=""utf-8"")
+
+    run_log = f""""""===== Q1-R03 NINE-STATE HETEROGENEOUS SOURCE UTILITY ASSET =====
+Script version: {VERSION}
+Build: {BUILD}
+
+Source:
+  manifest_sha256={EXPECTED_MANIFEST_SHA256}
+  source_val_groups={SOURCE_VAL_N}
+  perturbations={len(PERTURBATIONS)}
+
+Panel:
+  PraNet states=3 rows={len(pranet_rows)}
+  DeepLabV3-R50 states=3 rows={len(deep_rows)}
+  SegFormer-B0 states=3 rows={len(seg_rows)}
+  total states=9
+  total rows={len(all_rows)}
+
+Information boundary:
+  seen_sanity opened=NO
+  unseen_locked opened=NO
+  PolypGen target opened=NO
+  target labels opened=NO
+  utility predictor fitted=NO
+  threshold selected=NO
+  hyperparameter sweep=NO
+
+DeepLab exact-B0 reproduction:
+  max_abs_source_dice_error={deep_audit['max_abs_source_dice_reproduction_error']:.12g}
+
+Combined table:
+  sha256={table_sha}
+
+Decision:
+  {DECISION_READY}
+
+If ready:
+  next = Q1-R04 Model-Relative Prospective Utility Feasibility with LOAO
+""""""
+    run_log_path = build_dir / ""run_log.txt""
+    run_log_path.write_text(run_log, encoding=""utf-8"")
+
+    artifact_paths = {
+        ""protocol_copy"": protocol_copy,
+        ""panel_checkpoint_manifest"": panel_path,
+        ""source_group_fold_audit"": fold_path,
+        ""pranet_reuse_audit"": build_dir / ""pranet_reuse_audit.json"",
+        ""deeplab_reuse_and_b0_audit"": build_dir / ""deeplab_reuse_and_b0_audit.json"",
+        ""segformer_tent_parameter_audit"": build_dir / ""segformer_tent_parameter_audit.json"",
+        ""nine_state_source_utility_table"": table_path,
+        ""architecture_distribution_summary"": dist_path,
+        ""provenance_audit"": provenance_path,
+        ""decision"": decision_path,
+        ""run_log"": run_log_path,
+    }
+
+    lock = {
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""manifest_sha256"": EXPECTED_MANIFEST_SHA256,
+        ""r02_lock_sha256"": EXPECTED_R02_LOCK_SHA256,
+        ""model_states"": 9,
+        ""rows"": EXPECTED_TOTAL_ROWS,
+        ""feature_names"": SOURCE_FEATURE_NAMES,
+        ""target_data_used"": False,
+        ""utility_predictor_fitted"": False,
+        ""artifacts"": {
+            name: {
+                ""relative_path"": str(path.relative_to(build_dir)),
+                ""sha256"": file_sha256(path),
+            }
+            for name, path in artifact_paths.items()
+        },
+        ""decision"": DECISION_READY,
+    }
+    lock_path = build_dir / ""Q1_R03_NINE_STATE_SOURCE_UTILITY_LOCK.json""
+    write_json(lock_path, lock)
+    lock_sha = file_sha256(lock_path)
+
+    # Final immutability check.
+    for name, meta in lock[""artifacts""].items():
+        path = build_dir / meta[""relative_path""]
+        if file_sha256(path) != meta[""sha256""]:
+            raise RuntimeError(f""Artifact changed before commit: {name}"")
+
+    build_dir.rename(args.output_dir)
+
+    print()
+    print((args.output_dir / ""run_log.txt"").read_text(encoding=""utf-8""))
+    print(
+        ""Q1-R03 LOCK:"",
+        args.output_dir / ""Q1_R03_NINE_STATE_SOURCE_UTILITY_LOCK.json"",
+    )
+    print(""Q1-R03 LOCK SHA256:"", lock_sha)"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,parse_args,1778,1813,"def parse_args():
+    p = argparse.ArgumentParser(
+        description=(
+            ""Q1-R03: complete a source-only 9-state heterogeneous ""
+            ""A1_TENT_1STEP utility asset. No utility predictor is fitted.""
+        )
+    )
+    p.add_argument(""--root"", type=Path, default=ROOT)
+    p.add_argument(""--output-dir"", type=Path, default=OUTPUT_DIR)
+    p.add_argument(
+        ""--deeplab-parity-only"",
+        action=""store_true"",
+        help=(
+            ""Technical diagnostic: reproduce frozen S05-C source Dice for ""
+            ""DeepLab seed 20260817 on the first source-val image across all ""
+            ""10 perturbations. No adaptation optimizer step and no target access.""
+        ),
+    )
+    p.add_argument(
+        ""--preflight-only"",
+        action=""store_true"",
+        help=(
+            ""Verify all frozen provenance/checkpoints and one SegFormer dummy ""
+            ""forward/TENT parameter discovery; no source image inference and no ""
+            ""optimizer step.""
+        ),
+    )
+    p.add_argument(
+        ""--resume"",
+        action=""store_true"",
+        help=(
+            ""Resume only verified Q1-R03 per-state caches after technical interruption.""
+        ),
+    )
+    p.add_argument(""--self-test"", action=""store_true"")
+    return p.parse_args()"
+DeepLabV3-R50,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,main,1816,1831,"def main():
+    args = parse_args()
+    if args.self_test:
+        self_test()
+        return 0
+    if args.deeplab_parity_only:
+        return run_deeplab_parity_only()
+    if args.preflight_only:
+        run_preflight()
+        return 0
+    try:
+        run(args)
+    except Exception:
+        traceback.print_exc()
+        raise
+    return 0"
+DeepLabV3-R50,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,patch_r05d3_cardinality,383,410,"def patch_r05d3_cardinality(r05d3):
+    # Reuse model-specific implementation unchanged, but with PolypGen count.
+    r05d3.EXPECTED_CASES = EXPECTED_CASES
+    r05d3.EXPECTED_STATES = EXPECTED_STATES
+    r05d3.EXPECTED_MODEL_CASES = EXPECTED_MODEL_CASES
+
+    if int(r05d3.MASK_H) != MASK_H or int(r05d3.MASK_W) != MASK_W:
+        raise RuntimeError(""R05D3 mask resolution changed."")
+    if int(r05d3.PACKED_BYTES) != PACKED_BYTES:
+        raise RuntimeError(""R05D3 packed-mask byte count changed."")
+    if str(r05d3.BITORDER) != BITORDER:
+        raise RuntimeError(""R05D3 packbits bitorder changed."")
+    if float(r05d3.TENT_LR) != 1e-3:
+        raise RuntimeError(""R05D3 TENT lr changed."")
+    if float(r05d3.TENT_WEIGHT_DECAY) != 0.0:
+        raise RuntimeError(""R05D3 TENT weight decay changed."")
+    if int(r05d3.TENT_STEPS) != 1:
+        raise RuntimeError(""R05D3 TENT step count changed."")
+
+    for name in [
+        ""run_pranet_state"",
+        ""run_deeplab_state"",
+        ""run_segformer_state"",
+        ""pack_mask"",
+        ""unpack_mask"",
+    ]:
+        if not hasattr(r05d3, name):
+            raise RuntimeError(f""R05D3 missing required function: {name}"")"
+DeepLabV3-R50,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,run_state,645,832,"def run_state(
+    r05d3,
+    r03,
+    state,
+    targets,
+    device,
+    state_dir,
+    upstream,
+    resume,
+    seg_context=None,
+):
+    npz_path, index_path, sidecar_path = state_paths(state_dir, state)
+
+    if resume and sidecar_is_complete(
+        sidecar_path,
+        npz_path,
+        index_path,
+        state,
+        upstream,
+    ):
+        print(
+            f""[RESUME VERIFIED] {state['model_state_id']} ""
+            f""seed={state['training_seed']}""
+        )
+        with index_path.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+
+        if not validate_cached_rows_for_target(
+            rows,
+            state,
+            targets,
+        ):
+            raise RuntimeError(
+                f""Cached rows failed target/state validation: ""
+                f""{state['model_state_id']}""
+            )
+
+        return (
+            npz_path,
+            index_path,
+            sidecar_path,
+            rows,
+            seg_context,
+        )
+
+    # Delete only this incomplete state artifact set.
+    for p in [npz_path, index_path, sidecar_path]:
+        if p.exists():
+            p.unlink()
+
+    family = state[""model_family""]
+
+    # Fix2: the authoritative R05D3 SegFormer runner intentionally returns
+    # FOUR values:
+    #   SOURCE packed masks, A1 packed masks, index rows, seg_context
+    #
+    # PraNet and DeepLab return three. Do not flatten this difference because
+    # seg_context is deliberately reused across the three SegFormer states.
+    if family == ""SegFormer-B0"":
+        result = r05d3.run_segformer_state(
+            state,
+            targets,
+            device,
+            r03,
+            seg_context=seg_context,
+        )
+        if not isinstance(result, tuple) or len(result) != 4:
+            raise RuntimeError(
+                ""Authoritative SegFormer runner return schema changed; ""
+                f""expected 4 values, got ""
+                f""{len(result) if isinstance(result, tuple) else type(result)}""
+            )
+        (
+            source_pack,
+            a1_pack,
+            rows,
+            seg_context,
+        ) = result
+    elif family == ""PraNet"":
+        result = invoke_runner(
+            r05d3.run_pranet_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative PraNet runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    elif family == ""DeepLabV3-R50"":
+        result = invoke_runner(
+            r05d3.run_deeplab_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative DeepLab runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    else:
+        raise RuntimeError(f""Unexpected family: {family}"")
+
+    source_pack, a1_pack = validate_prediction_arrays(
+        r05d3,
+        source_pack,
+        a1_pack,
+    )
+
+    if len(rows) != EXPECTED_CASES:
+        raise RuntimeError(
+            f""{state['model_state_id']} index rows={len(rows)} ""
+            f""expected={EXPECTED_CASES}""
+        )
+
+    expected_ids = [t[""sample_id""] for t in targets]
+    observed_ids = [str(r[""sample_id""]) for r in rows]
+    if observed_ids != expected_ids:
+        raise RuntimeError(
+            f""{state['model_state_id']} target order changed.""
+        )
+
+    for i, row in enumerate(rows):
+        target = targets[i]
+        if str(row[""image_raw_sha256""]).lower() != str(
+            target[""image_raw_sha256""]
+        ).lower():
+            raise RuntimeError(
+                f""{state['model_state_id']} image SHA mismatch at row {i}""
+            )
+        if row[""model_state_id""] != state[""model_state_id""]:
+            raise RuntimeError(""State ID mismatch in prediction index."")
+        if str(row[""checkpoint_sha256""]).lower() != state[
+            ""checkpoint_sha256""
+        ].lower():
+            raise RuntimeError(""Checkpoint SHA mismatch in prediction index."")
+
+    np.savez_compressed(
+        npz_path,
+        source_masks_packed=source_pack,
+        a1_masks_packed=a1_pack,
+    )
+
+    fields = list(rows[0].keys())
+    write_csv(index_path, rows, fields)
+
+    sidecar = {
+        ""decision"": ""STATE_COMPLETE"",
+        ""model_family"": family,
+        ""model_state_id"": state[""model_state_id""],
+        ""training_seed"": int(state[""training_seed""]),
+        ""checkpoint_sha256"": state[""checkpoint_sha256""],
+        ""target_cases"": EXPECTED_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""tent_lr"": 1e-3,
+        ""tent_weight_decay"": 0.0,
+        ""tent_steps"": 1,
+        ""episodic_reset"": True,
+        ""polypgen_manifest_sha256"": upstream[""polypgen_manifest_sha256""],
+        ""independence_lock_sha256"": upstream[""independence_lock_sha256""],
+        ""r05d3_script_sha256"": upstream[""r05d3_script_sha256""],
+        ""npz_sha256"": sha256_file(npz_path),
+        ""index_sha256"": sha256_file(index_path),
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_metrics_computed"": False,
+    }
+    write_json(sidecar_path, sidecar)
+
+    return (
+        npz_path,
+        index_path,
+        sidecar_path,
+        rows,
+        seg_context,
+    )"
+DeepLabV3-R50,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,run,871,1261,"def run(args):
+    upstream = load_upstream_locks()
+    targets = load_targets_and_verify_rgb()
+    panel = load_frozen_panel()
+
+    r05d3 = import_module(
+        R05D3_SCRIPT,
+        ""q1_r10l3a_authoritative_r05d3"",
+    )
+    patch_r05d3_cardinality(r05d3)
+
+    r03 = import_module(
+        Path(r05d3.R03_SCRIPT),
+        ""q1_r10l3a_r03"",
+    )
+    validate_sha(
+        Path(r05d3.R03_SCRIPT),
+        str(r05d3.EXPECTED_R03_SCRIPT_SHA256),
+        ""R03 script"",
+    )
+
+    import torch
+    device = torch.device(""cuda"" if torch.cuda.is_available() else ""cpu"")
+    print(""Device:"", device)
+    if device.type == ""cuda"":
+        print(""CUDA:"", torch.cuda.get_device_name(device))
+
+    if args.output_dir.exists():
+        raise FileExistsError(
+            f""Final R10L3A output already exists: {args.output_dir}""
+        )
+
+    build_dir = Path(str(args.output_dir) + ""__building"")
+    if build_dir.exists() and not args.resume:
+        raise FileExistsError(
+            f""Partial R10L3A Fix2 output exists: {build_dir}. ""
+            f""Use --resume only after a technical interruption.""
+        )
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    state_dir = build_dir / ""state_predictions""
+    state_dir.mkdir(parents=True, exist_ok=True)
+
+    # Preserve completed expensive states from the failed Fix1 run. The old
+    # partial directory is read-only from Fix2's perspective.
+    imported_fix1_states = bootstrap_verified_fix1_states(
+        FIX1_PARTIAL_BUILD_DIR,
+        state_dir,
+        panel,
+        targets,
+        upstream,
+    )
+
+    # Imported states are now local Fix2 resume caches.
+    effective_resume = bool(args.resume or imported_fix1_states)
+
+    # Lock target identity without reading GT columns.
+    target_rows = []
+    for t in targets:
+        target_rows.append({
+            ""sample_id"": t[""sample_id""],
+            ""original_polypgen_sample_id"": t[""original_polypgen_sample_id""],
+            ""center"": t[""center""],
+            ""image_path"": t[""image_path""],
+            ""image_raw_sha256"": t[""image_raw_sha256""],
+        })
+    write_csv(
+        build_dir / ""frozen_polypgen_rgb_manifest_no_gt.csv"",
+        target_rows,
+        [
+            ""sample_id"",
+            ""original_polypgen_sample_id"",
+            ""center"",
+            ""image_path"",
+            ""image_raw_sha256"",
+        ],
+    )
+
+    write_csv(
+        build_dir / ""checkpoint_manifest.csv"",
+        panel,
+        [
+            ""model_family"",
+            ""training_seed"",
+            ""model_state_id"",
+            ""checkpoint"",
+            ""checkpoint_sha256"",
+        ],
+    )
+
+    write_json(
+        build_dir / ""upstream_audit.json"",
+        {
+            ""script_version"": VERSION,
+            ""build"": BUILD,
+            **upstream,
+            ""polypgen_cases"": EXPECTED_CASES,
+            ""model_states"": EXPECTED_STATES,
+            ""model_case_units"": EXPECTED_MODEL_CASES,
+            ""independence_gate_decision"": EXPECTED_INDEPENDENCE_DECISION,
+            ""target_gt_path_column_read"": False,
+            ""target_gt_pixels_decoded"": False,
+            ""fix1_partial_build_dir"": str(FIX1_PARTIAL_BUILD_DIR),
+            ""verified_fix1_states_imported"": imported_fix1_states,
+        },
+    )
+
+    global_rows = []
+    state_summaries = []
+    seg_context = None
+
+    for state in panel:
+        print()
+        print(""="" * 72)
+        print(""STATE:"", state[""model_state_id""])
+        print(""FAMILY:"", state[""model_family""])
+        print(""SEED:"", state[""training_seed""])
+        print(""="" * 72)
+
+        (
+            npz_path,
+            index_path,
+            sidecar_path,
+            rows,
+            seg_context,
+        ) = run_state(
+            r05d3=r05d3,
+            r03=r03,
+            state=state,
+            targets=targets,
+            device=device,
+            state_dir=state_dir,
+            upstream=upstream,
+            resume=effective_resume,
+            seg_context=seg_context,
+        )
+
+        npz_rel = str(npz_path.relative_to(build_dir))
+        idx_rel = str(index_path.relative_to(build_dir))
+        side_rel = str(sidecar_path.relative_to(build_dir))
+
+        changed = []
+        source_fg = []
+        a1_fg = []
+
+        for i, row in enumerate(rows):
+            changed.append(int(row[""changed_pixels""]))
+            source_fg.append(int(row[""source_foreground_pixels""]))
+            a1_fg.append(int(row[""a1_foreground_pixels""]))
+
+            global_rows.append({
+                ""sample_id"": row[""sample_id""],
+                ""center"": targets[i][""center""],
+                ""original_polypgen_sample_id"":
+                    targets[i][""original_polypgen_sample_id""],
+                ""image_path"": row[""image_path""],
+                ""image_raw_sha256"": row[""image_raw_sha256""],
+                ""model_family"": row[""model_family""],
+                ""model_state_id"": row[""model_state_id""],
+                ""training_seed"": int(row[""training_seed""]),
+                ""checkpoint_sha256"": row[""checkpoint_sha256""],
+                ""state_prediction_npz"": npz_rel,
+                ""state_index_csv"": idx_rel,
+                ""state_lock_json"": side_rel,
+                ""state_row_index"": int(row[""row_index""]),
+                ""source_foreground_pixels"":
+                    int(row[""source_foreground_pixels""]),
+                ""a1_foreground_pixels"":
+                    int(row[""a1_foreground_pixels""]),
+                ""changed_pixels"": int(row[""changed_pixels""]),
+            })
+
+        state_summaries.append({
+            ""model_family"": state[""model_family""],
+            ""model_state_id"": state[""model_state_id""],
+            ""training_seed"": int(state[""training_seed""]),
+            ""target_cases"": len(rows),
+            ""source_foreground_pixels_mean"": float(np.mean(source_fg)),
+            ""a1_foreground_pixels_mean"": float(np.mean(a1_fg)),
+            ""changed_pixels_mean"": float(np.mean(changed)),
+            ""changed_pixels_median"": float(np.median(changed)),
+            ""changed_pixels_max"": int(np.max(changed)),
+        })
+
+    if len(global_rows) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(
+            f""Global model-case rows={len(global_rows)} ""
+            f""expected={EXPECTED_MODEL_CASES}""
+        )
+
+    key_set = {
+        (r[""sample_id""], r[""model_state_id""])
+        for r in global_rows
+    }
+    if len(key_set) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(""sample_id + model_state_id is not unique."")
+
+    write_csv(
+        build_dir / ""model_case_prediction_manifest.csv"",
+        global_rows,
+        list(global_rows[0].keys()),
+    )
+    write_csv(
+        build_dir / ""prediction_change_summary.csv"",
+        state_summaries,
+        list(state_summaries[0].keys()),
+    )
+
+    boundary = {
+        ""polypgen_rgb_pixels_decoded"": True,
+        ""polypgen_gt_path_column_read"": False,
+        ""polypgen_gt_pixels_decoded"": False,
+        ""source_inference_run"": True,
+        ""a1_backward_pass_run"": True,
+        ""a1_optimizer_step_run"": True,
+        ""a1_action"": ""A1_TENT_1STEP"",
+        ""a1_optimizer"": ""Adam"",
+        ""a1_lr"": 1e-3,
+        ""a1_weight_decay"": 0.0,
+        ""a1_steps"": 1,
+        ""episodic_reset"": True,
+        ""all_model_case_units_received_a1"": True,
+        ""model_case_units_receiving_a1"": EXPECTED_MODEL_CASES,
+        ""r10l0_safety_estimator_read"": False,
+        ""safety_probability_computed"": False,
+        ""target_dice_computed"": False,
+        ""target_delta_dice_computed"": False,
+        ""target_harm_label_computed"": False,
+        ""target_calibration"": False,
+        ""target_threshold_selection"": False,
+        ""target_feature_selection"": False,
+        ""target_case_exclusion_from_prediction_behavior"": False,
+    }
+    write_json(
+        build_dir / ""information_boundary_audit.json"",
+        boundary,
+    )
+
+    lock = {
+        ""decision"": DECISION_READY,
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        **upstream,
+        ""target_dataset"": ""PolypGen2021_MultiCenterData_v3"",
+        ""target_component"": ""unique_static_data_C1_to_C6"",
+        ""target_cases"": EXPECTED_CASES,
+        ""centers"": [""C1"", ""C2"", ""C3"", ""C4"", ""C5"", ""C6""],
+        ""model_states"": EXPECTED_STATES,
+        ""model_case_rows"": EXPECTED_MODEL_CASES,
+        ""source_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""a1_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""all_model_cases_received_a1"": True,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""optimizer"": ""Adam"",
+        ""learning_rate"": 1e-3,
+        ""weight_decay"": 0.0,
+        ""steps"": 1,
+        ""episodic_reset"": True,
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_outcomes_revealed"": False,
+        ""safety_estimator_read"": False,
+        ""safety_scores_generated"": False,
+        ""artifacts"": {
+            ""rgb_manifest_no_gt"": {
+                ""relative_path"": ""frozen_polypgen_rgb_manifest_no_gt.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""frozen_polypgen_rgb_manifest_no_gt.csv""
+                ),
+            },
+            ""checkpoint_manifest"": {
+                ""relative_path"": ""checkpoint_manifest.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""checkpoint_manifest.csv""
+                ),
+            },
+            ""model_case_prediction_manifest"": {
+                ""relative_path"": ""model_case_prediction_manifest.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""model_case_prediction_manifest.csv""
+                ),
+            },
+            ""prediction_change_summary"": {
+                ""relative_path"": ""prediction_change_summary.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""prediction_change_summary.csv""
+                ),
+            },
+            ""information_boundary_audit"": {
+                ""relative_path"": ""information_boundary_audit.json"",
+                ""sha256"": sha256_file(
+                    build_dir / ""information_boundary_audit.json""
+                ),
+            },
+        },
+    }
+
+    lock_path = (
+        build_dir
+        / ""R10L3A_POLYPGEN_SOURCE_A1_PREDICTION_LOCK.json""
+    )
+    write_json(lock_path, lock)
+
+    decision_path = build_dir / ""decision.txt""
+    decision_path.write_text(DECISION_READY + ""\n"", encoding=""utf-8"")
+
+    run_lines = [
+        ""===== R10L3A POLYPGEN SOURCE + A1 PREDICTION LOCK FIX2 ====="",
+        f""Script version: {VERSION}"",
+        f""Build: {BUILD}"",
+        """",
+        ""Frozen independent target:"",
+        f""  PolypGen static cases={EXPECTED_CASES}"",
+        ""  centers=6"",
+        ""  source train exact overlap=0"",
+        ""  source val exact overlap=0"",
+        """",
+        ""Technical recovery:"",
+        f""  verified Fix1 states imported={len(imported_fix1_states)}"",
+        ""  Fix1 partial output modified=NO"",
+        ""  SegFormer return schema=4 values with reusable seg_context"",
+        """",
+        ""Frozen panel/action:"",
+        ""  PraNet states=3"",
+        ""  DeepLabV3-R50 states=3"",
+        ""  SegFormer-B0 states=3"",
+        f""  total states={EXPECTED_STATES}"",
+        ""  action=A1_TENT_1STEP"",
+        ""  optimizer=Adam"",
+        ""  lr=0.001"",
+        ""  weight_decay=0"",
+        ""  steps=1"",
+        ""  episodic reset=YES"",
+        """",
+        ""Prediction lock:"",
+        f""  model-case rows={EXPECTED_MODEL_CASES}"",
+        f""  SOURCE masks={EXPECTED_MODEL_CASES}"",
+        f""  A1 masks={EXPECTED_MODEL_CASES}"",
+        f""  mask resolution={MASK_H}x{MASK_W}"",
+        f""  packed bytes/mask={PACKED_BYTES}"",
+        f""  bitorder={BITORDER}"",
+        """",
+        ""Information boundary:"",
+        ""  PolypGen RGB pixels decoded=YES"",
+        ""  PolypGen GT path column read=NO"",
+        ""  PolypGen GT pixels decoded=NO"",
+        ""  R10L0 safety estimator read=NO"",
+        ""  safety score generated=NO"",
+        ""  Dice/DeltaDice/HARM=NO"",
+        ""  target calibration/tuning=NO"",
+        """",
+        ""Decision:"",
+        f""  {DECISION_READY}"",
+        """",
+        ""Next:"",
+        ""  R10L3B prospective frozen R10L0 safety-score generation"",
+        ""  GT must remain unopened until R10L3B is locked."",
+    ]
+    run_log = ""\n"".join(run_lines) + ""\n""
+    (build_dir / ""run_log.txt"").write_text(
+        run_log,
+        encoding=""utf-8"",
+    )
+
+    # Final structural check before atomic rename.
+    if len(list(state_dir.glob(""*_predictions.npz""))) != EXPECTED_STATES:
+        raise RuntimeError(""State NPZ count != 9."")
+    if len(list(state_dir.glob(""*_index.csv""))) != EXPECTED_STATES:
+        raise RuntimeError(""State index count != 9."")
+    if len(list(state_dir.glob(""*_state_lock.json""))) != EXPECTED_STATES:
+        raise RuntimeError(""State sidecar count != 9."")
+
+    build_dir.rename(args.output_dir)
+
+    print()
+    print(
+        (args.output_dir / ""run_log.txt"").read_text(
+            encoding=""utf-8""
+        )
+    )
+    final_lock = (
+        args.output_dir
+        / ""R10L3A_POLYPGEN_SOURCE_A1_PREDICTION_LOCK.json""
+    )
+    print(""R10L3A LOCK:"", final_lock)
+    print(""R10L3A LOCK SHA256:"", sha256_file(final_lock))
+    print(""PASS"")"
+PraNet,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,validate_upstream,280,335,"def validate_upstream():
+    validate_sha(PROTOCOL, EXPECTED_PROTOCOL_SHA256, ""D3 protocol"")
+    validate_sha(R05D1_LOCK, EXPECTED_R05D1_LOCK_SHA256, ""D1 lock"")
+    validate_sha(R05D2_LOCK, EXPECTED_R05D2_LOCK_SHA256, ""D2 lock"")
+    validate_sha(R05D2_SCRIPT, EXPECTED_R05D2_SCRIPT_SHA256, ""D2 script"")
+    validate_sha(R03_LOCK, EXPECTED_R03_LOCK_SHA256, ""R03 lock"")
+    validate_sha(R03_SCRIPT, EXPECTED_R03_SCRIPT_SHA256, ""R03 script"")
+    validate_sha(PRANET_HELPER, EXPECTED_PRANET_HELPER_SHA256, ""PraNet helper"")
+    validate_sha(DEEPLAB_HELPER, EXPECTED_DEEPLAB_HELPER_SHA256, ""DeepLab helper"")
+
+    d1 = json.loads(R05D1_LOCK.read_text(encoding=""utf-8""))
+    d2 = json.loads(R05D2_LOCK.read_text(encoding=""utf-8""))
+    r03_lock = json.loads(R03_LOCK.read_text(encoding=""utf-8""))
+
+    if d1.get(""decision"") != EXPECTED_R05D1_DECISION:
+        raise RuntimeError(f""Unexpected D1 decision: {d1.get('decision')}"")
+    if int(d1.get(""eligible_confirmatory_cases"", -1)) != EXPECTED_CASES:
+        raise RuntimeError(""D1 eligible target count changed."")
+    if int(d1.get(""exact_overlap_exclusions"", -1)) != 0:
+        raise RuntimeError(""D1 overlap exclusion count changed."")
+    if bool(d1.get(""target_gt_pixels_decoded"", True)):
+        raise RuntimeError(""D1 reports target GT decoding."")
+
+    if d2.get(""decision"") != EXPECTED_R05D2_DECISION:
+        raise RuntimeError(f""Unexpected D2 decision: {d2.get('decision')}"")
+    if int(d2.get(""target_cases"", -1)) != EXPECTED_CASES:
+        raise RuntimeError(""D2 target count changed."")
+    if int(d2.get(""model_states"", -1)) != EXPECTED_STATES:
+        raise RuntimeError(""D2 model-state count changed."")
+    if int(d2.get(""model_case_rows"", -1)) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(""D2 model-case row count changed."")
+    if bool(d2.get(""target_gt_pixels_decoded"", True)):
+        raise RuntimeError(""D2 reports target GT decoding."")
+    if bool(d2.get(""target_outcomes_revealed"", True)):
+        raise RuntimeError(""D2 reports target outcome reveal."")
+    if bool(d2.get(""predictor_fit_or_modified"", True)):
+        raise RuntimeError(""D2 reports predictor modification."")
+
+    # IMPORTANT: only hash the frozen D2 table; never parse probability rows.
+    d2_table = artifact_path_from_lock(
+        R05D2_DIR,
+        d2,
+        ""target_paot_probabilities"",
+    )
+    validate_sha(d2_table, EXPECTED_D2_TABLE_SHA256, ""D2 PAOT table"")
+
+    d1_manifest = artifact_path_from_lock(
+        R05D1_DIR,
+        d1,
+        ""frozen_confirmatory_manifest"",
+    )
+
+    if r03_lock.get(""decision"") != EXPECTED_R03_DECISION:
+        raise RuntimeError(f""Unexpected R03 decision: {r03_lock.get('decision')}"")
+
+    return d1, d2, r03_lock, d1_manifest, d2_table"
+PraNet,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,run_pranet_state,422,495,"def run_pranet_state(state, targets, device):
+    helper = import_module(
+        PRANET_HELPER,
+        f""q1_r05d3_pranet_{state['training_seed']}"",
+    )
+    training = helper.import_training_helper()
+
+    seed = int(state[""training_seed""])
+    set_runtime_seed(seed)
+
+    model = helper.load_model(training, seed, device)
+    params = helper.configure_tent(model)
+    source_values = helper.snapshot_params(params)
+
+    source_pack = np.empty((EXPECTED_CASES, PACKED_BYTES), dtype=np.uint8)
+    a1_pack = np.empty_like(source_pack)
+    index_rows = []
+
+    pbar = tqdm(
+        enumerate(targets),
+        total=EXPECTED_CASES,
+        desc=f""D3 PraNet seed {seed}"",
+        unit=""img"",
+        dynamic_ncols=True,
+    )
+
+    for i, target in pbar:
+        with Image.open(target[""image_path""]) as im:
+            native = im.convert(""RGB"")
+
+        x = helper.image_to_model_tensor(training, native).to(
+            device,
+            non_blocking=True,
+        )
+
+        # Exact S03-B SOURCE + episodic A1.
+        z_source, z_a1 = helper.source_and_tent_logits(
+            model,
+            params,
+            source_values,
+            x,
+        )
+
+        sm = logit_to_mask(z_source)
+        am = logit_to_mask(z_a1)
+
+        source_pack[i] = pack_mask(sm)
+        a1_pack[i] = pack_mask(am)
+
+        changed = int(np.count_nonzero(sm != am))
+        index_rows.append({
+            ""row_index"": i,
+            ""sample_id"": target[""sample_id""],
+            ""image_path"": target[""image_path""],
+            ""image_raw_sha256"": target[""image_raw_sha256""],
+            ""model_family"": state[""model_family""],
+            ""model_state_id"": state[""model_state_id""],
+            ""training_seed"": seed,
+            ""checkpoint_sha256"": state[""checkpoint_sha256""],
+            ""source_foreground_pixels"": int(sm.sum()),
+            ""a1_foreground_pixels"": int(am.sum()),
+            ""changed_pixels"": changed,
+        })
+        pbar.set_postfix(chg=changed)
+
+        del x, z_source, z_a1, sm, am
+
+    helper.restore_params(params, source_values)
+    del model, params, source_values
+
+    if device.type == ""cuda"":
+        __import__(""torch"").cuda.empty_cache()
+
+    return source_pack, a1_pack, index_rows"
+PraNet,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,preflight,999,1141,"def preflight():
+    _, _, _, manifest_path, _ = validate_upstream()
+    targets, d2helper = load_frozen_targets(manifest_path)
+    panel, r03 = build_frozen_panel(d2helper)
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for Q1-R05D3."")
+    device = torch.device(""cuda"")
+
+    dummy_rgb = Image.new(""RGB"", (352, 352), color=(127, 127, 127))
+
+    # PraNet dummy SOURCE+A1.
+    ps = next(s for s in panel if s[""model_family""] == ""PraNet"")
+    ph = import_module(PRANET_HELPER, ""q1_r05d3_preflight_pranet"")
+    pt = ph.import_training_helper()
+    pm = ph.load_model(pt, int(ps[""training_seed""]), device)
+    pp = ph.configure_tent(pm)
+    pv = ph.snapshot_params(pp)
+    px = ph.image_to_model_tensor(pt, dummy_rgb).to(device)
+    psrc, pa1 = ph.source_and_tent_logits(pm, pp, pv, px)
+    if psrc.shape != (MASK_H, MASK_W) or pa1.shape != (MASK_H, MASK_W):
+        raise RuntimeError(""PraNet dummy SOURCE/A1 shape failed."")
+    del pm, pp, pv, px, psrc, pa1
+
+    # DeepLab dummy SOURCE+A1.
+    ds = next(s for s in panel if s[""model_family""] == ""DeepLabV3-R50"")
+    dh = import_module(DEEPLAB_HELPER, ""q1_r05d3_preflight_deeplab"")
+    dt = dh.import_training_helper()
+    dh.seed_everything(20260817)
+    dm = dh.load_model(dt, int(ds[""training_seed""]), device)
+    (
+        dp, _, _, unsafe, _, dropouts
+    ) = dh.configure_singleton_safe_tent(dm)
+    dv = dh.snapshot_params(dp)
+    dx = dh.image_to_model_tensor(dt, dummy_rgb).to(device)
+    dsrc, da1, dloss = dh.source_and_tent_logits(
+        helper=dt,
+        model=dm,
+        params=dp,
+        source_values=dv,
+        unsafe_bn_modules=unsafe,
+        dropout_modules=dropouts,
+        x=dx,
+    )
+    if dsrc.shape != (MASK_H, MASK_W) or da1.shape != (MASK_H, MASK_W):
+        raise RuntimeError(""DeepLab dummy SOURCE/A1 shape failed."")
+    if not math.isfinite(float(dloss)):
+        raise RuntimeError(""DeepLab dummy entropy loss is non-finite."")
+    del dm, dp, dv, unsafe, dropouts, dx, dsrc, da1, dloss
+
+    # SegFormer dummy SOURCE+A1.
+    segctx = r03.build_segformer_context(device)
+    (
+        torch2,
+        nn,
+        F,
+        SegformerForSemanticSegmentation,
+        config,
+        mean,
+        std,
+    ) = segctx
+
+    ss = next(s for s in panel if s[""model_family""] == ""SegFormer-B0"")
+    sm = r03.load_segformer_state(
+        int(ss[""training_seed""]),
+        device,
+        SegformerForSemanticSegmentation,
+        config,
+        torch2,
+    )
+    (
+        sp,
+        _,
+        sbn,
+        sbn_orig,
+        sdrop,
+        _,
+    ) = r03.configure_segformer_tent(sm, nn)
+    sv = r03.snapshot_params(sp)
+    sx = r03.segformer_tensor(dummy_rgb, mean, std, torch2).to(device)
+
+    r03.restore_params(sp, sv, torch2)
+    r03.segformer_source_mode(sm, sbn, sbn_orig, sdrop)
+    with torch2.no_grad():
+        _, szsrc = r03.segformer_logits_and_z(sm, sx, F)
+
+    r03.restore_params(sp, sv, torch2)
+    r03.segformer_tent_mode(sm, sbn, sdrop)
+
+    opt = torch2.optim.Adam(
+        sp,
+        lr=TENT_LR,
+        weight_decay=TENT_WEIGHT_DECAY,
+    )
+    opt.zero_grad(set_to_none=True)
+    slogits, _ = r03.segformer_logits_and_z(sm, sx, F)
+    sloss = r03.categorical_entropy(slogits, torch2)
+    sloss.backward()
+    opt.step()
+    opt.zero_grad(set_to_none=True)
+
+    with torch2.no_grad():
+        _, sza1 = r03.segformer_logits_and_z(sm, sx, F)
+
+    if tuple(szsrc[0].shape) != (MASK_H, MASK_W):
+        raise RuntimeError(""SegFormer dummy SOURCE shape failed."")
+    if tuple(sza1[0].shape) != (MASK_H, MASK_W):
+        raise RuntimeError(""SegFormer dummy A1 shape failed."")
+
+    del (
+        sm,
+        sp,
+        sbn,
+        sbn_orig,
+        sdrop,
+        sv,
+        sx,
+        opt,
+        slogits,
+        sloss,
+        szsrc,
+        sza1,
+    )
+    torch.cuda.empty_cache()
+
+    print(""===== Q1-R05D3 PREFLIGHT ====="")
+    print(f""protocol_sha256={EXPECTED_PROTOCOL_SHA256}"")
+    print(f""r05d1_lock_sha256={EXPECTED_R05D1_LOCK_SHA256}"")
+    print(f""r05d2_lock_sha256={EXPECTED_R05D2_LOCK_SHA256}"")
+    print(f""d2_probability_table_sha256={EXPECTED_D2_TABLE_SHA256}"")
+    print(f""target_cases={len(targets)}"")
+    print(f""model_states={len(panel)}"")
+    print(f""expected_model_cases={EXPECTED_MODEL_CASES}"")
+    print(""action=A1_TENT_1STEP"")
+    print(""all_model_cases_receive_A1=YES"")
+    print(""D2_probability_values_read=NO"")
+    print(""PAOT_gating=NO"")
+    print(""target_GT_pixels_decoded=NO"")
+    print(""dummy_PraNet_SOURCE_A1=PASS"")
+    print(""dummy_DeepLab_SOURCE_A1=PASS"")
+    print(""dummy_SegFormer_SOURCE_A1=PASS"")
+    print(""PREFLIGHT_PASS"")"
+PraNet,code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,run,1148,1577,"def run(args):
+    d1, d2, r03_lock, manifest_path, _ = validate_upstream()
+    targets, d2helper = load_frozen_targets(manifest_path)
+    panel, r03 = build_frozen_panel(d2helper)
+
+    if args.output_dir.exists():
+        raise FileExistsError(
+            f""Final Q1-R05D3 output already exists: {args.output_dir}""
+        )
+
+    build_dir = Path(str(args.output_dir) + ""__building"")
+    if build_dir.exists() and not args.resume:
+        raise FileExistsError(
+            f""Partial Q1-R05D3 output exists: {build_dir}. ""
+            ""Use --resume only after a technical interruption.""
+        )
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    state_dir = build_dir / ""state_predictions""
+    state_dir.mkdir(parents=True, exist_ok=True)
+
+    protocol_copy = build_dir / ""preregistered_protocol_copy.md""
+    if not protocol_copy.exists():
+        shutil.copy2(PROTOCOL, protocol_copy)
+    validate_sha(protocol_copy, EXPECTED_PROTOCOL_SHA256, ""D3 protocol copy"")
+
+    target_manifest_sha = sha256_file(manifest_path)
+    order_sha = target_order_sha(targets)
+
+    gt_rule_path = build_dir / ""frozen_d4_gt_and_metric_rule.json""
+    if not gt_rule_path.exists():
+        write_json(gt_rule_path, GT_RULE)
+
+    checkpoint_manifest_path = build_dir / ""checkpoint_manifest.csv""
+    if not checkpoint_manifest_path.exists():
+        write_csv(
+            checkpoint_manifest_path,
+            panel,
+            [
+                ""model_family"",
+                ""training_seed"",
+                ""model_state_id"",
+                ""checkpoint"",
+                ""checkpoint_sha256"",
+            ],
+        )
+
+    upstream = {
+        ""script_version"": VERSION,
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""r05d1_lock_sha256"": EXPECTED_R05D1_LOCK_SHA256,
+        ""r05d1_decision"": d1.get(""decision""),
+        ""r05d2_lock_sha256"": EXPECTED_R05D2_LOCK_SHA256,
+        ""r05d2_decision"": d2.get(""decision""),
+        ""r05d2_probability_table_sha256"": EXPECTED_D2_TABLE_SHA256,
+        ""r05d2_probability_table_verified_by_hash_only"": True,
+        ""r03_lock_sha256"": EXPECTED_R03_LOCK_SHA256,
+        ""r03_decision"": r03_lock.get(""decision""),
+        ""target_manifest_sha256"": target_manifest_sha,
+        ""target_id_order_sha256"": order_sha,
+        ""target_cases"": len(targets),
+        ""model_states"": len(panel),
+        ""expected_model_cases"": EXPECTED_MODEL_CASES,
+        ""target_gt_pixels_decoded"": False,
+        ""paot_probability_values_read"": False,
+        ""paot_gating_used"": False,
+        ""target_fit_or_tuning"": False,
+    }
+    upstream_path = build_dir / ""upstream_audit.json""
+    write_json(upstream_path, upstream)
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for Q1-R05D3 formal run."")
+    device = torch.device(""cuda"")
+
+    print(""===== Q1-R05D3 SOURCE + A1 PREDICTION GENERATION ====="")
+    print(f""Device={device}"")
+    print(f""Target cases={len(targets)}"")
+    print(f""Model states={len(panel)}"")
+    print(f""Expected model-cases={EXPECTED_MODEL_CASES}"")
+    print(""Action=A1_TENT_1STEP"")
+    print(""D2 probability values read=NO"")
+    print(""PAOT gating=NO"")
+    print(""Target GT pixels decoded=NO"")
+    print()
+
+    global_rows = []
+    seg_context = None
+
+    for state_idx, state in enumerate(panel, start=1):
+        print(
+            f""[STATE {state_idx}/{len(panel)}] ""
+            f""{state['model_state_id']} ""
+            f""checkpoint={state['checkpoint_sha256'][:12]}...""
+        )
+
+        cached_rows = load_state(
+            state_dir,
+            state,
+            targets,
+            target_manifest_sha,
+            order_sha,
+            allow_orphan_cleanup=bool(args.resume),
+        )
+
+        pred_path, index_path, _ = state_paths(state_dir, state)
+
+        if cached_rows is not None:
+            print(f""[RESUME] verified state rows={len(cached_rows)}"")
+            global_rows.extend(
+                global_rows_from_state(cached_rows, pred_path, index_path)
+            )
+            continue
+
+        if state[""model_family""] == ""PraNet"":
+            source_pack, a1_pack, index_rows = run_pranet_state(
+                state,
+                targets,
+                device,
+            )
+        elif state[""model_family""] == ""DeepLabV3-R50"":
+            source_pack, a1_pack, index_rows = run_deeplab_state(
+                state,
+                targets,
+                device,
+            )
+        elif state[""model_family""] == ""SegFormer-B0"":
+            (
+                source_pack,
+                a1_pack,
+                index_rows,
+                seg_context,
+            ) = run_segformer_state(
+                state,
+                targets,
+                device,
+                r03,
+                seg_context=seg_context,
+            )
+        else:
+            raise RuntimeError(f""Unknown family: {state['model_family']}"")
+
+        validate_prediction_arrays(source_pack, a1_pack)
+        validate_index_rows(index_rows, state, targets)
+
+        pred_path, index_path, _ = save_state(
+            state_dir,
+            state,
+            targets,
+            source_pack,
+            a1_pack,
+            index_rows,
+            target_manifest_sha,
+            order_sha,
+        )
+
+        verified_rows = load_state(
+            state_dir,
+            state,
+            targets,
+            target_manifest_sha,
+            order_sha,
+            allow_orphan_cleanup=False,
+        )
+        if verified_rows is None:
+            raise RuntimeError(""Newly saved state failed verification."")
+
+        global_rows.extend(
+            global_rows_from_state(verified_rows, pred_path, index_path)
+        )
+
+        print(f""[PASS] locked state rows={len(verified_rows)}"")
+
+        del source_pack, a1_pack, index_rows, verified_rows
+        torch.cuda.empty_cache()
+
+    if len(global_rows) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(
+            f""Global rows={len(global_rows)} expected={EXPECTED_MODEL_CASES}""
+        )
+
+    unique_keys = {
+        (r[""model_state_id""], r[""sample_id""])
+        for r in global_rows
+    }
+    if len(unique_keys) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(""Duplicate/missing model-case keys."")
+
+    state_counts = Counter(r[""model_state_id""] for r in global_rows)
+    if len(state_counts) != EXPECTED_STATES:
+        raise RuntimeError(""Global state count mismatch."")
+    if any(v != EXPECTED_CASES for v in state_counts.values()):
+        raise RuntimeError(f""Per-state count mismatch: {dict(state_counts)}"")
+
+    global_rows.sort(
+        key=lambda r: (
+            r[""model_family""],
+            int(r[""training_seed""]),
+            r[""sample_id""],
+        )
+    )
+
+    global_manifest_path = build_dir / ""model_case_prediction_manifest.csv""
+    write_csv(global_manifest_path, global_rows, GLOBAL_FIELDS)
+
+    # Prediction-only descriptive summary; never used for selection.
+    grouped = defaultdict(list)
+    for row in global_rows:
+        grouped[(row[""model_family""], row[""model_state_id""])].append(row)
+        grouped[(row[""model_family""], ""ALL_3_STATES"")].append(row)
+        grouped[(""ALL_ARCHITECTURES"", ""ALL_9_STATES"")].append(row)
+
+    summary_rows = []
+    for (family, state_id), rows in sorted(grouped.items()):
+        src = np.asarray(
+            [int(r[""source_foreground_pixels""]) / MASK_PIXELS for r in rows],
+            dtype=np.float64,
+        )
+        a1 = np.asarray(
+            [int(r[""a1_foreground_pixels""]) / MASK_PIXELS for r in rows],
+            dtype=np.float64,
+        )
+        chg = np.asarray(
+            [int(r[""changed_pixels""]) / MASK_PIXELS for r in rows],
+            dtype=np.float64,
+        )
+        summary_rows.append({
+            ""model_family"": family,
+            ""model_state_id"": state_id,
+            ""rows"": len(rows),
+            ""source_fg_fraction_mean"": float(src.mean()),
+            ""a1_fg_fraction_mean"": float(a1.mean()),
+            ""changed_fraction_mean"": float(chg.mean()),
+            ""changed_fraction_q50"": float(np.quantile(chg, 0.50)),
+            ""changed_fraction_q90"": float(np.quantile(chg, 0.90)),
+            ""zero_change_fraction"": float(np.mean(chg == 0.0)),
+        })
+
+    summary_path = build_dir / ""prediction_change_summary.csv""
+    write_csv(
+        summary_path,
+        summary_rows,
+        [
+            ""model_family"",
+            ""model_state_id"",
+            ""rows"",
+            ""source_fg_fraction_mean"",
+            ""a1_fg_fraction_mean"",
+            ""changed_fraction_mean"",
+            ""changed_fraction_q50"",
+            ""changed_fraction_q90"",
+            ""zero_change_fraction"",
+        ],
+    )
+
+    boundary = {
+        ""target_image_pixels_decoded"": True,
+        ""target_gt_paths_present_as_provenance_strings"": True,
+        ""target_gt_pixels_decoded"": False,
+        ""source_inference_run"": True,
+        ""a1_tent_1step_run"": True,
+        ""a1_optimizer"": ""Adam"",
+        ""a1_lr"": TENT_LR,
+        ""a1_weight_decay"": TENT_WEIGHT_DECAY,
+        ""a1_steps_per_model_case"": TENT_STEPS,
+        ""episodic_reset"": True,
+        ""model_case_units_receiving_a1"": EXPECTED_MODEL_CASES,
+        ""d2_probability_table_sha_verified"": True,
+        ""d2_probability_values_read"": False,
+        ""paot_probability_threshold_selected"": False,
+        ""paot_gating_used"": False,
+        ""predictor_fit_or_modified"": False,
+        ""target_normalization_fit"": False,
+        ""target_calibration"": False,
+        ""target_hyperparameter_sweep"": False,
+        ""target_case_exclusion_from_prediction_behavior"": False,
+        ""target_dice_computed"": False,
+        ""target_delta_dice_computed"": False,
+        ""target_outcome_labels_computed"": False,
+    }
+    boundary_path = build_dir / ""information_boundary_audit.json""
+    write_json(boundary_path, boundary)
+
+    decision_path = build_dir / ""decision.txt""
+    decision_path.write_text(DECISION_READY + ""\n"", encoding=""utf-8"")
+
+    run_lines = [
+        ""===== Q1-R05D3 NEOPOLYP SOURCE + A1 PREDICTION LOCK ====="",
+        f""Script version: {VERSION}"",
+        f""Build: {BUILD}"",
+        """",
+        ""Frozen target:"",
+        f""  NeoPolyp cases={EXPECTED_CASES}"",
+        ""  exact overlap exclusions=0"",
+        """",
+        ""Frozen panel/action:"",
+        ""  PraNet states=3"",
+        ""  DeepLabV3-R50 states=3"",
+        ""  SegFormer-B0 states=3"",
+        f""  total states={EXPECTED_STATES}"",
+        ""  action=A1_TENT_1STEP"",
+        ""  optimizer=Adam"",
+        f""  lr={TENT_LR}"",
+        f""  weight_decay={TENT_WEIGHT_DECAY}"",
+        ""  steps=1"",
+        ""  episodic reset=YES"",
+        """",
+        ""Prediction lock:"",
+        f""  model-case rows={len(global_rows)}"",
+        f""  SOURCE masks={len(global_rows)}"",
+        f""  A1 masks={len(global_rows)}"",
+        f""  mask resolution={MASK_H}x{MASK_W}"",
+        f""  packed bytes/mask={PACKED_BYTES}"",
+        f""  bitorder={BITORDER}"",
+        """",
+        ""Information boundary:"",
+        ""  target image pixels decoded=YES"",
+        ""  target GT pixels decoded=NO"",
+        ""  D2 probability table SHA verified=YES"",
+        ""  D2 probability values read=NO"",
+        ""  PAOT gating used=NO"",
+        f""  all {EXPECTED_MODEL_CASES} model-case units received A1=YES"",
+        ""  predictor fit/modified=NO"",
+        ""  target tuning/calibration=NO"",
+        ""  target Dice/DeltaDice/outcomes=NO"",
+        """",
+        ""Future D4 GT rule frozen:"",
+        ""  black background -> binary background"",
+        ""  green non-neoplastic -> binary foreground"",
+        ""  red neoplastic -> binary foreground"",
+        ""  RGB assignment=nearest fixed prototype"",
+        ""  GT resize=352x352 nearest"",
+        ""  HARM <= -0.02"",
+        ""  BENEFIT >= +0.02"",
+        """",
+        ""Decision:"",
+        f""  {DECISION_READY}"",
+        """",
+        ""Next:"",
+        ""  Q1-R05D4 GT reveal + PAOT confirmatory evaluation"",
+    ]
+    run_log_path = build_dir / ""run_log.txt""
+    run_log_path.write_text(
+        ""\n"".join(run_lines) + ""\n"",
+        encoding=""utf-8"",
+    )
+
+    artifacts = {
+        ""protocol_copy"": protocol_copy,
+        ""upstream_audit"": upstream_path,
+        ""checkpoint_manifest"": checkpoint_manifest_path,
+        ""model_case_prediction_manifest"": global_manifest_path,
+        ""prediction_change_summary"": summary_path,
+        ""frozen_d4_gt_and_metric_rule"": gt_rule_path,
+        ""information_boundary_audit"": boundary_path,
+        ""decision"": decision_path,
+        ""run_log"": run_log_path,
+    }
+
+    for state in panel:
+        pred_path, index_path, state_lock_path = state_paths(state_dir, state)
+        if not pred_path.exists() or not index_path.exists() or not state_lock_path.exists():
+            raise RuntimeError(f""Missing state artifacts: {state['model_state_id']}"")
+        token = state_token(state)
+        artifacts[f""state_npz__{token}""] = pred_path
+        artifacts[f""state_index__{token}""] = index_path
+        artifacts[f""state_lock__{token}""] = state_lock_path
+
+    lock = {
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""r05d1_lock_sha256"": EXPECTED_R05D1_LOCK_SHA256,
+        ""r05d2_lock_sha256"": EXPECTED_R05D2_LOCK_SHA256,
+        ""r05d2_probability_table_sha256"": EXPECTED_D2_TABLE_SHA256,
+        ""r03_lock_sha256"": EXPECTED_R03_LOCK_SHA256,
+        ""target_manifest_sha256"": target_manifest_sha,
+        ""target_id_order_sha256"": order_sha,
+        ""target_cases"": EXPECTED_CASES,
+        ""model_states"": EXPECTED_STATES,
+        ""model_case_rows"": EXPECTED_MODEL_CASES,
+        ""source_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""a1_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""optimizer"": ""Adam"",
+        ""lr"": TENT_LR,
+        ""weight_decay"": TENT_WEIGHT_DECAY,
+        ""steps"": TENT_STEPS,
+        ""episodic_reset"": True,
+        ""all_model_cases_received_a1"": True,
+        ""d2_probability_values_read"": False,
+        ""paot_gating_used"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_outcomes_revealed"": False,
+        ""frozen_d4_gt_rule"": GT_RULE,
+        ""decision"": DECISION_READY,
+        ""artifacts"": {
+            name: {
+                ""relative_path"": str(path.relative_to(build_dir)),
+                ""sha256"": sha256_file(path),
+            }
+            for name, path in artifacts.items()
+        },
+    }
+
+    final_lock_path = (
+        build_dir / ""Q1_R05D3_NEOPOLYP_SOURCE_A1_PREDICTION_LOCK.json""
+    )
+    write_json(final_lock_path, lock)
+    lock_sha = sha256_file(final_lock_path)
+
+    for name, meta in lock[""artifacts""].items():
+        path = build_dir / meta[""relative_path""]
+        if sha256_file(path) != meta[""sha256""]:
+            raise RuntimeError(f""Artifact changed before commit: {name}"")
+
+    build_dir.rename(args.output_dir)
+
+    print()
+    print((args.output_dir / ""run_log.txt"").read_text(encoding=""utf-8""))
+    print(
+        ""Q1-R05D3 LOCK:"",
+        args.output_dir / ""Q1_R05D3_NEOPOLYP_SOURCE_A1_PREDICTION_LOCK.json"",
+    )
+    print(""Q1-R05D3 LOCK SHA256:"", lock_sha)"
+PraNet,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,validate_upstream,388,466,"def validate_upstream():
+    validate_sha(PROTOCOL, EXPECTED_PROTOCOL_SHA256, ""Q1-R03 protocol"")
+    validate_sha(R02_LOCK, EXPECTED_R02_LOCK_SHA256, ""Q1-R02 lock"")
+    r02 = json.loads(R02_LOCK.read_text(encoding=""utf-8""))
+    if r02.get(""decision"") != EXPECTED_R02_DECISION:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_UPSTREAM_PROVENANCE: R02 decision={r02.get('decision')}""
+        )
+
+    validate_sha(
+        Q1_S00A_LOCK, EXPECTED_Q1_S00A_LOCK_SHA256, ""Q1-S00A lock""
+    )
+    validate_sha(
+        S07B_TABLE, EXPECTED_S07B_TABLE_SHA256, ""S07-B utility table""
+    )
+    validate_sha(
+        PRANET_HELPER, EXPECTED_PRANET_HELPER_SHA256, ""PraNet S03 helper""
+    )
+    validate_sha(
+        PRANET_TRAINING_HELPER,
+        EXPECTED_PRANET_TRAINING_HELPER_SHA256,
+        ""PraNet training helper"",
+    )
+    validate_sha(
+        DEEPLAB_HELPER, EXPECTED_DEEPLAB_HELPER_SHA256, ""DeepLab S05-C helper""
+    )
+    validate_sha(
+        DEEPLAB_TRAINING_HELPER,
+        EXPECTED_DEEPLAB_TRAINING_HELPER_SHA256,
+        ""DeepLab training helper"",
+    )
+
+    q1_lock = json.loads(Q1_S00A_LOCK.read_text(encoding=""utf-8""))
+    feature_art = q1_lock.get(""artifacts"", {}).get(""gradient_probe_features"", {})
+    feature_expected = feature_art.get(""sha256"")
+    if not feature_expected:
+        raise RuntimeError(
+            ""INVALID_Q1_R03_UPSTREAM_PROVENANCE: Q1-S00A lock lacks feature SHA""
+        )
+    validate_sha(Q1_S00A_FEATURES, feature_expected, ""Q1-S00A B0 table"")
+
+    if not DEEPLAB_AUDIT.exists():
+        raise FileNotFoundError(DEEPLAB_AUDIT)
+    deep_audit = json.loads(DEEPLAB_AUDIT.read_text(encoding=""utf-8""))
+    deep_table_expected = deep_audit.get(""source_training_table_sha256"")
+    if not deep_table_expected:
+        raise RuntimeError(
+            ""INVALID_Q1_R03_UPSTREAM_PROVENANCE: S05-C audit lacks table SHA""
+        )
+    validate_sha(DEEPLAB_TABLE, deep_table_expected, ""S05-C frozen table"")
+
+    panel = []
+    for family, mapping in (
+        (""PraNet"", PRANET_CHECKPOINTS),
+        (""DeepLabV3-R50"", DEEPLAB_CHECKPOINTS),
+        (""SegFormer-B0"", SEGFORMER_CHECKPOINTS),
+    ):
+        for seed, (path, sha) in mapping.items():
+            validate_sha(path, sha, f""{family} checkpoint seed {seed}"")
+            panel.append({
+                ""model_family"": family,
+                ""seed"": seed,
+                ""model_state_id"": f""{family}::{seed}"",
+                ""checkpoint"": str(path),
+                ""checkpoint_sha256"": sha,
+            })
+
+    if len(panel) != 9 or len({r[""checkpoint_sha256""] for r in panel}) != 9:
+        raise RuntimeError(""INVALID_Q1_R03_PANEL_CHECKPOINT"")
+
+    return panel, {
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""manifest_sha256"": EXPECTED_MANIFEST_SHA256,
+        ""r02_lock_sha256"": EXPECTED_R02_LOCK_SHA256,
+        ""q1_s00a_lock_sha256"": EXPECTED_Q1_S00A_LOCK_SHA256,
+        ""q1_s00a_feature_sha256"": feature_expected,
+        ""s07b_table_sha256"": EXPECTED_S07B_TABLE_SHA256,
+        ""deeplab_table_sha256"": deep_table_expected,
+    }"
+PraNet,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,build_pranet_rows,643,727,"def build_pranet_rows():
+    feat_rows, feat_fields = read_csv(Q1_S00A_FEATURES)
+    missing = sorted(set(SOURCE_FEATURE_NAMES) - set(feat_fields))
+    if missing:
+        raise RuntimeError(f""INVALID_Q1_R03_PRANET_REUSE: missing B0={missing}"")
+
+    utility_rows, utility_fields = read_csv(S07B_TABLE)
+    required_u = {
+        ""seed"", ""sample_id"", ""source_group_id"", ""fold"", ""perturbation"",
+        ""action"", ""source_dice"", ""action_dice"", ""delta_dice"",
+        ""harmful"", ""neutral"", ""beneficial"",
+    }
+    if not required_u.issubset(utility_fields):
+        raise RuntimeError(""INVALID_Q1_R03_PRANET_REUSE: S07-B schema"")
+
+    utility_a1 = {
+        (int(r[""seed""]), r[""sample_id""], r[""perturbation""]): r
+        for r in utility_rows
+        if r[""action""] == A1_ACTION
+    }
+    if len(utility_a1) != EXPECTED_ROWS_PER_FAMILY:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_PRANET_REUSE: A1 rows={len(utility_a1)}""
+        )
+
+    out = []
+    crosscheck_max = 0.0
+    for f in feat_rows:
+        key = (int(f[""seed""]), f[""sample_id""], f[""perturbation""])
+        if key not in utility_a1:
+            raise RuntimeError(f""INVALID_Q1_R03_PRANET_REUSE: missing {key}"")
+        u = utility_a1[key]
+
+        for name in (""source_group_id"", ""fold""):
+            if str(f[name]) != str(u[name]):
+                raise RuntimeError(
+                    f""INVALID_Q1_R03_PRANET_REUSE: {name} mismatch {key}""
+                )
+
+        delta_diff = abs(float(f[""delta_dice""]) - float(u[""delta_dice""]))
+        crosscheck_max = max(crosscheck_max, delta_diff)
+        if delta_diff > 1e-12:
+            raise RuntimeError(
+                f""INVALID_Q1_R03_PRANET_REUSE: delta mismatch {key} {delta_diff}""
+            )
+
+        for name in (""harmful"", ""neutral"", ""beneficial""):
+            if int(f[name]) != int(u[name]):
+                raise RuntimeError(
+                    f""INVALID_Q1_R03_PRANET_REUSE: class mismatch {key} {name}""
+                )
+
+        seed = int(f[""seed""])
+        if seed not in PRANET_CHECKPOINTS:
+            raise RuntimeError(f""Unexpected PraNet seed {seed}"")
+        sha = PRANET_CHECKPOINTS[seed][1]
+        features = {name: float(f[name]) for name in SOURCE_FEATURE_NAMES}
+        row = make_common_row(
+            ""PraNet"",
+            seed,
+            sha,
+            f[""sample_id""],
+            int(f[""fold""]),
+            f[""perturbation""],
+            float(u[""source_dice""]),
+            float(u[""action_dice""]),
+            features,
+        )
+        if abs(row[""delta_dice""] - float(u[""delta_dice""])) > 1e-12:
+            raise RuntimeError(""PraNet rebuilt delta mismatch."")
+        out.append(row)
+
+    if len(out) != EXPECTED_ROWS_PER_FAMILY:
+        raise RuntimeError(""INVALID_Q1_R03_PRANET_REUSE"")
+    for seed in PRANET_SEEDS:
+        validate_state_rows(
+            [r for r in out if int(r[""training_seed""]) == seed],
+            ""PraNet"", seed, PRANET_CHECKPOINTS[seed][1],
+        )
+    return out, {
+        ""rows"": len(out),
+        ""max_abs_delta_crosscheck"": crosscheck_max,
+        ""new_inference"": False,
+        ""source"": ""Q1-S00A B0 + S07-B frozen A1 outcomes"",
+    }"
+PraNet,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,build_segformer_rows,1081,1245,"def build_segformer_rows(source_rows, device, cache_dir, resume):
+    (
+        torch, nn, F, SegformerForSemanticSegmentation,
+        config, mean, std,
+    ) = build_segformer_context(device)
+
+    all_rows = []
+    parameter_names_reference = None
+    dropout_names_reference = None
+    bn_count_reference = None
+    per_seed_audit = {}
+
+    for seed in SEGFORMER_SEEDS:
+        sha = SEGFORMER_CHECKPOINTS[seed][1]
+        if resume:
+            cached = load_state_cache(cache_dir, ""SegFormer-B0"", seed, sha)
+            if cached is not None:
+                print(f""[RESUME] SegFormer-B0 seed={seed} rows={len(cached)}"")
+                all_rows.extend(cached)
+                continue
+
+        random.seed(seed)
+        np.random.seed(seed % (2**32 - 1))
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+        model = load_segformer_state(
+            seed, device, SegformerForSemanticSegmentation, config, torch
+        )
+        (
+            params, param_names, bn_modules, bn_original_track,
+            dropout_modules, dropout_names,
+        ) = configure_segformer_tent(model, nn)
+        source_values = snapshot_params(params)
+
+        if parameter_names_reference is None:
+            parameter_names_reference = list(param_names)
+            dropout_names_reference = list(dropout_names)
+            bn_count_reference = len(bn_modules)
+        else:
+            if list(param_names) != parameter_names_reference:
+                raise RuntimeError(
+                    ""INVALID_Q1_R03_SEGFORMER_TENT: parameter schema differs by seed""
+                )
+            if list(dropout_names) != dropout_names_reference:
+                raise RuntimeError(
+                    ""INVALID_Q1_R03_SEGFORMER_TENT: dropout schema differs by seed""
+                )
+            if len(bn_modules) != bn_count_reference:
+                raise RuntimeError(
+                    ""INVALID_Q1_R03_SEGFORMER_TENT: BN schema differs by seed""
+                )
+
+        state_rows = []
+        pbar = tqdm(
+            total=EXPECTED_ROWS_PER_STATE,
+            desc=f""Q1-R03 SegFormer A1 seed {seed}"",
+            unit=""case"",
+            dynamic_ncols=True,
+        )
+
+        for src in source_rows:
+            image_path = DATA_ROOT / Path(src[""image_relpath""])
+            with Image.open(image_path) as im:
+                native = im.convert(""RGB"")
+            gt = load_native_gt(src)
+
+            for perturbation in PERTURBATIONS:
+                # Use frozen S03 perturbation implementation exactly.
+                # Imported lazily here to avoid target/helper coupling.
+                pranet_helper = import_module(
+                    PRANET_HELPER,
+                    ""q1_r03_pranet_perturb_helper"",
+                ) if ""q1_r03_pranet_perturb_helper"" not in sys.modules else sys.modules[
+                    ""q1_r03_pranet_perturb_helper""
+                ]
+                perturbed = pranet_helper.apply_perturbation(
+                    native, perturbation, src[""sample_id""]
+                )
+                x = segformer_tensor(perturbed, mean, std, torch).to(
+                    device, non_blocking=True
+                )
+
+                # Untouched source prediction.
+                restore_params(params, source_values, torch)
+                segformer_source_mode(
+                    model, bn_modules, bn_original_track, dropout_modules
+                )
+                with torch.no_grad():
+                    _, z_source_t = segformer_logits_and_z(model, x, F)
+                z_source = z_source_t[0].detach().float().cpu().numpy()
+
+                # Episodic A1 TENT.
+                restore_params(params, source_values, torch)
+                segformer_tent_mode(model, bn_modules, dropout_modules)
+                optimizer = torch.optim.Adam(
+                    params, lr=TENT_LR, weight_decay=TENT_WEIGHT_DECAY
+                )
+                optimizer.zero_grad(set_to_none=True)
+                logits_pre, _ = segformer_logits_and_z(model, x, F)
+                loss = categorical_entropy(logits_pre, torch)
+                if not torch.isfinite(loss):
+                    raise RuntimeError(
+                        ""INVALID_Q1_R03_SEGFORMER_TENT: non-finite entropy""
+                    )
+                loss.backward()
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+
+                with torch.no_grad():
+                    _, z_action_t = segformer_logits_and_z(model, x, F)
+                z_action = z_action_t[0].detach().float().cpu().numpy()
+                tent_loss = float(loss.detach().cpu())
+
+                source_dice = dice_from_z352(z_source, gt, torch, F)
+                action_dice = dice_from_z352(z_action, gt, torch, F)
+                features = extract_source_features(z_source, tent_loss)
+
+                row = make_common_row(
+                    ""SegFormer-B0"",
+                    seed,
+                    sha,
+                    src[""sample_id""],
+                    fold_for_sample(src[""sample_id""]),
+                    perturbation,
+                    source_dice,
+                    action_dice,
+                    features,
+                )
+                state_rows.append(row)
+                pbar.update(1)
+                pbar.set_postfix(dDice=f""{row['delta_dice']:+.3f}"")
+
+                del optimizer, logits_pre, loss, z_source_t, z_action_t
+
+        pbar.close()
+        restore_params(params, source_values, torch)
+        validate_state_rows(state_rows, ""SegFormer-B0"", seed, sha)
+        save_state_cache(cache_dir, ""SegFormer-B0"", seed, sha, state_rows)
+        all_rows.extend(state_rows)
+
+        per_seed_audit[str(seed)] = {
+            ""trainable_norm_affine_tensor_count"": len(params),
+            ""trainable_norm_affine_names"": list(param_names),
+            ""batchnorm_module_count"": len(bn_modules),
+            ""dropout_module_count"": len(dropout_modules),
+            ""dropout_names"": list(dropout_names),
+            ""rows"": len(state_rows),
+        }
+
+        del model, params, source_values, bn_modules, dropout_modules
+        torch.cuda.empty_cache()
+
+    return all_rows, {
+        ""parameter_names_reference"": parameter_names_reference,
+        ""dropout_names_reference"": dropout_names_reference,
+        ""batchnorm_module_count"": bn_count_reference,
+        ""per_seed"": per_seed_audit,
+        ""tent_lr"": TENT_LR,
+        ""tent_weight_decay"": TENT_WEIGHT_DECAY,
+        ""tent_steps"": 1,
+        ""adapted_module_types"": [""LayerNorm"", ""BatchNorm2d""],
+        ""dropout_rule"": ""eval_during_tent"",
+        ""batchnorm_rule"": ""current_sample_stats_during_tent"",
+    }"
+PraNet,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,distribution_summary,1252,1278,"def distribution_summary(rows):
+    out = []
+    groups = [(""ALL"", rows)]
+    for family in (""PraNet"", ""DeepLabV3-R50"", ""SegFormer-B0""):
+        groups.append((family, [r for r in rows if r[""model_family""] == family]))
+
+    for name, rr in groups:
+        d = np.asarray([float(r[""delta_dice""]) for r in rr], dtype=np.float64)
+        src = np.asarray([float(r[""source_dice""]) for r in rr], dtype=np.float64)
+        act = np.asarray([float(r[""action_dice""]) for r in rr], dtype=np.float64)
+        out.append({
+            ""group"": name,
+            ""rows"": len(rr),
+            ""source_dice_mean"": float(src.mean()),
+            ""action_dice_mean"": float(act.mean()),
+            ""delta_dice_mean"": float(d.mean()),
+            ""delta_dice_std"": float(d.std()),
+            ""delta_dice_q10"": float(np.quantile(d, 0.10)),
+            ""delta_dice_q50"": float(np.quantile(d, 0.50)),
+            ""delta_dice_q90"": float(np.quantile(d, 0.90)),
+            ""harm_fraction"": float(np.mean(d <= HARM_THRESHOLD)),
+            ""neutral_fraction"": float(
+                np.mean((d > HARM_THRESHOLD) & (d < BENEFIT_THRESHOLD))
+            ),
+            ""benefit_fraction"": float(np.mean(d >= BENEFIT_THRESHOLD)),
+        })
+    return out"
+PraNet,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,validate_global_rows,1281,1324,"def validate_global_rows(rows):
+    if len(rows) != EXPECTED_TOTAL_ROWS:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_CARDINALITY: total={len(rows)} ""
+            f""expected={EXPECTED_TOTAL_ROWS}""
+        )
+
+    states = Counter(r[""model_state_id""] for r in rows)
+    if len(states) != 9 or any(v != EXPECTED_ROWS_PER_STATE for v in states.values()):
+        raise RuntimeError(f""INVALID_Q1_R03_CARDINALITY: states={dict(states)}"")
+
+    families = Counter(r[""model_family""] for r in rows)
+    expected_family = {
+        ""PraNet"": EXPECTED_ROWS_PER_FAMILY,
+        ""DeepLabV3-R50"": EXPECTED_ROWS_PER_FAMILY,
+        ""SegFormer-B0"": EXPECTED_ROWS_PER_FAMILY,
+    }
+    if dict(families) != expected_family:
+        raise RuntimeError(
+            f""INVALID_Q1_R03_CARDINALITY: families={dict(families)}""
+        )
+
+    global_keys = {
+        (
+            r[""model_state_id""],
+            r[""sample_id""],
+            r[""perturbation""],
+        )
+        for r in rows
+    }
+    if len(global_keys) != EXPECTED_TOTAL_ROWS:
+        raise RuntimeError(""INVALID_Q1_R03_CARDINALITY: duplicate global key"")
+
+    groups = defaultdict(set)
+    for r in rows:
+        groups[r[""sample_id""]].add(int(r[""fold""]))
+    if len(groups) != SOURCE_VAL_N:
+        raise RuntimeError(""INVALID_Q1_R03_GROUP_FOLD: group count"")
+    if any(len(v) != 1 for v in groups.values()):
+        raise RuntimeError(""INVALID_Q1_R03_GROUP_FOLD: fold leakage"")
+
+    fold_counts = Counter(next(iter(v)) for v in groups.values())
+    if dict(sorted(fold_counts.items())) != EXPECTED_FOLD_GROUP_COUNTS:
+        raise RuntimeError(""INVALID_Q1_R03_GROUP_FOLD: fold counts"")"
+PraNet,code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,run,1520,1726,"def run(args):
+    panel, provenance = validate_upstream()
+    source_rows = load_source_val_rows()
+    fold_rows = build_fold_audit(source_rows)
+
+    if args.output_dir.exists():
+        raise FileExistsError(f""Final Q1-R03 output exists: {args.output_dir}"")
+
+    build_dir = Path(str(args.output_dir) + ""__building"")
+    if build_dir.exists() and not args.resume:
+        raise FileExistsError(
+            f""Partial Q1-R03 output exists: {build_dir}. Use --resume only after ""
+            ""a technical interruption.""
+        )
+    build_dir.mkdir(parents=True, exist_ok=True)
+    cache_dir = build_dir / ""state_cache""
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError(""CUDA required for Q1-R03."")
+    device = torch.device(""cuda"")
+
+    protocol_copy = build_dir / ""preregistered_protocol_copy.md""
+    if not protocol_copy.exists():
+        shutil.copy2(PROTOCOL, protocol_copy)
+    validate_sha(protocol_copy, EXPECTED_PROTOCOL_SHA256, ""protocol copy"")
+
+    panel_path = build_dir / ""panel_checkpoint_manifest.csv""
+    write_csv(
+        panel_path,
+        panel,
+        [
+            ""model_family"",
+            ""seed"",
+            ""model_state_id"",
+            ""checkpoint"",
+            ""checkpoint_sha256"",
+        ],
+    )
+
+    fold_path = build_dir / ""source_group_fold_audit.csv""
+    write_csv(fold_path, fold_rows, [""source_group_id"", ""fold""])
+
+    print(""===== Q1-R03 NINE-STATE SOURCE UTILITY ASSET ====="")
+    print(f""Device={device}"")
+    print(f""Source groups={SOURCE_VAL_N}"")
+    print(f""Perturbations={len(PERTURBATIONS)}"")
+    print(""Model states=9"")
+    print(f""Expected rows={EXPECTED_TOTAL_ROWS}"")
+    print(""Target data=NO"")
+    print(""Utility predictor fitted=NO"")
+    print()
+
+    pranet_rows, pranet_audit = build_pranet_rows()
+    write_json(build_dir / ""pranet_reuse_audit.json"", pranet_audit)
+    print(f""[PASS] PraNet frozen reuse rows={len(pranet_rows)}"")
+
+    deep_rows, deep_audit = build_deeplab_rows(
+        source_rows, device, cache_dir, args.resume
+    )
+    write_json(build_dir / ""deeplab_reuse_and_b0_audit.json"", deep_audit)
+    print(
+        ""[PASS] DeepLab exact-B0 rows=""
+        f""{len(deep_rows)} max_source_dice_error=""
+        f""{deep_audit['max_abs_source_dice_reproduction_error']:.3e}""
+    )
+
+    seg_rows, seg_audit = build_segformer_rows(
+        source_rows, device, cache_dir, args.resume
+    )
+    write_json(build_dir / ""segformer_tent_parameter_audit.json"", seg_audit)
+    print(f""[PASS] SegFormer A1 rows={len(seg_rows)}"")
+
+    all_rows = pranet_rows + deep_rows + seg_rows
+    validate_global_rows(all_rows)
+    all_rows.sort(
+        key=lambda r: (
+            r[""model_family""],
+            int(r[""training_seed""]),
+            r[""sample_id""],
+            r[""perturbation""],
+        )
+    )
+
+    table_path = build_dir / ""nine_state_source_utility_table.csv""
+    write_csv(table_path, all_rows, COMMON_FIELDS)
+    table_sha = file_sha256(table_path)
+
+    dist = distribution_summary(all_rows)
+    dist_path = build_dir / ""architecture_distribution_summary.csv""
+    write_csv(dist_path, dist, list(dist[0].keys()))
+
+    provenance_payload = {
+        **provenance,
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        ""target_data_used"": False,
+        ""utility_predictor_fitted"": False,
+        ""threshold_selected"": False,
+        ""hyperparameter_sweep"": False,
+        ""source_val_groups"": SOURCE_VAL_N,
+        ""perturbations"": list(PERTURBATIONS),
+        ""action"": A1_ACTION,
+        ""model_states"": 9,
+        ""rows"": len(all_rows),
+        ""table_sha256"": table_sha,
+    }
+    provenance_path = build_dir / ""provenance_audit.json""
+    write_json(provenance_path, provenance_payload)
+
+    decision_path = build_dir / ""decision.txt""
+    decision_path.write_text(DECISION_READY + ""\n"", encoding=""utf-8"")
+
+    run_log = f""""""===== Q1-R03 NINE-STATE HETEROGENEOUS SOURCE UTILITY ASSET =====
+Script version: {VERSION}
+Build: {BUILD}
+
+Source:
+  manifest_sha256={EXPECTED_MANIFEST_SHA256}
+  source_val_groups={SOURCE_VAL_N}
+  perturbations={len(PERTURBATIONS)}
+
+Panel:
+  PraNet states=3 rows={len(pranet_rows)}
+  DeepLabV3-R50 states=3 rows={len(deep_rows)}
+  SegFormer-B0 states=3 rows={len(seg_rows)}
+  total states=9
+  total rows={len(all_rows)}
+
+Information boundary:
+  seen_sanity opened=NO
+  unseen_locked opened=NO
+  PolypGen target opened=NO
+  target labels opened=NO
+  utility predictor fitted=NO
+  threshold selected=NO
+  hyperparameter sweep=NO
+
+DeepLab exact-B0 reproduction:
+  max_abs_source_dice_error={deep_audit['max_abs_source_dice_reproduction_error']:.12g}
+
+Combined table:
+  sha256={table_sha}
+
+Decision:
+  {DECISION_READY}
+
+If ready:
+  next = Q1-R04 Model-Relative Prospective Utility Feasibility with LOAO
+""""""
+    run_log_path = build_dir / ""run_log.txt""
+    run_log_path.write_text(run_log, encoding=""utf-8"")
+
+    artifact_paths = {
+        ""protocol_copy"": protocol_copy,
+        ""panel_checkpoint_manifest"": panel_path,
+        ""source_group_fold_audit"": fold_path,
+        ""pranet_reuse_audit"": build_dir / ""pranet_reuse_audit.json"",
+        ""deeplab_reuse_and_b0_audit"": build_dir / ""deeplab_reuse_and_b0_audit.json"",
+        ""segformer_tent_parameter_audit"": build_dir / ""segformer_tent_parameter_audit.json"",
+        ""nine_state_source_utility_table"": table_path,
+        ""architecture_distribution_summary"": dist_path,
+        ""provenance_audit"": provenance_path,
+        ""decision"": decision_path,
+        ""run_log"": run_log_path,
+    }
+
+    lock = {
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        ""protocol_sha256"": EXPECTED_PROTOCOL_SHA256,
+        ""manifest_sha256"": EXPECTED_MANIFEST_SHA256,
+        ""r02_lock_sha256"": EXPECTED_R02_LOCK_SHA256,
+        ""model_states"": 9,
+        ""rows"": EXPECTED_TOTAL_ROWS,
+        ""feature_names"": SOURCE_FEATURE_NAMES,
+        ""target_data_used"": False,
+        ""utility_predictor_fitted"": False,
+        ""artifacts"": {
+            name: {
+                ""relative_path"": str(path.relative_to(build_dir)),
+                ""sha256"": file_sha256(path),
+            }
+            for name, path in artifact_paths.items()
+        },
+        ""decision"": DECISION_READY,
+    }
+    lock_path = build_dir / ""Q1_R03_NINE_STATE_SOURCE_UTILITY_LOCK.json""
+    write_json(lock_path, lock)
+    lock_sha = file_sha256(lock_path)
+
+    # Final immutability check.
+    for name, meta in lock[""artifacts""].items():
+        path = build_dir / meta[""relative_path""]
+        if file_sha256(path) != meta[""sha256""]:
+            raise RuntimeError(f""Artifact changed before commit: {name}"")
+
+    build_dir.rename(args.output_dir)
+
+    print()
+    print((args.output_dir / ""run_log.txt"").read_text(encoding=""utf-8""))
+    print(
+        ""Q1-R03 LOCK:"",
+        args.output_dir / ""Q1_R03_NINE_STATE_SOURCE_UTILITY_LOCK.json"",
+    )
+    print(""Q1-R03 LOCK SHA256:"", lock_sha)"
+PraNet,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,patch_r05d3_cardinality,383,410,"def patch_r05d3_cardinality(r05d3):
+    # Reuse model-specific implementation unchanged, but with PolypGen count.
+    r05d3.EXPECTED_CASES = EXPECTED_CASES
+    r05d3.EXPECTED_STATES = EXPECTED_STATES
+    r05d3.EXPECTED_MODEL_CASES = EXPECTED_MODEL_CASES
+
+    if int(r05d3.MASK_H) != MASK_H or int(r05d3.MASK_W) != MASK_W:
+        raise RuntimeError(""R05D3 mask resolution changed."")
+    if int(r05d3.PACKED_BYTES) != PACKED_BYTES:
+        raise RuntimeError(""R05D3 packed-mask byte count changed."")
+    if str(r05d3.BITORDER) != BITORDER:
+        raise RuntimeError(""R05D3 packbits bitorder changed."")
+    if float(r05d3.TENT_LR) != 1e-3:
+        raise RuntimeError(""R05D3 TENT lr changed."")
+    if float(r05d3.TENT_WEIGHT_DECAY) != 0.0:
+        raise RuntimeError(""R05D3 TENT weight decay changed."")
+    if int(r05d3.TENT_STEPS) != 1:
+        raise RuntimeError(""R05D3 TENT step count changed."")
+
+    for name in [
+        ""run_pranet_state"",
+        ""run_deeplab_state"",
+        ""run_segformer_state"",
+        ""pack_mask"",
+        ""unpack_mask"",
+    ]:
+        if not hasattr(r05d3, name):
+            raise RuntimeError(f""R05D3 missing required function: {name}"")"
+PraNet,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,run_state,645,832,"def run_state(
+    r05d3,
+    r03,
+    state,
+    targets,
+    device,
+    state_dir,
+    upstream,
+    resume,
+    seg_context=None,
+):
+    npz_path, index_path, sidecar_path = state_paths(state_dir, state)
+
+    if resume and sidecar_is_complete(
+        sidecar_path,
+        npz_path,
+        index_path,
+        state,
+        upstream,
+    ):
+        print(
+            f""[RESUME VERIFIED] {state['model_state_id']} ""
+            f""seed={state['training_seed']}""
+        )
+        with index_path.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+
+        if not validate_cached_rows_for_target(
+            rows,
+            state,
+            targets,
+        ):
+            raise RuntimeError(
+                f""Cached rows failed target/state validation: ""
+                f""{state['model_state_id']}""
+            )
+
+        return (
+            npz_path,
+            index_path,
+            sidecar_path,
+            rows,
+            seg_context,
+        )
+
+    # Delete only this incomplete state artifact set.
+    for p in [npz_path, index_path, sidecar_path]:
+        if p.exists():
+            p.unlink()
+
+    family = state[""model_family""]
+
+    # Fix2: the authoritative R05D3 SegFormer runner intentionally returns
+    # FOUR values:
+    #   SOURCE packed masks, A1 packed masks, index rows, seg_context
+    #
+    # PraNet and DeepLab return three. Do not flatten this difference because
+    # seg_context is deliberately reused across the three SegFormer states.
+    if family == ""SegFormer-B0"":
+        result = r05d3.run_segformer_state(
+            state,
+            targets,
+            device,
+            r03,
+            seg_context=seg_context,
+        )
+        if not isinstance(result, tuple) or len(result) != 4:
+            raise RuntimeError(
+                ""Authoritative SegFormer runner return schema changed; ""
+                f""expected 4 values, got ""
+                f""{len(result) if isinstance(result, tuple) else type(result)}""
+            )
+        (
+            source_pack,
+            a1_pack,
+            rows,
+            seg_context,
+        ) = result
+    elif family == ""PraNet"":
+        result = invoke_runner(
+            r05d3.run_pranet_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative PraNet runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    elif family == ""DeepLabV3-R50"":
+        result = invoke_runner(
+            r05d3.run_deeplab_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative DeepLab runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    else:
+        raise RuntimeError(f""Unexpected family: {family}"")
+
+    source_pack, a1_pack = validate_prediction_arrays(
+        r05d3,
+        source_pack,
+        a1_pack,
+    )
+
+    if len(rows) != EXPECTED_CASES:
+        raise RuntimeError(
+            f""{state['model_state_id']} index rows={len(rows)} ""
+            f""expected={EXPECTED_CASES}""
+        )
+
+    expected_ids = [t[""sample_id""] for t in targets]
+    observed_ids = [str(r[""sample_id""]) for r in rows]
+    if observed_ids != expected_ids:
+        raise RuntimeError(
+            f""{state['model_state_id']} target order changed.""
+        )
+
+    for i, row in enumerate(rows):
+        target = targets[i]
+        if str(row[""image_raw_sha256""]).lower() != str(
+            target[""image_raw_sha256""]
+        ).lower():
+            raise RuntimeError(
+                f""{state['model_state_id']} image SHA mismatch at row {i}""
+            )
+        if row[""model_state_id""] != state[""model_state_id""]:
+            raise RuntimeError(""State ID mismatch in prediction index."")
+        if str(row[""checkpoint_sha256""]).lower() != state[
+            ""checkpoint_sha256""
+        ].lower():
+            raise RuntimeError(""Checkpoint SHA mismatch in prediction index."")
+
+    np.savez_compressed(
+        npz_path,
+        source_masks_packed=source_pack,
+        a1_masks_packed=a1_pack,
+    )
+
+    fields = list(rows[0].keys())
+    write_csv(index_path, rows, fields)
+
+    sidecar = {
+        ""decision"": ""STATE_COMPLETE"",
+        ""model_family"": family,
+        ""model_state_id"": state[""model_state_id""],
+        ""training_seed"": int(state[""training_seed""]),
+        ""checkpoint_sha256"": state[""checkpoint_sha256""],
+        ""target_cases"": EXPECTED_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""tent_lr"": 1e-3,
+        ""tent_weight_decay"": 0.0,
+        ""tent_steps"": 1,
+        ""episodic_reset"": True,
+        ""polypgen_manifest_sha256"": upstream[""polypgen_manifest_sha256""],
+        ""independence_lock_sha256"": upstream[""independence_lock_sha256""],
+        ""r05d3_script_sha256"": upstream[""r05d3_script_sha256""],
+        ""npz_sha256"": sha256_file(npz_path),
+        ""index_sha256"": sha256_file(index_path),
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_metrics_computed"": False,
+    }
+    write_json(sidecar_path, sidecar)
+
+    return (
+        npz_path,
+        index_path,
+        sidecar_path,
+        rows,
+        seg_context,
+    )"
+PraNet,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,run,871,1261,"def run(args):
+    upstream = load_upstream_locks()
+    targets = load_targets_and_verify_rgb()
+    panel = load_frozen_panel()
+
+    r05d3 = import_module(
+        R05D3_SCRIPT,
+        ""q1_r10l3a_authoritative_r05d3"",
+    )
+    patch_r05d3_cardinality(r05d3)
+
+    r03 = import_module(
+        Path(r05d3.R03_SCRIPT),
+        ""q1_r10l3a_r03"",
+    )
+    validate_sha(
+        Path(r05d3.R03_SCRIPT),
+        str(r05d3.EXPECTED_R03_SCRIPT_SHA256),
+        ""R03 script"",
+    )
+
+    import torch
+    device = torch.device(""cuda"" if torch.cuda.is_available() else ""cpu"")
+    print(""Device:"", device)
+    if device.type == ""cuda"":
+        print(""CUDA:"", torch.cuda.get_device_name(device))
+
+    if args.output_dir.exists():
+        raise FileExistsError(
+            f""Final R10L3A output already exists: {args.output_dir}""
+        )
+
+    build_dir = Path(str(args.output_dir) + ""__building"")
+    if build_dir.exists() and not args.resume:
+        raise FileExistsError(
+            f""Partial R10L3A Fix2 output exists: {build_dir}. ""
+            f""Use --resume only after a technical interruption.""
+        )
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    state_dir = build_dir / ""state_predictions""
+    state_dir.mkdir(parents=True, exist_ok=True)
+
+    # Preserve completed expensive states from the failed Fix1 run. The old
+    # partial directory is read-only from Fix2's perspective.
+    imported_fix1_states = bootstrap_verified_fix1_states(
+        FIX1_PARTIAL_BUILD_DIR,
+        state_dir,
+        panel,
+        targets,
+        upstream,
+    )
+
+    # Imported states are now local Fix2 resume caches.
+    effective_resume = bool(args.resume or imported_fix1_states)
+
+    # Lock target identity without reading GT columns.
+    target_rows = []
+    for t in targets:
+        target_rows.append({
+            ""sample_id"": t[""sample_id""],
+            ""original_polypgen_sample_id"": t[""original_polypgen_sample_id""],
+            ""center"": t[""center""],
+            ""image_path"": t[""image_path""],
+            ""image_raw_sha256"": t[""image_raw_sha256""],
+        })
+    write_csv(
+        build_dir / ""frozen_polypgen_rgb_manifest_no_gt.csv"",
+        target_rows,
+        [
+            ""sample_id"",
+            ""original_polypgen_sample_id"",
+            ""center"",
+            ""image_path"",
+            ""image_raw_sha256"",
+        ],
+    )
+
+    write_csv(
+        build_dir / ""checkpoint_manifest.csv"",
+        panel,
+        [
+            ""model_family"",
+            ""training_seed"",
+            ""model_state_id"",
+            ""checkpoint"",
+            ""checkpoint_sha256"",
+        ],
+    )
+
+    write_json(
+        build_dir / ""upstream_audit.json"",
+        {
+            ""script_version"": VERSION,
+            ""build"": BUILD,
+            **upstream,
+            ""polypgen_cases"": EXPECTED_CASES,
+            ""model_states"": EXPECTED_STATES,
+            ""model_case_units"": EXPECTED_MODEL_CASES,
+            ""independence_gate_decision"": EXPECTED_INDEPENDENCE_DECISION,
+            ""target_gt_path_column_read"": False,
+            ""target_gt_pixels_decoded"": False,
+            ""fix1_partial_build_dir"": str(FIX1_PARTIAL_BUILD_DIR),
+            ""verified_fix1_states_imported"": imported_fix1_states,
+        },
+    )
+
+    global_rows = []
+    state_summaries = []
+    seg_context = None
+
+    for state in panel:
+        print()
+        print(""="" * 72)
+        print(""STATE:"", state[""model_state_id""])
+        print(""FAMILY:"", state[""model_family""])
+        print(""SEED:"", state[""training_seed""])
+        print(""="" * 72)
+
+        (
+            npz_path,
+            index_path,
+            sidecar_path,
+            rows,
+            seg_context,
+        ) = run_state(
+            r05d3=r05d3,
+            r03=r03,
+            state=state,
+            targets=targets,
+            device=device,
+            state_dir=state_dir,
+            upstream=upstream,
+            resume=effective_resume,
+            seg_context=seg_context,
+        )
+
+        npz_rel = str(npz_path.relative_to(build_dir))
+        idx_rel = str(index_path.relative_to(build_dir))
+        side_rel = str(sidecar_path.relative_to(build_dir))
+
+        changed = []
+        source_fg = []
+        a1_fg = []
+
+        for i, row in enumerate(rows):
+            changed.append(int(row[""changed_pixels""]))
+            source_fg.append(int(row[""source_foreground_pixels""]))
+            a1_fg.append(int(row[""a1_foreground_pixels""]))
+
+            global_rows.append({
+                ""sample_id"": row[""sample_id""],
+                ""center"": targets[i][""center""],
+                ""original_polypgen_sample_id"":
+                    targets[i][""original_polypgen_sample_id""],
+                ""image_path"": row[""image_path""],
+                ""image_raw_sha256"": row[""image_raw_sha256""],
+                ""model_family"": row[""model_family""],
+                ""model_state_id"": row[""model_state_id""],
+                ""training_seed"": int(row[""training_seed""]),
+                ""checkpoint_sha256"": row[""checkpoint_sha256""],
+                ""state_prediction_npz"": npz_rel,
+                ""state_index_csv"": idx_rel,
+                ""state_lock_json"": side_rel,
+                ""state_row_index"": int(row[""row_index""]),
+                ""source_foreground_pixels"":
+                    int(row[""source_foreground_pixels""]),
+                ""a1_foreground_pixels"":
+                    int(row[""a1_foreground_pixels""]),
+                ""changed_pixels"": int(row[""changed_pixels""]),
+            })
+
+        state_summaries.append({
+            ""model_family"": state[""model_family""],
+            ""model_state_id"": state[""model_state_id""],
+            ""training_seed"": int(state[""training_seed""]),
+            ""target_cases"": len(rows),
+            ""source_foreground_pixels_mean"": float(np.mean(source_fg)),
+            ""a1_foreground_pixels_mean"": float(np.mean(a1_fg)),
+            ""changed_pixels_mean"": float(np.mean(changed)),
+            ""changed_pixels_median"": float(np.median(changed)),
+            ""changed_pixels_max"": int(np.max(changed)),
+        })
+
+    if len(global_rows) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(
+            f""Global model-case rows={len(global_rows)} ""
+            f""expected={EXPECTED_MODEL_CASES}""
+        )
+
+    key_set = {
+        (r[""sample_id""], r[""model_state_id""])
+        for r in global_rows
+    }
+    if len(key_set) != EXPECTED_MODEL_CASES:
+        raise RuntimeError(""sample_id + model_state_id is not unique."")
+
+    write_csv(
+        build_dir / ""model_case_prediction_manifest.csv"",
+        global_rows,
+        list(global_rows[0].keys()),
+    )
+    write_csv(
+        build_dir / ""prediction_change_summary.csv"",
+        state_summaries,
+        list(state_summaries[0].keys()),
+    )
+
+    boundary = {
+        ""polypgen_rgb_pixels_decoded"": True,
+        ""polypgen_gt_path_column_read"": False,
+        ""polypgen_gt_pixels_decoded"": False,
+        ""source_inference_run"": True,
+        ""a1_backward_pass_run"": True,
+        ""a1_optimizer_step_run"": True,
+        ""a1_action"": ""A1_TENT_1STEP"",
+        ""a1_optimizer"": ""Adam"",
+        ""a1_lr"": 1e-3,
+        ""a1_weight_decay"": 0.0,
+        ""a1_steps"": 1,
+        ""episodic_reset"": True,
+        ""all_model_case_units_received_a1"": True,
+        ""model_case_units_receiving_a1"": EXPECTED_MODEL_CASES,
+        ""r10l0_safety_estimator_read"": False,
+        ""safety_probability_computed"": False,
+        ""target_dice_computed"": False,
+        ""target_delta_dice_computed"": False,
+        ""target_harm_label_computed"": False,
+        ""target_calibration"": False,
+        ""target_threshold_selection"": False,
+        ""target_feature_selection"": False,
+        ""target_case_exclusion_from_prediction_behavior"": False,
+    }
+    write_json(
+        build_dir / ""information_boundary_audit.json"",
+        boundary,
+    )
+
+    lock = {
+        ""decision"": DECISION_READY,
+        ""script_version"": VERSION,
+        ""build"": BUILD,
+        **upstream,
+        ""target_dataset"": ""PolypGen2021_MultiCenterData_v3"",
+        ""target_component"": ""unique_static_data_C1_to_C6"",
+        ""target_cases"": EXPECTED_CASES,
+        ""centers"": [""C1"", ""C2"", ""C3"", ""C4"", ""C5"", ""C6""],
+        ""model_states"": EXPECTED_STATES,
+        ""model_case_rows"": EXPECTED_MODEL_CASES,
+        ""source_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""a1_prediction_masks"": EXPECTED_MODEL_CASES,
+        ""all_model_cases_received_a1"": True,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""optimizer"": ""Adam"",
+        ""learning_rate"": 1e-3,
+        ""weight_decay"": 0.0,
+        ""steps"": 1,
+        ""episodic_reset"": True,
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_outcomes_revealed"": False,
+        ""safety_estimator_read"": False,
+        ""safety_scores_generated"": False,
+        ""artifacts"": {
+            ""rgb_manifest_no_gt"": {
+                ""relative_path"": ""frozen_polypgen_rgb_manifest_no_gt.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""frozen_polypgen_rgb_manifest_no_gt.csv""
+                ),
+            },
+            ""checkpoint_manifest"": {
+                ""relative_path"": ""checkpoint_manifest.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""checkpoint_manifest.csv""
+                ),
+            },
+            ""model_case_prediction_manifest"": {
+                ""relative_path"": ""model_case_prediction_manifest.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""model_case_prediction_manifest.csv""
+                ),
+            },
+            ""prediction_change_summary"": {
+                ""relative_path"": ""prediction_change_summary.csv"",
+                ""sha256"": sha256_file(
+                    build_dir / ""prediction_change_summary.csv""
+                ),
+            },
+            ""information_boundary_audit"": {
+                ""relative_path"": ""information_boundary_audit.json"",
+                ""sha256"": sha256_file(
+                    build_dir / ""information_boundary_audit.json""
+                ),
+            },
+        },
+    }
+
+    lock_path = (
+        build_dir
+        / ""R10L3A_POLYPGEN_SOURCE_A1_PREDICTION_LOCK.json""
+    )
+    write_json(lock_path, lock)
+
+    decision_path = build_dir / ""decision.txt""
+    decision_path.write_text(DECISION_READY + ""\n"", encoding=""utf-8"")
+
+    run_lines = [
+        ""===== R10L3A POLYPGEN SOURCE + A1 PREDICTION LOCK FIX2 ====="",
+        f""Script version: {VERSION}"",
+        f""Build: {BUILD}"",
+        """",
+        ""Frozen independent target:"",
+        f""  PolypGen static cases={EXPECTED_CASES}"",
+        ""  centers=6"",
+        ""  source train exact overlap=0"",
+        ""  source val exact overlap=0"",
+        """",
+        ""Technical recovery:"",
+        f""  verified Fix1 states imported={len(imported_fix1_states)}"",
+        ""  Fix1 partial output modified=NO"",
+        ""  SegFormer return schema=4 values with reusable seg_context"",
+        """",
+        ""Frozen panel/action:"",
+        ""  PraNet states=3"",
+        ""  DeepLabV3-R50 states=3"",
+        ""  SegFormer-B0 states=3"",
+        f""  total states={EXPECTED_STATES}"",
+        ""  action=A1_TENT_1STEP"",
+        ""  optimizer=Adam"",
+        ""  lr=0.001"",
+        ""  weight_decay=0"",
+        ""  steps=1"",
+        ""  episodic reset=YES"",
+        """",
+        ""Prediction lock:"",
+        f""  model-case rows={EXPECTED_MODEL_CASES}"",
+        f""  SOURCE masks={EXPECTED_MODEL_CASES}"",
+        f""  A1 masks={EXPECTED_MODEL_CASES}"",
+        f""  mask resolution={MASK_H}x{MASK_W}"",
+        f""  packed bytes/mask={PACKED_BYTES}"",
+        f""  bitorder={BITORDER}"",
+        """",
+        ""Information boundary:"",
+        ""  PolypGen RGB pixels decoded=YES"",
+        ""  PolypGen GT path column read=NO"",
+        ""  PolypGen GT pixels decoded=NO"",
+        ""  R10L0 safety estimator read=NO"",
+        ""  safety score generated=NO"",
+        ""  Dice/DeltaDice/HARM=NO"",
+        ""  target calibration/tuning=NO"",
+        """",
+        ""Decision:"",
+        f""  {DECISION_READY}"",
+        """",
+        ""Next:"",
+        ""  R10L3B prospective frozen R10L0 safety-score generation"",
+        ""  GT must remain unopened until R10L3B is locked."",
+    ]
+    run_log = ""\n"".join(run_lines) + ""\n""
+    (build_dir / ""run_log.txt"").write_text(
+        run_log,
+        encoding=""utf-8"",
+    )
+
+    # Final structural check before atomic rename.
+    if len(list(state_dir.glob(""*_predictions.npz""))) != EXPECTED_STATES:
+        raise RuntimeError(""State NPZ count != 9."")
+    if len(list(state_dir.glob(""*_index.csv""))) != EXPECTED_STATES:
+        raise RuntimeError(""State index count != 9."")
+    if len(list(state_dir.glob(""*_state_lock.json""))) != EXPECTED_STATES:
+        raise RuntimeError(""State sidecar count != 9."")
+
+    build_dir.rename(args.output_dir)
+
+    print()
+    print(
+        (args.output_dir / ""run_log.txt"").read_text(
+            encoding=""utf-8""
+        )
+    )
+    final_lock = (
+        args.output_dir
+        / ""R10L3A_POLYPGEN_SOURCE_A1_PREDICTION_LOCK.json""
+    )
+    print(""R10L3A LOCK:"", final_lock)
+    print(""R10L3A LOCK SHA256:"", sha256_file(final_lock))
+    print(""PASS"")"

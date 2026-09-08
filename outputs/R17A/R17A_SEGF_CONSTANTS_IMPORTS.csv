@@ -1,0 +1,79 @@
+﻿path,kind,name,line,source
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,16,from __future__ import annotations
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,18,import argparse
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,19,import csv
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,20,import hashlib
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,21,import importlib.util
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,22,import json
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,23,import math
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,24,import os
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,25,import random
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,26,import shutil
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,27,import sys
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,28,import traceback
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,29,"from collections import Counter, defaultdict"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,30,from pathlib import Path
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,31,"from typing import Dict, List, Sequence, Tuple"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,33,import numpy as np
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,34,from PIL import Image
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,IMPORT,,35,from tqdm import tqdm
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,DATA_ROOT,57,"DATA_ROOT = ROOT / ""data"" / ""processed"" / ""S00_polyp_locked_v1"""
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,HF_CACHE,102,"HF_CACHE = ROOT / ""cache"" / ""huggingface"""
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,IMAGE_SIZE,106,IMAGE_SIZE = 352
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,TENT_LR,108,TENT_LR = 1e-3
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,TENT_WEIGHT_DECAY,109,TENT_WEIGHT_DECAY = 0.0
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,SEGFORMER_SEEDS,115,"SEGFORMER_SEEDS = (20260820, 20260821, 20260822)"
+code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py,ASSIGNMENT,SEGFORMER_CHECKPOINTS,196,"SEGFORMER_CHECKPOINTS = {
+    20260820: (
+        R02_DIR / ""seed_20260820"" / ""best_model_state.pt"",
+        ""9dae2ae907b193ea36c2bccc8e376ddbad1699ba27ae0769cf40bcba13e95605"",
+    ),
+    20260821: (
+        R02_DIR / ""seed_20260821"" / ""best_model_state.pt"",
+        ""ad75290168eab7d116aa3de61b3eafc1e986f11fc0bbfa4a6108abbf669a258d"",
+    ),
+    20260822: (
+        R02_DIR / ""seed_20260822"" / ""best_model_state.pt"",
+        ""ea0b3881373e9f966475a082490fabe4b0acae81179b8596c48a06ee2661a34a"",
+    ),
+}"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,14,from __future__ import annotations
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,16,import argparse
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,17,import csv
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,18,import hashlib
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,19,import importlib.util
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,20,import json
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,21,import math
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,22,import os
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,23,import random
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,24,import shutil
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,25,import sys
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,26,import traceback
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,27,"from collections import Counter, defaultdict"
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,28,from pathlib import Path
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,29,from typing import Sequence
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,34,import numpy as np
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,35,from PIL import Image
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,IMPORT,,36,from tqdm import tqdm
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,ASSIGNMENT,EXPECTED_CASES,116,EXPECTED_CASES = 1000
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,ASSIGNMENT,PACKED_BYTES,123,PACKED_BYTES = (MASK_PIXELS + 7) // 8
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,ASSIGNMENT,TENT_LR,126,TENT_LR = 1e-3
+code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py,ASSIGNMENT,TENT_WEIGHT_DECAY,127,TENT_WEIGHT_DECAY = 0.0
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,44,from __future__ import annotations
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,46,import argparse
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,47,import csv
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,48,import hashlib
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,49,import importlib.util
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,50,import inspect
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,51,import json
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,52,import os
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,53,import re
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,54,import shutil
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,55,import sys
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,56,import traceback
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,57,from pathlib import Path
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,62,import numpy as np
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,63,import pandas as pd
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,IMPORT,,64,from tqdm import tqdm
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,ASSIGNMENT,EXPECTED_CASES,120,EXPECTED_CASES = 1532
+code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,ASSIGNMENT,PACKED_BYTES,127,PACKED_BYTES = (MASK_PIXELS + 7) // 8

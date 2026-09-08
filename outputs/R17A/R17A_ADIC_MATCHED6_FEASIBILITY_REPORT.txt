@@ -1,0 +1,29 @@
+===== R17A ADIC MATCHED-6 NATIVE-DROPOUT FEASIBILITY REPORT =====
+Version: 2026-09-09-Q1-R17A-ADIC-MATCHED6-NATIVE-DROPOUT-FEASIBILITY-AUDIT-v1
+Scope: PolypGen DeepLabV3-R50 + PraNet, 6 states
+
+INFORMATION BOUNDARY:
+Training: NO
+Inference: NO
+Target GT loading: NO
+HARM/outcome loading: NO
+Model modification: NO
+
+OFFICIAL TEGDA IMPLEMENTATION CONTRACT:
+- n_iter=10 stochastic passes.
+- Existing nn.Dropout modules are switched to train mode.
+- No new dropout layer is injected.
+- The function's `dropout` argument is not used to rewrite module p.
+- Deterministic prediction remains the reference prediction.
+- The same 10 passes can provide MC predictive uncertainty.
+
+FAMILY SUPPORT:
+DeepLabV3-R50: CANDIDATE_NATIVE_DROPOUT_ROUTE | code_files_with_dropout_evidence=3
+  code/Q1_R17A_ADIC_matched6_native_dropout_feasibility_audit_v1.py
+  code/S05_C_build_deeplab_source_side_safettta_gate_v1.py
+  release/SafeTTA_clean_test_v102/legacy_all_retained_code/S05_C_build_deeplab_source_side_safettta_gate_v1.py
+PraNet: CANDIDATE_NATIVE_DROPOUT_ROUTE | code_files_with_dropout_evidence=1
+  code/Q1_R17A_ADIC_matched6_native_dropout_feasibility_audit_v1.py
+
+GATE=READY_FOR_ADIC_MATCHED6_EXACT_MODEL_INSTANTIATION_AUDIT
+NEXT=INSTANTIATE_EXACT_FROZEN_MODELS_AND_REQUIRE_NATIVE_NN_DROPOUT_PLUS_DETERMINISTIC_SOURCE_PARITY_BEFORE_SCORE_LOCK

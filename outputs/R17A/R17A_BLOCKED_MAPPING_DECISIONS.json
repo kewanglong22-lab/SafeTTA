@@ -1,0 +1,1046 @@
+{
+  "PolypGen": {
+    "decision": "DIRECT_SOFT_ASSET_READY",
+    "reason": "pre-GT soft/logit file(s) found after corrected no_label/gt_free handling, with image/sample manifests available",
+    "soft_file_count": 6,
+    "soft_files": [
+      {
+        "path": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/deeplab_seed20260817/locked_logits.npz",
+        "members": [
+          {
+            "member": "source_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "tent_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "external_ids.npy",
+            "shape": "[1537]",
+            "dtype": "<U36"
+          },
+          {
+            "member": "centers.npy",
+            "shape": "[1537]",
+            "dtype": "<U2"
+          },
+          {
+            "member": "image_members.npy",
+            "shape": "[1537]",
+            "dtype": "<U82"
+          },
+          {
+            "member": "architecture.npy",
+            "shape": "[1]",
+            "dtype": "<U7"
+          },
+          {
+            "member": "seed.npy",
+            "shape": "[1]",
+            "dtype": "int64"
+          },
+          {
+            "member": "gate_artifact_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "protocol_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "archive_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "eligibility_manifest_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          }
+        ]
+      },
+      {
+        "path": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/deeplab_seed20260818/locked_logits.npz",
+        "members": [
+          {
+            "member": "source_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "tent_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "external_ids.npy",
+            "shape": "[1537]",
+            "dtype": "<U36"
+          },
+          {
+            "member": "centers.npy",
+            "shape": "[1537]",
+            "dtype": "<U2"
+          },
+          {
+            "member": "image_members.npy",
+            "shape": "[1537]",
+            "dtype": "<U82"
+          },
+          {
+            "member": "architecture.npy",
+            "shape": "[1]",
+            "dtype": "<U7"
+          },
+          {
+            "member": "seed.npy",
+            "shape": "[1]",
+            "dtype": "int64"
+          },
+          {
+            "member": "gate_artifact_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "protocol_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "archive_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "eligibility_manifest_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          }
+        ]
+      },
+      {
+        "path": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/deeplab_seed20260819/locked_logits.npz",
+        "members": [
+          {
+            "member": "source_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "tent_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "external_ids.npy",
+            "shape": "[1537]",
+            "dtype": "<U36"
+          },
+          {
+            "member": "centers.npy",
+            "shape": "[1537]",
+            "dtype": "<U2"
+          },
+          {
+            "member": "image_members.npy",
+            "shape": "[1537]",
+            "dtype": "<U82"
+          },
+          {
+            "member": "architecture.npy",
+            "shape": "[1]",
+            "dtype": "<U7"
+          },
+          {
+            "member": "seed.npy",
+            "shape": "[1]",
+            "dtype": "int64"
+          },
+          {
+            "member": "gate_artifact_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "protocol_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "archive_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "eligibility_manifest_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          }
+        ]
+      },
+      {
+        "path": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/pranet_seed20260817/locked_logits.npz",
+        "members": [
+          {
+            "member": "source_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "tent_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "external_ids.npy",
+            "shape": "[1537]",
+            "dtype": "<U36"
+          },
+          {
+            "member": "centers.npy",
+            "shape": "[1537]",
+            "dtype": "<U2"
+          },
+          {
+            "member": "image_members.npy",
+            "shape": "[1537]",
+            "dtype": "<U82"
+          },
+          {
+            "member": "architecture.npy",
+            "shape": "[1]",
+            "dtype": "<U6"
+          },
+          {
+            "member": "seed.npy",
+            "shape": "[1]",
+            "dtype": "int64"
+          },
+          {
+            "member": "gate_artifact_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "protocol_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "archive_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "eligibility_manifest_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          }
+        ]
+      },
+      {
+        "path": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/pranet_seed20260818/locked_logits.npz",
+        "members": [
+          {
+            "member": "source_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "tent_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "external_ids.npy",
+            "shape": "[1537]",
+            "dtype": "<U36"
+          },
+          {
+            "member": "centers.npy",
+            "shape": "[1537]",
+            "dtype": "<U2"
+          },
+          {
+            "member": "image_members.npy",
+            "shape": "[1537]",
+            "dtype": "<U82"
+          },
+          {
+            "member": "architecture.npy",
+            "shape": "[1]",
+            "dtype": "<U6"
+          },
+          {
+            "member": "seed.npy",
+            "shape": "[1]",
+            "dtype": "int64"
+          },
+          {
+            "member": "gate_artifact_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "protocol_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "archive_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "eligibility_manifest_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          }
+        ]
+      },
+      {
+        "path": "outputs/S06_C_polypgen_dual_backbone_no_label_lock_v1_fix1/units/pranet_seed20260819/locked_logits.npz",
+        "members": [
+          {
+            "member": "source_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "tent_logits.npy",
+            "shape": "[1537, 352, 352]",
+            "dtype": "float16"
+          },
+          {
+            "member": "external_ids.npy",
+            "shape": "[1537]",
+            "dtype": "<U36"
+          },
+          {
+            "member": "centers.npy",
+            "shape": "[1537]",
+            "dtype": "<U2"
+          },
+          {
+            "member": "image_members.npy",
+            "shape": "[1537]",
+            "dtype": "<U82"
+          },
+          {
+            "member": "architecture.npy",
+            "shape": "[1]",
+            "dtype": "<U6"
+          },
+          {
+            "member": "seed.npy",
+            "shape": "[1]",
+            "dtype": "int64"
+          },
+          {
+            "member": "gate_artifact_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "protocol_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "archive_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          },
+          {
+            "member": "eligibility_manifest_sha256.npy",
+            "shape": "[1]",
+            "dtype": "<U64"
+          }
+        ]
+      }
+    ],
+    "checkpoint_claim_count": 132,
+    "resolved_checkpoint_claim_count": 132,
+    "unique_state_claim_count": 12,
+    "resolved_unique_state_count": 12,
+    "image_manifest_count": 29,
+    "inference_code_count": 9,
+    "top_resolved_checkpoints": [
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260819",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260819",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "SegFormer-B0::20260820",
+        "training_seed": "20260820",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260820/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "SegFormer-B0::20260821",
+        "training_seed": "20260821",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260821/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "SegFormer-B0::20260822",
+        "training_seed": "20260822",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260822/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260819",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50::20260819",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "PraNet::20260819",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      }
+    ],
+    "top_image_manifests": [
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/frozen_polypgen_rgb_manifest_no_gt.csv",
+        "rows": 1532,
+        "columns": "sample_id|original_polypgen_sample_id|center|image_path|image_raw_sha256"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/model_case_prediction_manifest.csv",
+        "rows": 13788,
+        "columns": "sample_id|center|original_polypgen_sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|state_prediction_npz|state_index_csv|state_lock_json|state_row_index|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/deeplabv3_r50_seed20260817_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/deeplabv3_r50_seed20260818_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/deeplabv3_r50_seed20260819_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/pranet_seed20260817_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/pranet_seed20260818_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/pranet_seed20260819_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260820_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260821_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2_v1/state_predictions/segformer_b0_seed20260822_index.csv",
+        "rows": 1532,
+        "columns": "row_index|sample_id|image_path|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|a1_foreground_pixels|changed_pixels"
+      },
+      {
+        "path": "outputs/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1_v1__building/frozen_polypgen_rgb_manifest_no_gt.csv",
+        "rows": 1532,
+        "columns": "sample_id|original_polypgen_sample_id|center|image_path|image_raw_sha256"
+      }
+    ],
+    "top_inference_code": [
+      "code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py",
+      "release/SafeTTA_clean_test_v102/experiments/polypgen/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py",
+      "code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1.py",
+      "code/Q1_R10L3B_polypgen_frozen_safety_score_lock_fix1.py",
+      "release/SafeTTA_clean_test_v102/experiments/polypgen/Q1_R10L3B_polypgen_frozen_safety_score_lock_fix1.py",
+      "code/S06_C_polypgen_dual_backbone_no_label_inference_lock_v1.py",
+      "code/S06_C_polypgen_dual_backbone_no_label_inference_lock_v1_fix1.py",
+      "code/S06_D_polypgen_external_gt_reveal_evaluation_v1.py",
+      "code/S06_D_polypgen_external_gt_reveal_evaluation_v1_fix1.py"
+    ]
+  },
+  "SUNSEG": {
+    "decision": "GT_FREE_SOURCE_REINFERENCE_READY",
+    "reason": "all discovered frozen model-state checkpoint claims resolve, and image-only/sample manifests plus retained inference code exist",
+    "soft_file_count": 0,
+    "soft_files": [],
+    "checkpoint_claim_count": 90,
+    "resolved_checkpoint_claim_count": 90,
+    "unique_state_claim_count": 18,
+    "resolved_unique_state_count": 18,
+    "image_manifest_count": 17,
+    "inference_code_count": 5,
+    "top_resolved_checkpoints": [
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "",
+        "training_seed": "20260820",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260820/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "",
+        "training_seed": "20260821",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260821/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "",
+        "training_seed": "20260822",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260822/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "PraNet",
+        "model_state_id": "",
+        "training_seed": "20260819",
+        "resolved_path": "outputs/S01_B_pranet_source_only_seed20260819_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "",
+        "training_seed": "20260820",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260820/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "",
+        "training_seed": "20260821",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260821/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer-B0",
+        "model_state_id": "",
+        "training_seed": "20260822",
+        "resolved_path": "outputs/Q1_R02_segformer_b0_three_seed_source_training_v1_fix7/seed_20260822/best_model_state.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50__seed20260817",
+        "training_seed": "20260817",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260817_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3-R50",
+        "model_state_id": "DeepLabV3-R50__seed20260818",
+        "training_seed": "20260818",
+        "resolved_path": "outputs/S05_B_deeplabv3_r50_source_only_seed20260818_v1/checkpoints/best_source_val_dice.pt",
+        "resolution_method": "SHA256_MATCH",
+        "sha256_match": true
+      }
+    ],
+    "top_image_manifests": [
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/R14C1_SUNSEG_MODEL_FRAME_PREDICTION_MANIFEST.csv",
+        "rows": 8820,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260817_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260818_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/deeplabv3_r50_seed20260819_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/pranet_seed20260817_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/pranet_seed20260818_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/pranet_seed20260819_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/segformer_b0_seed20260820_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/segformer_b0_seed20260821_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C1_sunseg_source_tent1_pl_prediction_lock_preGT_fix3_v1/state_predictions/segformer_b0_seed20260822_source_tent1_pl_index.csv",
+        "rows": 980,
+        "columns": "row_index|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|source_foreground_pixels|tent1_foreground_pixels|source_tent1_changed_pixels|pl_foreground_pixels|source_pl_changed_pixels|confident_pixels|total_pixels|confident_fraction|pl_loss|pl_parameter_max_abs_delta|pl_buffer_max_abs_delta_after_adaptation|pl_updated|state_prediction_npz_relpath|state_index_csv_relpath|state_lock_json_relpath"
+      },
+      {
+        "path": "outputs/Q1_R14C2B_sunseg_frozen_safety_score_lock_preGT_fix1_v1/R14C2B_FROZEN_SUNSEG_SAFETY_SCORES.csv",
+        "rows": 8820,
+        "columns": "feature_row|sample_id|external_case_id|cluster_id|clip_id|source_split_label|frame_member|image_raw_sha256|model_family|model_state_id|training_seed|checkpoint_sha256|state_prediction_npz_relpath|state_row_index|morph_fg_fraction|morph_boundary_density|frozen_safety_probability|frozen_operating_threshold|frozen_risk_flag"
+      },
+      {
+        "path": "outputs/Q1_R14B2_sunseg_deep_schema_pairing_identity_audit_fix2_v1/R14B2_fix2_real_frame_gt_pairs.csv",
+        "rows": 49136,
+        "columns": "pair_key|dataset|visibility|clip_id|physical_case_id|frame_index|frame_member|gt_member|frame_size|gt_size"
+      }
+    ],
+    "top_inference_code": [
+      "code/Q1_R14C1A_sunseg_prediction_lineage_canonicalization_fix1.py",
+      "code/Q1_R14C3B_sunseg_gt_reveal_dual_action_frozen_score_evaluation_fix1.py",
+      "code/Q1_R14C3C_sunseg_confirmatory_result_audit_and_claim_freeze_fix1.py",
+      "release/SafeTTA_clean_test_v102/experiments/sunseg/Q1_R14C1A_sunseg_prediction_lineage_canonicalization_fix1.py",
+      "release/SafeTTA_clean_test_v102/experiments/sunseg/Q1_R14C3B_sunseg_gt_reveal_dual_action_frozen_score_evaluation_fix1.py"
+    ]
+  },
+  "PROMISE12": {
+    "decision": "GT_FREE_SOURCE_REINFERENCE_READY",
+    "reason": "frozen checkpoint mappings, manifests, and retained inference code exist; exact state count will be frozen by the score-lock script",
+    "soft_file_count": 0,
+    "soft_files": [],
+    "checkpoint_claim_count": 27,
+    "resolved_checkpoint_claim_count": 18,
+    "unique_state_claim_count": 3,
+    "resolved_unique_state_count": 2,
+    "image_manifest_count": 4,
+    "inference_code_count": 11,
+    "top_resolved_checkpoints": [
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3_R50",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer_B0",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3_R50",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer_B0",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3_R50",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer_B0",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3_R50",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer_B0",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "DeepLabV3_R50",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/DeepLabV3_R50/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      },
+      {
+        "model_family": "SegFormer_B0",
+        "model_state_id": "",
+        "training_seed": "",
+        "resolved_path": "outputs/Q1X_CM4D_final_all_source_segmentation_models_lock_fix2_v1/models/SegFormer_B0/final.pt",
+        "resolution_method": "EXACT_PATH",
+        "sha256_match": true
+      }
+    ],
+    "top_image_manifests": [
+      {
+        "path": "outputs/Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1/target_image_only_cache/promise12_image_only_slices.csv",
+        "rows": 1377,
+        "columns": "global_index|case_id|case_key|slice_index"
+      },
+      {
+        "path": "outputs/Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1_v1/target_image_only_cache/promise12_image_only_volumes.csv",
+        "rows": 50,
+        "columns": "case_id|case_key|dim_x|dim_y|dim_z|spacing_x|spacing_y|spacing_z|q005|q995|resampled_y|resampled_x"
+      },
+      {
+        "path": "outputs/Q1X_CM2A_prostate158_official_manifest_t2_resolver_and_slice_preflight_fix3_v1/CM2A_PROMISE12_IMAGE_ONLY_PATIENT_MANIFEST.csv",
+        "rows": 50,
+        "columns": "patient_id|case_id|image_mhd|image_raw|dim_x|dim_y|dim_z|element_type|element_spacing"
+      },
+      {
+        "path": "outputs/Q1X_CM2A_prostate158_official_manifest_t2_resolver_and_slice_preflight_fix3_v1/CM2A_PROMISE12_IMAGE_ONLY_SLICE_MANIFEST.csv",
+        "rows": 1377,
+        "columns": "sample_id|patient_id|case_id|slice_axis|slice_index|image_mhd|image_raw|dim_x|dim_y|dim_z|gt_used_for_manifest"
+      }
+    ],
+    "top_inference_code": [
+      "code/Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1.py",
+      "release/SafeTTA_clean_test_v102/experiments/mri_prostate_promise/Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1.py",
+      "release/SafeTTA_clean_test_v102/method_core/mri/Q1X_CM5A_promise12_gt_free_prediction_tent1_safety_scoring_lock_fix1.py",
+      "code/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix1.py",
+      "code/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2.py",
+      "code/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix1.py",
+      "code/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2.py",
+      "release/SafeTTA_clean_test_v102/experiments/mri_prostate_promise/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2.py",
+      "release/SafeTTA_clean_test_v102/experiments/mri_prostate_promise/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2.py",
+      "release/SafeTTA_clean_test_v102/method_core/mri/Q1X_CM5B_unlabeled_support_aware_operating_point_transport_lock_fix2.py",
+      "release/SafeTTA_clean_test_v102/method_core/mri/Q1X_CM7A_promise12_external_ranking_baseline_audit_fix2.py"
+    ]
+  }
+}

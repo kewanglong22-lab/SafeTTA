@@ -1,0 +1,3 @@
+﻿model_family,states,exact_nn_dropout_counts_by_seed_unique,exact_nn_dropout_p_schema_unique,decision
+DeepLabV3-R50,3,[1],['0.5'],SUPPORTED_NATIVE_NN_DROPOUT
+PraNet,3,[0],[''],UNSUPPORTED_NO_NATIVE_NN_DROPOUT

@@ -1,0 +1,90 @@
+{
+  "status": "PASS",
+  "decision": "PASS_R17A_POLYPGEN_DEEPLAB3_ADIC_MC_PREGT_SCORE_LOCK",
+  "version": "2026-09-09-Q1-R17A-ADIC-MC-DEEPLAB3-PREGT-SCORE-LOCK-v1-fix2",
+  "dataset": "PolypGen",
+  "scope": {
+    "model_family": "DeepLabV3-R50",
+    "states": 3,
+    "rows": 4596,
+    "physical_samples": 1532,
+    "pranet_included": false,
+    "pranet_exclusion_reason": "no native torch.nn.Dropout",
+    "segformer_included": false
+  },
+  "information_boundary": {
+    "training": false,
+    "tta": false,
+    "target_gt_loading": false,
+    "harm_outcome_loading": false,
+    "threshold_tuning": false,
+    "target_recalibration": false,
+    "target_score_reversal": false
+  },
+  "official_tegda_anchor": {
+    "repo": "https://github.com/HiLab-git/TEGDA",
+    "file": "code/sota/adic2d.py",
+    "n_iter": 10,
+    "native_module_type": "torch.nn.Dropout",
+    "dropout_p_rewritten": false,
+    "new_dropout_injected": false,
+    "binary_instantiation": "single foreground class reduction of official class-specific ADIC confidence-weighted dropout-vs-current Dice"
+  },
+  "rng": {
+    "base_seed": 20260909,
+    "strategy": "state-specific deterministic global torch RNG stream; fixed sorted state and manifest traversal"
+  },
+  "authoritative_code": {
+    "r05": "code/Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py",
+    "r05_sha256": "df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251",
+    "r03": "code/Q1_R03_nine_state_heterogeneous_source_utility_asset_v1_fix2.py",
+    "r03_sha256": "d737272b756a4d2051f9c74051d7085640eaec9cd8be6dbd951c325af2a17c31",
+    "r10": "code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py",
+    "r10_sha256": "4cae02c30e82781c6e7d3b74b6a312974789213a9cc59a44ca99bbfb94405708",
+    "extracted_input_prefix": "R17A_ADIC_EXACT_R05_DEEPLAB_INPUT_PREFIX.txt",
+    "extracted_input_prefix_sha256": "6e6b26d757dc399018993f18ca0f580e67a2b2d2e6467c154ecb4ce059419eab"
+  },
+  "states": [
+    {
+      "training_seed": 20260817,
+      "model_state_id": "DeepLabV3-R50::20260817",
+      "checkpoint_sha256": "d63f914e337295652627c773332d8e7382fbcd6a39d69805e1316dcc759605a2",
+      "deterministic_source_parity_matches": 1532,
+      "deterministic_source_parity_mismatches": 0,
+      "native_nn_dropout_count": 1,
+      "native_dropout_p": 0.5,
+      "stochastic_stream_seed": 20260909,
+      "frozen_prediction_npz_sha256": "d09394b6b095dc2b64ce5e038d1760d3c62b5886ca4e521b76ef1cb48de40b76",
+      "frozen_prediction_index_sha256": "5176333dc283ca09234589129662c6859229b04fdcc6e9097448fa579a222da5"
+    },
+    {
+      "training_seed": 20260818,
+      "model_state_id": "DeepLabV3-R50::20260818",
+      "checkpoint_sha256": "d4ede45d5b30f62fdbc92cd9aa8fc84e0d5a52073d5ef2c3ac36baa09a56eb25",
+      "deterministic_source_parity_matches": 1532,
+      "deterministic_source_parity_mismatches": 0,
+      "native_nn_dropout_count": 1,
+      "native_dropout_p": 0.5,
+      "stochastic_stream_seed": 20360909,
+      "frozen_prediction_npz_sha256": "e8826484ff14b9df28a15ed9ccaf55faae36b39da4c33f0229545dbe366572c3",
+      "frozen_prediction_index_sha256": "de67b5fe092a8ebe8408664910a43ab825e93469c985ba715471cea03cc060ad"
+    },
+    {
+      "training_seed": 20260819,
+      "model_state_id": "DeepLabV3-R50::20260819",
+      "checkpoint_sha256": "66aeae338d350db5aa878bcaab2e68bbe98eec8e626e28a1bb02b6708fa358eb",
+      "deterministic_source_parity_matches": 1532,
+      "deterministic_source_parity_mismatches": 0,
+      "native_nn_dropout_count": 1,
+      "native_dropout_p": 0.5,
+      "stochastic_stream_seed": 20460909,
+      "frozen_prediction_npz_sha256": "5a441f119227d0f28d092c9b486a90ed98de5f27792a3f17e4f04767a345cc43",
+      "frozen_prediction_index_sha256": "67cdba8666476c60ff30a0c3b7a76f75f1ffb6e33d706def1497e293699151c0"
+    }
+  ],
+  "score_table": "R17A_POLYPGEN_DEEPLAB3_ADIC_MC_PREGT_SCORE_LOCK.csv",
+  "score_table_sha256": "223f1496e9cc56736d752f57f38d8edae64f20c47bcb6d1b48c243775081cd52",
+  "summary_table": "R17A_POLYPGEN_DEEPLAB3_ADIC_MC_PREGT_SUMMARY.csv",
+  "summary_table_sha256": "719ce11599eeed9627490e2d5a413abc25e4ab34eeaeb7725ca726f267ffa276",
+  "next": "JOIN_ONLY_FROZEN_DEEPLAB3_HARM_OUTCOMES_AND_COMPARE_ADIC_MC_VS_SAFETTA"
+}

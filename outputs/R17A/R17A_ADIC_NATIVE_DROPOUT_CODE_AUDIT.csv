@@ -1,0 +1,4 @@
+﻿path,families,dropout_matches,sha256
+code/Q1_R17A_ADIC_matched6_native_dropout_feasibility_audit_v1.py,DeepLabV3-R50|PraNet,"L100:""nn.Dropout("", | L101:""torch.nn.Dropout("", | L102:""nn.Dropout2d("", | L103:""torch.nn.Dropout2d("", | L104:""F.dropout("", | L105:""torch.nn.functional.dropout("",",c9d95f04d7f6db6b021f5531a8a5fc7f79f30e8eaaf0e2d6ed539a32f009f925
+code/S05_C_build_deeplab_source_side_safettta_gate_v1.py,DeepLabV3-R50,"L1276:nn.Dropout(0.5),",ab1d98f9847b2e338f07ec26ff426f9cd428e68da4813b90e2227782319aa424
+release/SafeTTA_clean_test_v102/legacy_all_retained_code/S05_C_build_deeplab_source_side_safettta_gate_v1.py,DeepLabV3-R50,"L1276:nn.Dropout(0.5),",ab1d98f9847b2e338f07ec26ff426f9cd428e68da4813b90e2227782319aa424

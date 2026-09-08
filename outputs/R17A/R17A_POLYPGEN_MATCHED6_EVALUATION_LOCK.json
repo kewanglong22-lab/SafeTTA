@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "decision": "PASS_R17A_POLYPGEN_MATCHED6_CCD_POSTGT_EVALUATION",
+  "version": "2026-09-09-Q1-R17A-CCD-POLYPGEN-MATCHED6-POSTGT-EVALUATION-v1-fix1",
+  "dataset": "PolypGen",
+  "scope": {
+    "families": [
+      "DeepLabV3-R50",
+      "PraNet"
+    ],
+    "states": 6,
+    "full_paper_states": 9,
+    "rows": 9192,
+    "physical_samples": 1532,
+    "segformer_included": false,
+    "reason_segformer_excluded": "regenerated SOURCE predictions materially mismatched historical frozen SOURCE state; historical soft logits unavailable"
+  },
+  "frozen_inputs": {
+    "ccd_score_table": "outputs/Q1_R17A_CCD_polypgen_6state_preGT_score_lock_v1/R17A_POLYPGEN_CCD_6STATE_PREGT_SCORE_LOCK.csv",
+    "ccd_score_sha256": "85a2e5d913ddbb88a88c8df09b7ef88822963ea9a1451eda6c6254f95b151786",
+    "r10l3c_panel": "outputs/Q1_R10L3C_polypgen_gt_reveal_prospective_external_evaluation_fix1_v1/R10L3C_LOCKED_SCORE_GT_EVALUATION_PANEL.csv",
+    "r10l3c_panel_sha256": "c484d10c4196359f62a34c0b0fa34ae817a1fdf9d451abb1a37c333d92576a67",
+    "matched_join_panel": "R17A_POLYPGEN_MATCHED6_LOCKED_JOIN_PANEL.csv",
+    "matched_join_panel_sha256": "58101dac1a0e4c6ee6865e988c942d6f9252264a1d3607dd45c67f3d5b865830"
+  },
+  "evaluation": {
+    "harm_label": "frozen R10L3C harm_label",
+    "ccd_orientation": "higher = higher HARM risk",
+    "safetta_orientation": "frozen higher = higher HARM risk",
+    "target_recalibration": false,
+    "target_threshold_selection": false,
+    "target_feature_selection": false,
+    "target_score_reversal": false,
+    "paired_bootstrap_cluster": "sample_id",
+    "paired_bootstrap_center_stratified": true,
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260909
+  },
+  "artifacts": {
+    "R17A_POLYPGEN_MATCHED6_POINT_METRICS.csv": "77c907cb336ed77cb8b1996495e3edada3232d2e3da6dce98273c849c25e1c74",
+    "R17A_POLYPGEN_MATCHED6_PER_FAMILY_METRICS.csv": "6952b667e74a5cf15a440ffa6cb201b462227913f2453570f71a5f573a782dd5",
+    "R17A_POLYPGEN_MATCHED6_PAIRED_BOOTSTRAP.csv": "b65aa568ac39fff5971c24d017ac388feb40620b91c51bba2b70aa3d8605241d",
+    "R17A_POLYPGEN_MATCHED6_DELTA_CI95.csv": "baa283578f2dd0cfda37d442b7e925e07e802ca96524d5299511896701ac6bc2"
+  },
+  "interpretation": "Matched-subset published-baseline audit only; do not substitute its 2-family metrics for the manuscript's original 3-family/9-state PolypGen primary SafeTTA result."
+}

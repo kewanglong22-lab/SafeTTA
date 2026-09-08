@@ -1,0 +1,54 @@
+{
+  "script_version": "2026-09-09-R17B-v1-fix3",
+  "build": "Q1_R17B_PUBLICATION_V14_GITHUB_SYNC_AUDIT_V1_FIX3",
+  "repo_root": "F:\\MEDSEG_SAFETTA\\release\\SafeTTA_clean_test_v102",
+  "git_provenance": {
+    "is_git_worktree": true,
+    "origin_url": "https://github.com/kewanglong22-lab/SafeTTA.git",
+    "origin_matches_expected_repo": true,
+    "branch": "main",
+    "git_status_porcelain_lines": 3,
+    "error": ""
+  },
+  "r17a_root": "F:\\MEDSEG_SAFETTA",
+  "out_dir": "F:\\MEDSEG_SAFETTA\\R17B_v14_github_sync_audit_fix3",
+  "final_status": "PASS_READY_TO_SYNC",
+  "frozen_r17a_anchor_pass": 16,
+  "frozen_r17a_anchor_total": 16,
+  "checks": {
+    "repo_is_git_worktree": true,
+    "repo_origin_matches_kewanglong22_lab_SafeTTA": true,
+    "public_repo_has_no_blocking_large_or_model_checkpoint_files": true,
+    "r17a_ccd_assets_found": true,
+    "r17a_adic_assets_found": true,
+    "r17a_mc_dropout_assets_found": true,
+    "r17a_bootstrap_assets_found": true,
+    "r17a_frozen_point_anchors_16_of_16": true,
+    "sict_pooled_auroc_bootstrap_values_found": true,
+    "sict_pooled_auroc_ci_crosses_zero": true,
+    "no_sict_significance_overclaim_detected": true,
+    "pranet_adic_exclusion_evidence_found": true,
+    "segformer_ccd_exclusion_evidence_found": true
+  },
+  "counts": {
+    "repo_files_scanned": 533,
+    "r17a_files_considered": 153,
+    "ccd_hits": 32,
+    "adic_hits": 29,
+    "mc_dropout_hits": 29,
+    "bootstrap_hits": 29,
+    "pranet_hits": 67,
+    "segformer_hits": 72,
+    "copy_candidates": 109,
+    "do_not_copy": 0,
+    "public_repo_suspicious_files": 0,
+    "allowed_lightweight_serialized_artifacts": 4,
+    "nonblocking_archive_review_files": 1
+  },
+  "known_sict_pooled_auroc_bootstrap": {
+    "delta": -0.018125038,
+    "ci95_low": -0.050926781,
+    "ci95_high": 0.016866089
+  },
+  "overclaim_hits": []
+}

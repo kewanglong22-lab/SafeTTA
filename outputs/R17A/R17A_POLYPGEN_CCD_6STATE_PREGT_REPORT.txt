@@ -1,0 +1,28 @@
+===== R17A POLYPGEN CCD 6-STATE PRE-GT SCORE LOCK =====
+Version: 2026-09-08-Q1-R17A-CCD-POLYPGEN-6STATE-PREGT-SCORE-LOCK-v1
+Dataset: PolypGen
+Frozen manifest rows: 1532
+S06 source-logit rows per state: 1537
+States locked: 6/9
+Score rows: 9192
+Unique samples: 1532
+CCD RNG seed: 20260908
+Common 1532<-1537 alignment SHA256: f10f17a633289403949240378d9447e82998b543f18eb06234e9bf0a5e367ce3
+Excluded extra asset rows: [950, 1306, 1307, 1394, 1395]
+Score table SHA256: 85a2e5d913ddbb88a88c8df09b7ef88822963ea9a1451eda6c6254f95b151786
+
+Information boundary:
+  Training: NO
+  TTA: NO
+  Target GT loading: NO
+  HARM/outcome loading: NO
+  Threshold tuning: NO
+
+IMPORTANT:
+- This is a PRE-GT score lock only; no AUROC/AUPRC is computed here.
+- DeepLabV3-R50 and PraNet are complete (3 seeds each).
+- SegFormer-B0 is intentionally absent because no faithful frozen soft-logit asset exists.
+- Do not approximate SegFormer CCD from hard masks.
+
+GATE=PASS_R17A_POLYPGEN_CCD_6STATE_PREGT_SCORE_LOCK_PARTIAL_PANEL
+NEXT=RUN_GT_FREE_SEGFOMER_POLYPGEN_CCD_FOR_REMAINING_3_STATES

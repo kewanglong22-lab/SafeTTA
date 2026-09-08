@@ -1,0 +1,489 @@
+﻿script_variant,script_path,function,start_line,end_line,source
+fix1,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1.py,load_upstream_locks,210,255,"def load_upstream_locks():
+    for label, p in {
+        ""PolypGen manifest"": POLYPGEN_MANIFEST,
+        ""PolypGen manifest lock"": POLYPGEN_MANIFEST_LOCK,
+        ""independence lock"": INDEPENDENCE_LOCK,
+        ""checkpoint recovery"": CHECKPOINT_RECOVERY,
+        ""authoritative R05D3 script"": R05D3_SCRIPT,
+    }.items():
+        print(f""{label} exists:"", p.exists(), p)
+        if not p.exists():
+            raise FileNotFoundError(p)
+
+    r05d3_sha = validate_sha(
+        R05D3_SCRIPT,
+        EXPECTED_R05D3_SCRIPT_SHA256,
+        ""authoritative R05D3 script"",
+    )
+
+    pg_lock = json.loads(
+        POLYPGEN_MANIFEST_LOCK.read_text(encoding=""utf-8"")
+    )
+    if pg_lock.get(""decision"") != EXPECTED_POLYPGEN_MANIFEST_DECISION:
+        raise RuntimeError(
+            f""Unexpected PolypGen manifest decision: {pg_lock.get('decision')}""
+        )
+
+    indep = json.loads(INDEPENDENCE_LOCK.read_text(encoding=""utf-8""))
+    if indep.get(""decision"") != EXPECTED_INDEPENDENCE_DECISION:
+        raise RuntimeError(
+            f""PolypGen independence gate not passed: {indep.get('decision')}""
+        )
+
+    if int(indep.get(""source_train_exact_polypgen_overlaps"", -1)) != 0:
+        raise RuntimeError(""Source-train PolypGen overlap is not zero."")
+    if int(indep.get(""source_val_exact_polypgen_overlaps"", -1)) != 0:
+        raise RuntimeError(""Source-val PolypGen overlap is not zero."")
+    if int(indep.get(""frozen_states"", -1)) != 9:
+        raise RuntimeError(""Independence lock does not certify 9 states."")
+
+    return {
+        ""r05d3_script_sha256"": r05d3_sha,
+        ""polypgen_manifest_sha256"": sha256_file(POLYPGEN_MANIFEST),
+        ""polypgen_manifest_lock_sha256"": sha256_file(POLYPGEN_MANIFEST_LOCK),
+        ""independence_lock_sha256"": sha256_file(INDEPENDENCE_LOCK),
+        ""checkpoint_recovery_sha256"": sha256_file(CHECKPOINT_RECOVERY),
+    }"
+fix1,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix1.py,run_state,511,636,"def run_state(
+    r05d3,
+    r03,
+    state,
+    targets,
+    device,
+    state_dir,
+    upstream,
+    resume,
+):
+    npz_path, index_path, sidecar_path = state_paths(state_dir, state)
+
+    if resume and sidecar_is_complete(
+        sidecar_path,
+        npz_path,
+        index_path,
+        state,
+        upstream,
+    ):
+        print(
+            f""[RESUME VERIFIED] {state['model_state_id']} ""
+            f""seed={state['training_seed']}""
+        )
+        with index_path.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+        return npz_path, index_path, sidecar_path, rows
+
+    # Delete only this incomplete state artifact set.
+    for p in [npz_path, index_path, sidecar_path]:
+        if p.exists():
+            p.unlink()
+
+    family = state[""model_family""]
+
+    if family == ""PraNet"":
+        fn = r05d3.run_pranet_state
+    elif family == ""DeepLabV3-R50"":
+        fn = r05d3.run_deeplab_state
+    elif family == ""SegFormer-B0"":
+        fn = r05d3.run_segformer_state
+    else:
+        raise RuntimeError(f""Unexpected family: {family}"")
+
+    source_pack, a1_pack, rows = invoke_runner(
+        fn,
+        state=state,
+        targets=targets,
+        device=device,
+        r03=r03,
+    )
+
+    source_pack, a1_pack = validate_prediction_arrays(
+        r05d3,
+        source_pack,
+        a1_pack,
+    )
+
+    if len(rows) != EXPECTED_CASES:
+        raise RuntimeError(
+            f""{state['model_state_id']} index rows={len(rows)} ""
+            f""expected={EXPECTED_CASES}""
+        )
+
+    expected_ids = [t[""sample_id""] for t in targets]
+    observed_ids = [str(r[""sample_id""]) for r in rows]
+    if observed_ids != expected_ids:
+        raise RuntimeError(
+            f""{state['model_state_id']} target order changed.""
+        )
+
+    for i, row in enumerate(rows):
+        target = targets[i]
+        if str(row[""image_raw_sha256""]).lower() != str(
+            target[""image_raw_sha256""]
+        ).lower():
+            raise RuntimeError(
+                f""{state['model_state_id']} image SHA mismatch at row {i}""
+            )
+        if row[""model_state_id""] != state[""model_state_id""]:
+            raise RuntimeError(""State ID mismatch in prediction index."")
+        if str(row[""checkpoint_sha256""]).lower() != state[
+            ""checkpoint_sha256""
+        ].lower():
+            raise RuntimeError(""Checkpoint SHA mismatch in prediction index."")
+
+    np.savez_compressed(
+        npz_path,
+        source_masks_packed=source_pack,
+        a1_masks_packed=a1_pack,
+    )
+
+    fields = list(rows[0].keys())
+    write_csv(index_path, rows, fields)
+
+    sidecar = {
+        ""decision"": ""STATE_COMPLETE"",
+        ""model_family"": family,
+        ""model_state_id"": state[""model_state_id""],
+        ""training_seed"": int(state[""training_seed""]),
+        ""checkpoint_sha256"": state[""checkpoint_sha256""],
+        ""target_cases"": EXPECTED_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""tent_lr"": 1e-3,
+        ""tent_weight_decay"": 0.0,
+        ""tent_steps"": 1,
+        ""episodic_reset"": True,
+        ""polypgen_manifest_sha256"": upstream[""polypgen_manifest_sha256""],
+        ""independence_lock_sha256"": upstream[""independence_lock_sha256""],
+        ""r05d3_script_sha256"": upstream[""r05d3_script_sha256""],
+        ""npz_sha256"": sha256_file(npz_path),
+        ""index_sha256"": sha256_file(index_path),
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_metrics_computed"": False,
+    }
+    write_json(sidecar_path, sidecar)
+
+    return npz_path, index_path, sidecar_path, rows"
+fix2,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,load_upstream_locks,215,260,"def load_upstream_locks():
+    for label, p in {
+        ""PolypGen manifest"": POLYPGEN_MANIFEST,
+        ""PolypGen manifest lock"": POLYPGEN_MANIFEST_LOCK,
+        ""independence lock"": INDEPENDENCE_LOCK,
+        ""checkpoint recovery"": CHECKPOINT_RECOVERY,
+        ""authoritative R05D3 script"": R05D3_SCRIPT,
+    }.items():
+        print(f""{label} exists:"", p.exists(), p)
+        if not p.exists():
+            raise FileNotFoundError(p)
+
+    r05d3_sha = validate_sha(
+        R05D3_SCRIPT,
+        EXPECTED_R05D3_SCRIPT_SHA256,
+        ""authoritative R05D3 script"",
+    )
+
+    pg_lock = json.loads(
+        POLYPGEN_MANIFEST_LOCK.read_text(encoding=""utf-8"")
+    )
+    if pg_lock.get(""decision"") != EXPECTED_POLYPGEN_MANIFEST_DECISION:
+        raise RuntimeError(
+            f""Unexpected PolypGen manifest decision: {pg_lock.get('decision')}""
+        )
+
+    indep = json.loads(INDEPENDENCE_LOCK.read_text(encoding=""utf-8""))
+    if indep.get(""decision"") != EXPECTED_INDEPENDENCE_DECISION:
+        raise RuntimeError(
+            f""PolypGen independence gate not passed: {indep.get('decision')}""
+        )
+
+    if int(indep.get(""source_train_exact_polypgen_overlaps"", -1)) != 0:
+        raise RuntimeError(""Source-train PolypGen overlap is not zero."")
+    if int(indep.get(""source_val_exact_polypgen_overlaps"", -1)) != 0:
+        raise RuntimeError(""Source-val PolypGen overlap is not zero."")
+    if int(indep.get(""frozen_states"", -1)) != 9:
+        raise RuntimeError(""Independence lock does not certify 9 states."")
+
+    return {
+        ""r05d3_script_sha256"": r05d3_sha,
+        ""polypgen_manifest_sha256"": sha256_file(POLYPGEN_MANIFEST),
+        ""polypgen_manifest_lock_sha256"": sha256_file(POLYPGEN_MANIFEST_LOCK),
+        ""independence_lock_sha256"": sha256_file(INDEPENDENCE_LOCK),
+        ""checkpoint_recovery_sha256"": sha256_file(CHECKPOINT_RECOVERY),
+    }"
+fix2,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,bootstrap_verified_fix1_states,560,641,"def bootstrap_verified_fix1_states(
+    fix1_build_dir,
+    new_state_dir,
+    panel,
+    targets,
+    upstream,
+):
+    """"""
+    Preserve expensive completed Fix1 states without modifying the old partial
+    run. Only a full NPZ+index+sidecar triple that passes the same SHA/lineage
+    checks is imported into Fix2.
+    """"""
+    imported = []
+
+    if not fix1_build_dir.exists():
+        print(""Fix1 partial build exists: False"", fix1_build_dir)
+        return imported
+
+    old_state_dir = fix1_build_dir / ""state_predictions""
+    print(""Fix1 partial build exists: True"", fix1_build_dir)
+    print(""Fix1 state cache dir exists:"", old_state_dir.exists(), old_state_dir)
+
+    if not old_state_dir.exists():
+        return imported
+
+    for state in panel:
+        old_npz, old_idx, old_side = state_paths(old_state_dir, state)
+
+        if not sidecar_is_complete(
+            old_side,
+            old_npz,
+            old_idx,
+            state,
+            upstream,
+        ):
+            continue
+
+        with old_idx.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+
+        if not validate_cached_rows_for_target(
+            rows,
+            state,
+            targets,
+        ):
+            raise RuntimeError(
+                f""Fix1 cached rows failed target/state validation: ""
+                f""{state['model_state_id']}""
+            )
+
+        new_npz, new_idx, new_side = state_paths(new_state_dir, state)
+
+        hardlink_or_copy(old_npz, new_npz)
+        hardlink_or_copy(old_idx, new_idx)
+        hardlink_or_copy(old_side, new_side)
+
+        if not sidecar_is_complete(
+            new_side,
+            new_npz,
+            new_idx,
+            state,
+            upstream,
+        ):
+            raise RuntimeError(
+                f""Imported Fix1 cache failed Fix2 verification: ""
+                f""{state['model_state_id']}""
+            )
+
+        imported.append(state[""model_state_id""])
+        print(""[BOOTSTRAP VERIFIED]"", state[""model_state_id""])
+
+    print(
+        ""Verified Fix1 states imported into Fix2:"",
+        len(imported),
+        ""/"",
+        EXPECTED_STATES,
+    )
+    return imported"
+fix2,code/Q1_R10L3A_polypgen_source_a1_prediction_lock_fix2.py,run_state,645,832,"def run_state(
+    r05d3,
+    r03,
+    state,
+    targets,
+    device,
+    state_dir,
+    upstream,
+    resume,
+    seg_context=None,
+):
+    npz_path, index_path, sidecar_path = state_paths(state_dir, state)
+
+    if resume and sidecar_is_complete(
+        sidecar_path,
+        npz_path,
+        index_path,
+        state,
+        upstream,
+    ):
+        print(
+            f""[RESUME VERIFIED] {state['model_state_id']} ""
+            f""seed={state['training_seed']}""
+        )
+        with index_path.open(
+            ""r"",
+            newline="""",
+            encoding=""utf-8-sig"",
+        ) as f:
+            rows = list(csv.DictReader(f))
+
+        if not validate_cached_rows_for_target(
+            rows,
+            state,
+            targets,
+        ):
+            raise RuntimeError(
+                f""Cached rows failed target/state validation: ""
+                f""{state['model_state_id']}""
+            )
+
+        return (
+            npz_path,
+            index_path,
+            sidecar_path,
+            rows,
+            seg_context,
+        )
+
+    # Delete only this incomplete state artifact set.
+    for p in [npz_path, index_path, sidecar_path]:
+        if p.exists():
+            p.unlink()
+
+    family = state[""model_family""]
+
+    # Fix2: the authoritative R05D3 SegFormer runner intentionally returns
+    # FOUR values:
+    #   SOURCE packed masks, A1 packed masks, index rows, seg_context
+    #
+    # PraNet and DeepLab return three. Do not flatten this difference because
+    # seg_context is deliberately reused across the three SegFormer states.
+    if family == ""SegFormer-B0"":
+        result = r05d3.run_segformer_state(
+            state,
+            targets,
+            device,
+            r03,
+            seg_context=seg_context,
+        )
+        if not isinstance(result, tuple) or len(result) != 4:
+            raise RuntimeError(
+                ""Authoritative SegFormer runner return schema changed; ""
+                f""expected 4 values, got ""
+                f""{len(result) if isinstance(result, tuple) else type(result)}""
+            )
+        (
+            source_pack,
+            a1_pack,
+            rows,
+            seg_context,
+        ) = result
+    elif family == ""PraNet"":
+        result = invoke_runner(
+            r05d3.run_pranet_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative PraNet runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    elif family == ""DeepLabV3-R50"":
+        result = invoke_runner(
+            r05d3.run_deeplab_state,
+            state=state,
+            targets=targets,
+            device=device,
+            r03=r03,
+        )
+        if not isinstance(result, tuple) or len(result) != 3:
+            raise RuntimeError(
+                ""Authoritative DeepLab runner return schema changed.""
+            )
+        source_pack, a1_pack, rows = result
+    else:
+        raise RuntimeError(f""Unexpected family: {family}"")
+
+    source_pack, a1_pack = validate_prediction_arrays(
+        r05d3,
+        source_pack,
+        a1_pack,
+    )
+
+    if len(rows) != EXPECTED_CASES:
+        raise RuntimeError(
+            f""{state['model_state_id']} index rows={len(rows)} ""
+            f""expected={EXPECTED_CASES}""
+        )
+
+    expected_ids = [t[""sample_id""] for t in targets]
+    observed_ids = [str(r[""sample_id""]) for r in rows]
+    if observed_ids != expected_ids:
+        raise RuntimeError(
+            f""{state['model_state_id']} target order changed.""
+        )
+
+    for i, row in enumerate(rows):
+        target = targets[i]
+        if str(row[""image_raw_sha256""]).lower() != str(
+            target[""image_raw_sha256""]
+        ).lower():
+            raise RuntimeError(
+                f""{state['model_state_id']} image SHA mismatch at row {i}""
+            )
+        if row[""model_state_id""] != state[""model_state_id""]:
+            raise RuntimeError(""State ID mismatch in prediction index."")
+        if str(row[""checkpoint_sha256""]).lower() != state[
+            ""checkpoint_sha256""
+        ].lower():
+            raise RuntimeError(""Checkpoint SHA mismatch in prediction index."")
+
+    np.savez_compressed(
+        npz_path,
+        source_masks_packed=source_pack,
+        a1_masks_packed=a1_pack,
+    )
+
+    fields = list(rows[0].keys())
+    write_csv(index_path, rows, fields)
+
+    sidecar = {
+        ""decision"": ""STATE_COMPLETE"",
+        ""model_family"": family,
+        ""model_state_id"": state[""model_state_id""],
+        ""training_seed"": int(state[""training_seed""]),
+        ""checkpoint_sha256"": state[""checkpoint_sha256""],
+        ""target_cases"": EXPECTED_CASES,
+        ""mask_height"": MASK_H,
+        ""mask_width"": MASK_W,
+        ""packed_bytes_per_mask"": PACKED_BYTES,
+        ""bitorder"": BITORDER,
+        ""action"": ""A1_TENT_1STEP"",
+        ""tent_lr"": 1e-3,
+        ""tent_weight_decay"": 0.0,
+        ""tent_steps"": 1,
+        ""episodic_reset"": True,
+        ""polypgen_manifest_sha256"": upstream[""polypgen_manifest_sha256""],
+        ""independence_lock_sha256"": upstream[""independence_lock_sha256""],
+        ""r05d3_script_sha256"": upstream[""r05d3_script_sha256""],
+        ""npz_sha256"": sha256_file(npz_path),
+        ""index_sha256"": sha256_file(index_path),
+        ""target_gt_path_column_read"": False,
+        ""target_gt_pixels_decoded"": False,
+        ""target_metrics_computed"": False,
+    }
+    write_json(sidecar_path, sidecar)
+
+    return (
+        npz_path,
+        index_path,
+        sidecar_path,
+        rows,
+        seg_context,
+    )"

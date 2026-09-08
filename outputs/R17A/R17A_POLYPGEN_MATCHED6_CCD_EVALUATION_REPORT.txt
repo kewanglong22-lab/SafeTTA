@@ -1,0 +1,34 @@
+===== R17A POLYPGEN MATCHED-6 CCD POST-GT EVALUATION REPORT =====
+Version: 2026-09-09-Q1-R17A-CCD-POLYPGEN-MATCHED6-POSTGT-EVALUATION-v1-fix1
+Dataset: PolypGen
+Scope: DeepLabV3-R50 + PraNet only
+Rows: 9192
+Physical samples: 1532
+States: 6/9
+SegFormer included: NO
+
+WHY SEGFOMER IS EXCLUDED:
+- Historical SegFormer soft logits are unavailable.
+- New SegFormer regeneration mismatched the historical hard SOURCE state
+  on 4540/4596 state-image pairs with 5,578,077 differing pixels.
+- Therefore its regenerated CCD is not joined to historical HARM outcomes.
+
+POINT METRICS:
+SafeTTA pooled AUROC=0.669096725 AUPRC=0.613051022
+CCD     pooled AUROC=0.644591565 AUPRC=0.513241554
+SafeTTA macro2 AUROC=0.671385350 AUPRC=0.616637379
+CCD     macro2 AUROC=0.649438197 AUPRC=0.519921801
+
+PAIRED CLUSTERED BOOTSTRAP DELTAS (SafeTTA - CCD):
+pooled_auroc: delta=+0.024505160 95%CI=[-0.001002443,+0.051737086] SafeTTA_better=False
+pooled_auprc: delta=+0.099809468 95%CI=[+0.069599377,+0.130834930] SafeTTA_better=True
+macro2_auroc: delta=+0.021947153 95%CI=[-0.004600175,+0.049929577] SafeTTA_better=False
+macro2_auprc: delta=+0.096715579 95%CI=[+0.066320463,+0.127865253] SafeTTA_better=True
+
+INTERPRETATION:
+- This is a faithful matched-6-state baseline comparison.
+- It is NOT the paper's original full 9-state PolypGen primary result.
+- No target tuning/recalibration/score reversal was performed.
+
+GATE=PASS_R17A_POLYPGEN_MATCHED6_CCD_POSTGT_EVALUATION
+NEXT=REVIEW_CCD_EFFECT_SIZE_THEN_DECIDE_WHETHER_TO_ADD_AS_PUBLISHED_BASELINE_SENSITIVITY

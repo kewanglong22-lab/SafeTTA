@@ -1,0 +1,34 @@
+===== R17A ADIC MATCHED-6 EXACT MODEL INSTANTIATION REPORT =====
+Version: 2026-09-09-Q1-R17A-ADIC-MATCHED6-EXACT-MODEL-INSTANTIATION-AUDIT-v1
+
+INFORMATION BOUNDARY:
+Training: NO
+Target inference: NO
+Target GT loading: NO
+HARM/outcome loading: NO
+Model modification: NO
+
+OFFICIAL TEGDA FIDELITY:
+- exact native torch.nn.Dropout only
+- no injected dropout
+- no dropout-p rewriting
+
+STATE INVENTORY:
+DeepLabV3-R50 seed=20260817 class=DeepLabV3 nn.Dropout=1 p=0.5 Dropout2d=0 AlphaDropout=0
+DeepLabV3-R50 seed=20260818 class=DeepLabV3 nn.Dropout=1 p=0.5 Dropout2d=0 AlphaDropout=0
+DeepLabV3-R50 seed=20260819 class=DeepLabV3 nn.Dropout=1 p=0.5 Dropout2d=0 AlphaDropout=0
+PraNet seed=20260817 class=PraNet nn.Dropout=0 p=NONE Dropout2d=0 AlphaDropout=0
+PraNet seed=20260818 class=PraNet nn.Dropout=0 p=NONE Dropout2d=0 AlphaDropout=0
+PraNet seed=20260819 class=PraNet nn.Dropout=0 p=NONE Dropout2d=0 AlphaDropout=0
+
+FAMILY DECISION:
+DeepLabV3-R50: SUPPORTED_NATIVE_NN_DROPOUT | native_nn_dropout_counts=[1] | p_schema=['0.5']
+PraNet: UNSUPPORTED_NO_NATIVE_NN_DROPOUT | native_nn_dropout_counts=[0] | p_schema=['']
+
+GATE=PARTIAL_ADIC_SUPPORT_FAMILY_SPECIFIC
+NEXT=BUILD_ADIC_MC_SCORE_LOCK_ONLY_FOR_SUPPORTED_FAMILY_AND_KEEP_UNSUPPORTED_FAMILY_EXCLUDED
+
+IMPORTANT:
+- A family with zero exact nn.Dropout modules is not eligible for a
+  faithful TEGDA-ADIC baseline under the official implementation.
+- Do not inject dropout to rescue an unsupported family.
