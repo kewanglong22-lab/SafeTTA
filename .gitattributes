@@ -6,3 +6,11 @@
 *.joblib -text
 *.npz -text
 *.npy -text
+experiments/reviewer_defense/*.py text eol=lf
+outputs/r16_reviewer_defense/*.csv text eol=lf
+outputs/r16_reviewer_defense/*.json text eol=lf
+outputs/r16_reviewer_defense/*.txt text eol=lf
+provenance/r16_reviewer_defense/*.csv text eol=lf
+provenance/r16_reviewer_defense/*.json text eol=lf
+provenance/r16_reviewer_defense/*.md text eol=lf
+provenance/r16_reviewer_defense/*.txt text eol=lf
