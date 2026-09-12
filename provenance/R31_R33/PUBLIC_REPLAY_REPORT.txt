@@ -1,0 +1,5 @@
+R32A LOAO rows: 7/7 PASS
+R33 primary rows: 4/4 PASS
+R33 paired deltas: 6/6 PASS
+R33 claim lock: PASS
+GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
