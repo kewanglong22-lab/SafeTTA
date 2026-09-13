@@ -1,5 +1,27 @@
+SafeTTA R31-R33 public replay report
+Candidate branch: r31-r33-public-sync-20260912
+Exact-script synchronization commit: dabf3519499f1bd1e656e485b4585b8cd85da48c
+Bundle SHA256: 185e4dbc8af3fd19b91a423462e4f8f5f39f05ee2ad49493bd49147c61c318de
+
+EXACT SCRIPT AUDIT
+Final retained scripts: 22/22 PASS
+SHA-bound ancestors: 6/6 present
+SHA verification: 28/28 PASS
+py_compile: 28/28 PASS
+
+R31-R33 NUMERIC REPLAY
 R32A LOAO rows: 7/7 PASS
 R33 primary rows: 4/4 PASS
 R33 paired deltas: 6/6 PASS
 R33 claim lock: PASS
 GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
+
+LEGACY V14 REPLAY ON FINAL SYNCHRONIZED CANDIDATE
+STATUS=PENDING
+Required gate:
+Anchors accounted: 44/44
+All anchor states PASS: True
+GATE=PASS_PUBLIC_PAPER_STATISTIC_REPLAY
+
+FINAL MERGE/TAG STATUS
+PENDING_LEGACY_44_ANCHOR_REPLAY
