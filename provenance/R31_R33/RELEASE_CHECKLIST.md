@@ -26,6 +26,7 @@ This checklist is the final pre-merge / pre-tag gate for the SafeTTA R31-R33 man
 - [x] `FIGURE_TABLE_MAPPING.md` present.
 - [x] `CLAIM_BOUNDARIES.md` present.
 - [x] `REPRODUCIBILITY_SCOPE.md` present.
+- [x] `RETAINED_SCRIPT_MANIFEST.md` defines the exact 22 final scripts and six optional SHA-bound ancestors.
 
 ## C. Compact public outputs
 
@@ -42,6 +43,7 @@ Expected under `outputs/R31_R33/`:
 
 For a **full method/protocol audit release** rather than only a compact paper-statistic release:
 
+- [x] Exact 22-script target manifest frozen in `RETAINED_SCRIPT_MANIFEST.md`.
 - [ ] All 22 final retained R31-R33 experiment scripts synchronized into the grouped `experiments/` directories.
 - [ ] Script contents checked against the frozen author-workspace versions.
 - [ ] Script SHA256 manifest generated/verified for the public tree.
@@ -85,7 +87,7 @@ Interim audit status:
 
 - [x] R31-R33 replay implementation upgraded from file-presence checks to frozen numeric-anchor validation.
 - [x] Replay script syntax-checked and run successfully against the exact released compact table values before synchronization.
-- [x] PR changed-file list inspected: current compact layer contains the intended 20 files and no dataset/checkpoint additions.
+- [x] PR compact-layer changed-file list inspected; no dataset/checkpoint additions were introduced.
 - [ ] Legacy 44-anchor replay rerun on the final merged candidate.
 - [ ] R31-R33 compact replay rerun on the final merged candidate.
 - [ ] `PUBLIC_REPLAY_REPORT.txt` refreshed from the final candidate state.
@@ -119,7 +121,7 @@ For either release scope:
 - [ ] Create a **new immutable manuscript tag**; do not move or overwrite `v1.0-paper-v14`.
 - [ ] Update manuscript Data/Code Availability with the new tag and commit SHA.
 
-If the repository is advertised as including the full R31-R33 method/protocol execution lineage, all four items in Section D must also be completed before merge/tag.
+If the repository is advertised as including the full R31-R33 method/protocol execution lineage, all remaining items in Section D must also be completed before merge/tag.
 
 ## Recommended tag naming
 
