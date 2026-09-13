@@ -1,62 +1,132 @@
 # SafeTTA
 
-**Prediction-Conditioned Safety Ranking for Test-Time Adaptation across Domain,
-Action, and Task Shifts**
+**Prediction-Conditioned Safety Ranking for Test-Time Adaptation across Domain, Action, and Task Shifts**
 
-SafeTTA asks a pre-adaptation question: **should this sample be adapted before
-the adaptation update is executed?**
+SafeTTA studies whether a test-time adaptation (TTA) update is likely to harm a segmentation result. The current manuscript distinguishes two safety modes:
 
-The submission-locked v14 publication snapshot additionally audits whether
-published current-prediction quality and uncertainty signals can substitute for
-ranking the harm caused by a specified future TTA action.
+1. **SOURCE-only pre-adaptation ranking** — a 66-D prediction-conditioned representation is computed from the current image and frozen SOURCE prediction before any TTA update.
+2. **Transition-augmented pre-commit ranking** — a specified candidate TTA action is executed only on a reversible shadow copy; a 64-D candidate semantic transition is combined with the 66-D SOURCE state, yielding a 130-D risk representation before the candidate state is committed.
+
+The transition-augmented mode uses **no explicit ActionID** and no target-label calibration.
+
+---
 
 ## Reproducibility status
 
-The public release was validated in a relocated workspace independent of the
-original author project path.
+### Frozen v14 primary release
 
-### Frozen primary SafeTTA replay
+The original submission-locked release remains immutable:
 
-- chain asset resolution: **43/43 PASS**
-- canonical numeric provenance: **44/44 PASS**
-- public paper-statistic replay: **PASS**
-- legacy primary paper anchors: **44/44 PASS**
-- all legacy anchor states: **PASS**
-- minimal public release validation: **PASS**
-
-### Additive R17A published-reliability audit
-
-The v14 publication snapshot additionally includes the frozen head-to-head
-sensitivity audit against SicTTA-CCD, TEGDA-ADIC, and MC-dropout.
-
-- R17A published-reliability assets: **PASS**
-- R17A frozen four-method point-metric anchors: **16/16 PASS**
-- paired clustered-bootstrap audit: **PASS**
-- SicTTA-CCD pooled-AUROC significance guard: **PASS**
-- PraNet ADIC exclusion audit: **PASS**
-- SegFormer CCD exclusion audit: **PASS**
-- v14 publication-sync validation: **PASS**
-- remote commit/tag verification: **PASS**
-
-The R17A audit is **additive**. It does not modify the previously frozen
-44-anchor SafeTTA primary replay or any frozen primary SafeTTA result.
-
-### Submission-locked snapshot
-
-- GitHub repository: `https://github.com/kewanglong22-lab/SafeTTA`
-- branch: `main`
+- repository: `https://github.com/kewanglong22-lab/SafeTTA`
 - tag: `v1.0-paper-v14`
 - commit: `ca55622903ffe43065de2ed0ca558f0daf15aa7c`
+- chain asset resolution: **43/43 PASS**
+- canonical numeric provenance: **44/44 PASS**
+- legacy primary paper anchors: **44/44 PASS**
+- public paper-statistic replay: **PASS**
 
-The supported public claim is **paper-statistic reproducibility from released
-frozen intermediate artifacts and publication-audit outputs**. Complete
-bit-identical retraining of every historical upstream segmentation model is not
-claimed.
+The additive R17A published-reliability audit also remains unchanged and does not modify the legacy 44-anchor replay.
 
-## Frozen SafeTTA estimator
+### R31-R33 manuscript extension
 
-The frozen colonoscopy safety estimator is included under
-`artifacts/colonoscopy_safety_estimator/`.
+The current manuscript additionally includes:
+
+- **R31** — third-action MEMO development and action-transfer analysis;
+- **R31C/R31D** — negative multi-action controller-feasibility diagnostic;
+- **R32** — strict three-action leave-one-action-out (LOAO) validation;
+- **R33** — protocol-locked `NeoPolyp TENT1 + PL-CONF90 -> PolypGen MEMO` simultaneous domain + unseen-action evaluation.
+
+The R31-R33 public synchronization layer is additive. It does **not** rewrite `v1.0-paper-v14`.
+
+---
+
+## Key R31-R33 result
+
+For the external PolypGen unseen-MEMO evaluation:
+
+| Method | AUROC | AUPRC | HARM prevalence | AUPRC lift |
+|---|---:|---:|---:|---:|
+| SafeTTA-Q66+DeltaS | 0.743238 | **0.255458** | 0.065492 | **3.90x** |
+| TEGDA-ADIC | **0.749739** | 0.154403 | 0.065492 | 2.36x |
+| MC-dropout | 0.616843 | 0.098194 | 0.065492 | 1.50x |
+| SicTTA-CCD | 0.607297 | 0.083324 | 0.065492 | 1.27x |
+
+SafeTTA AUROC 95% physical-image clustered-bootstrap CI:
+
+```text
+[0.699569, 0.783784]
+```
+
+SafeTTA AUPRC lift over HARM prevalence:
+
+```text
+3.900614x
+```
+
+Paired SafeTTA-minus-TEGDA-ADIC results:
+
+```text
+AUROC delta = -0.006501, 95% CI [-0.043762, +0.028323]
+AUPRC delta = +0.101055, 95% CI [+0.055974, +0.149594]
+```
+
+The supported interpretation is **action-transferable future-HARM ranking with external support under simultaneous domain and unseen-action shift**. The repository does not claim full action invariance, full domain invariance, or pristine prospective R33 validation.
+
+---
+
+## Quick reviewer replay
+
+### 1. Legacy frozen primary paper statistics
+
+Download and extract the release asset:
+
+```text
+SafeTTA_replay_assets_v1.zip
+```
+
+Then run from repository root:
+
+```bash
+python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root .
+```
+
+Expected terminal gate:
+
+```text
+Anchors accounted: 44/44
+All anchor states PASS: True
+GATE=PASS_PUBLIC_PAPER_STATISTIC_REPLAY
+```
+
+### 2. R31-R33 compact manuscript replay
+
+Run:
+
+```bash
+python code/Q1_R31_R33_public_paper_stat_replay_v1.py --root .
+```
+
+Expected:
+
+```text
+R32A LOAO rows: 7/7 PASS
+R33 primary rows: 4/4 PASS
+R33 paired deltas: 6/6 PASS
+R33 claim lock: PASS
+GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
+```
+
+The R31-R33 replay verifies released compact manuscript-level numerical anchors. It does not retrain upstream segmentation models, rerun all TTA/DINO inference, or access private/raw datasets.
+
+---
+
+## Frozen SOURCE-only estimator
+
+The frozen colonoscopy SOURCE-only estimator is under:
+
+```text
+artifacts/colonoscopy_safety_estimator/
+```
 
 | Artifact | SHA256 |
 |---|---|
@@ -72,16 +142,64 @@ tau = 0.300584763193734
 
 DINOv2-base weights are not redistributed. See `THIRD_PARTY_NOTICES.md`.
 
-## Required replay asset
+---
 
-Download the GitHub Release asset:
+## Repository layout
 
 ```text
-SafeTTA_replay_assets_v1.zip
+SafeTTA/
+├── method_core/
+│   ├── representation/
+│   ├── safety_estimator/
+│   └── tta_actions/
+├── experiments/
+│   ├── source_training/
+│   ├── polypgen/
+│   ├── sunseg/
+│   ├── mri_prostate_promise/
+│   ├── paper_analysis/
+│   ├── R31_action_transfer/
+│   ├── R31_controller_negative/
+│   ├── R32_validation/
+│   └── R33_external_joint_shift/
+├── outputs/
+│   ├── R17A/
+│   └── R31_R33/
+├── provenance/
+│   ├── R17A/
+│   └── R31_R33/
+├── artifacts/
+├── code/
+└── legacy_all_retained_code/
 ```
 
-Extract it into the repository root. It preserves the required `outputs/...`
-relative paths.
+Reviewer-facing method navigation starts at [`METHOD_CODE_INDEX.md`](METHOD_CODE_INDEX.md).
+
+R31-R33 paper-output provenance is documented under [`provenance/R31_R33/`](provenance/R31_R33/).
+
+---
+
+## Scientific claim boundaries
+
+Supported wording includes:
+
+- action-transferable future-HARM ranking;
+- partially action-invariant harmful-update structure;
+- transition-augmented pre-commit safety ranking;
+- external support under simultaneous domain + unseen-action shift.
+
+Do **not** interpret the release as evidence for:
+
+- full action invariance;
+- full domain invariance;
+- pristine prospective R33 validation;
+- transition-mode risk computed strictly before the candidate action is simulated;
+- SafeTTA significantly outperforming TEGDA-ADIC in R33 AUROC;
+- a validated high-coverage multi-action risk controller.
+
+See [`provenance/R31_R33/CLAIM_BOUNDARIES.md`](provenance/R31_R33/CLAIM_BOUNDARIES.md).
+
+---
 
 ## Environment
 
@@ -99,146 +217,52 @@ conda env create -f environment_minimal.yml
 conda activate safetta-minimal
 ```
 
-See `ENVIRONMENT.md` for the distinction between the authoritative full lock and
-the optional compact environment.
+See `ENVIRONMENT.md` for the authoritative/full versus convenience environment distinction.
 
-## Reproduce frozen primary paper statistics
-
-From the repository root:
-
-```bash
-python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root .
-```
-
-Expected result:
-
-```text
-Anchors accounted: 44/44
-All anchor states PASS: True
-GATE=PASS_PUBLIC_PAPER_STATISTIC_REPLAY
-```
-
-These 44 anchors correspond to the **legacy frozen primary SafeTTA replay**.
-The additive R17A publication audit is tracked separately and does not alter
-this validated replay.
+---
 
 ## Reproducibility boundary
 
-The public package supports deterministic reproduction/verification of the
-reported paper-level numeric anchors from frozen released intermediate
-artifacts and the released R17A publication-audit outputs.
+The public repository supports deterministic reproduction/verification of released paper-level numerical anchors from frozen intermediate artifacts and compact audit outputs.
 
 It does not claim:
 
-- bit-identical retraining of every historical upstream segmentation model;
+- bit-identical retraining of every historical upstream segmentation checkpoint;
 - redistribution of all source datasets or external ground truth;
+- redistribution of third-party DINOv2 weights;
 - bit-identical wall-clock runtime across hardware.
 
-The historical segmentation checkpoints and their retained provenance are
-treated as frozen upstream experimental states. The public reproducibility
-claim therefore focuses on the released SafeTTA estimator, frozen intermediate
-outputs, paper statistics, and associated audit trail.
+Historical segmentation checkpoints are treated as frozen upstream experimental states. Exact retained scripts may preserve historical author-workspace defaults; reviewer-facing workflows expose portable entry points where practical. See `PORTABILITY.md`.
+
+---
+
+## R17A reliability-baseline audit
+
+The v14 additive reliability audit compares SOURCE-only SafeTTA with SicTTA-CCD, TEGDA-ADIC, and MC-dropout on the earlier PolypGen/TENT1 endpoint.
+
+| Method | Pooled AUROC | Pooled AUPRC |
+|---|---:|---:|
+| SafeTTA | 0.616419085 | 0.491783038 |
+| SicTTA-CCD | 0.634544123 | 0.459995939 |
+| TEGDA-ADIC | 0.602545392 | 0.391803539 |
+| MC-dropout | 0.446858833 | 0.326636094 |
+
+SafeTTA-minus-SicTTA-CCD pooled-AUROC difference:
+
+```text
+-0.018125038, 95% CI [-0.050926781, +0.016866089]
+```
+
+Therefore SicTTA-CCD is **not** described as significantly worse than SOURCE-only SafeTTA in pooled AUROC. This earlier endpoint is scientifically distinct from the later transition-augmented R33 unseen-MEMO endpoint.
+
+---
 
 ## License and third-party materials
 
-Original SafeTTA code and materials that the authors are entitled to license
-are released under Apache License 2.0. Third-party pretrained models, datasets,
-software, and externally governed assets retain their original terms.
+Original SafeTTA code/materials that the authors are entitled to license are released under Apache License 2.0. Third-party pretrained models, datasets, software, and externally governed assets retain their original terms.
 
 See `LICENSE` and `THIRD_PARTY_NOTICES.md`.
 
 ## Citation
 
-A formal citation entry should be added after final bibliographic information is
-available.
-
-## Full method code
-
-The repository includes the exact retained SafeTTA method implementation and
-final experiment workflow, not only paper-table/statistical replay scripts.
-
-Start with [`METHOD_CODE_INDEX.md`](METHOD_CODE_INDEX.md).
-
-- `method_core/` — prediction-conditioned representation, frozen safety
-  estimator, TTA actions, and MRI safety implementation.
-- `experiments/` — source training, PolypGen, SUN-SEG, Prostate158/PROMISE12,
-  R17A published-reliability analyses, and final paper analyses.
-- `legacy_all_retained_code/` — retained SafeTTA-related historical code for
-  provenance/completeness.
-- `code/` — compact validated public paper-statistic replay scripts.
-- `provenance/R17A/` — R17A frozen anchor and publication-sync provenance.
-- `outputs/R17A/` — frozen R17A tabular/audit outputs included in the
-  publication snapshot.
-
-The primary public numerical replay remains deterministic reproduction of the
-**44/44 legacy frozen SafeTTA anchors**. The R17A publication audit adds
-**16/16 frozen four-method point-metric anchors** and associated paired
-bootstrap/scope audits without changing the original primary replay.
-
-The repository does not claim bit-identical retraining of every historical
-upstream segmentation checkpoint.
-
-## Portability
-
-Exact frozen scripts may retain historical author-machine paths as defaults.
-Reviewer-facing scripts with historical defaults expose CLI path overrides so
-that the released workflows can be run from relocated workspaces. See
-[`PORTABILITY.md`](PORTABILITY.md).
-
-<!-- R17A_V14_PUBLICATION_SYNC_BEGIN -->
-## Published reliability-baseline audit (R17A)
-
-The v14 publication audit compares SafeTTA with three published reliability
-baselines: SicTTA-CCD, TEGDA-ADIC, and MC-dropout.
-
-**Locked interpretation.** Current prediction quality and uncertainty are
-associated with adaptation harm, but they are not sufficient proxies for the
-harm caused by a specified future TTA action.
-
-The public R17A package is intended for paper-statistic replay and audit. It
-contains lightweight scripts, frozen tabular results, paired clustered-bootstrap
-outputs, and provenance records only. Large segmentation checkpoints and
-source datasets remain external to the GitHub repository.
-
-### Frozen four-method point metrics
-
-| Method | Pooled AUROC | Pooled AUPRC | Macro-3 AUROC | Macro-3 AUPRC |
-|---|---:|---:|---:|---:|
-| SafeTTA | 0.616419085 | 0.491783038 | 0.616370607 | 0.492769742 |
-| SicTTA-CCD | 0.634544123 | 0.459995939 | 0.634958120 | 0.459201008 |
-| TEGDA-ADIC | 0.602545392 | 0.391803539 | 0.602608630 | 0.393504367 |
-| MC-dropout | 0.446858833 | 0.326636094 | 0.446499781 | 0.328112952 |
-
-### Scientific scope guardrails
-
-- SicTTA-CCD is **not** described as being significantly worse than SafeTTA
-  in pooled AUROC because the paired clustered-bootstrap confidence interval
-  for the SafeTTA-minus-CCD difference crosses zero.
-- SafeTTA-minus-SicTTA-CCD pooled-AUROC difference:
-  `-0.018125038`, 95% CI `[-0.050926781, +0.016866089]`.
-- TEGDA-ADIC is reproduced only where faithful native-dropout support exists.
-- PraNet is excluded from ADIC when native `nn.Dropout` support is absent;
-  dropout is not injected merely to create a baseline.
-- SegFormer regenerated CCD states are not mixed with historical HARM labels
-  when the regenerated SOURCE state is inconsistent with the historical frozen
-  state.
-- No target recalibration, target threshold tuning, feature selection, or
-  post-hoc score reversal is used in the frozen R17A head-to-head audit.
-
-### R17A public audit status
-
-- frozen four-method point-metric anchors: **16/16 PASS**
-- paired clustered-bootstrap audit: **PASS**
-- SicTTA-CCD pooled-AUROC significance guard: **PASS**
-- PraNet ADIC exclusion audit: **PASS**
-- SegFormer CCD exclusion audit: **PASS**
-- v14 publication-sync validation: **PASS**
-- remote branch SHA verification: **PASS**
-- remote publication-tag verification: **PASS**
-
-The R17A audit is additive and does not modify the legacy **44/44** frozen
-SafeTTA primary replay.
-
-See `provenance/R17A/` for the frozen anchor manifest and R17B/R17C audit
-records, and `outputs/R17A/` for the released frozen tabular/audit outputs.
-<!-- R17A_V14_PUBLICATION_SYNC_END -->
+A formal citation entry will be added after final bibliographic information is available.

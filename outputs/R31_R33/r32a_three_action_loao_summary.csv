@@ -1,0 +1,8 @@
+representation,memo_auroc,pl_auroc,tent_auroc,macro_auroc,macro_auprc
+Random,0.5,0.5,0.5,0.5,0.16713
+SOURCE semantic64 only,0.666059,0.619009,0.658999,0.648022,0.224168
+SOURCE Q66 only,0.727547,0.669616,0.787407,0.72819,0.295683
+DeltaSemantic64 only,0.663397,0.655501,0.764159,0.694352,0.455586
+Action-conditioned Q66+DeltaS,0.725173,0.712228,0.774016,0.737139,0.381348
+Shared Q66+DeltaS,0.71796,0.736321,0.770519,0.7416,0.415859
+Separate-action reference,0.808604,0.758185,0.907669,0.824819,0.503236
