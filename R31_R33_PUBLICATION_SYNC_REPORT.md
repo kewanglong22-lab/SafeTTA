@@ -1,86 +1,58 @@
 # R31-R33 publication-sync report
 
-Status: **COMPACT_PUBLICATION_LAYER_READY; FULL R31-R33 SCRIPT SYNC PENDING**
+Status: **FULL R31-R33 SCRIPT LAYER SYNCHRONIZED; LEGACY FINAL REPLAY PENDING**
 
-The current PR contains the reviewer-facing compact publication layer:
+The current PR now contains both the compact reviewer-facing publication layer and the complete retained R31-R33 execution-script audit layer.
 
-- R31/R32/R33 experiment-directory README files;
+## Included
+
+- updated root `README.md` and `METHOD_CODE_INDEX.md`;
+- four reviewer-facing R31-R33 experiment directories;
+- **22 exact final retained R31-R33 experiment/protocol scripts**;
+- **6 mechanically failed/replaced SHA-bound ancestor scripts** retained under `provenance/R31_R33/sha_bound_ancestors/`;
 - compact paper-facing outputs under `outputs/R31_R33/`;
-- claim-boundary, figure/table mapping, release-checklist, and reproducibility documents;
-- a numeric-anchor validating public replay script;
-- updated root `README.md` and `METHOD_CODE_INDEX.md`.
+- claim-boundary, figure/table mapping, release-checklist and reproducibility documents;
+- `R31_R33_CODE_INDEX.csv` and `R31_R33_SHA256.csv`;
+- numeric-anchor validating R31-R33 public replay;
+- synchronization helper under `tools/`.
 
-It intentionally does **not** mutate or replace the validated `v1.0-paper-v14` tag or legacy 44-anchor replay.
+It does **not** mutate or replace the validated `v1.0-paper-v14` tag or legacy 44-anchor replay.
 
-## Current public-layer status
+## Exact-script synchronization audit
 
-- compact R31-R33 outputs: **included**
-- numeric-anchor replay: **included**
-- claim boundaries: **included**
-- reviewer documentation: **included**
-- large checkpoints: **0**
-- datasets / target GT: **0**
-- DINOv2 weights: **0**
-- exact final retained R31-R33 experiment scripts: **NOT YET SYNCHRONIZED IN THIS PR**
-- mechanically failed but SHA-bound ancestor scripts: **NOT YET SYNCHRONIZED IN THIS PR**
-
-## Exact final retained scripts expected for full method-audit completeness
-
-### R31 action transfer
+Bundle SHA256:
 
 ```text
-Q1_R31A_action_conditional_harm_predictor_v1.py
-Q1_R31B0_memo_seg4_third_action_protocol_lock_v1.py
-Q1_R31B1_memo_seg4_action_design_and_lr_freeze_v1.py
-Q1_R31B2_800case_memo_prediction_and_semantic_lock_v1.py
-Q1_R31B3_first_800case_gt_reveal_and_three_action_loao_v1.py
+185e4dbc8af3fd19b91a423462e4f8f5f39f05ee2ad49493bd49147c61c318de
 ```
 
-### R31 controller negative
+Synchronized candidate commit:
 
 ```text
-Q1_R31C0_multi_action_risk_controller_protocol_lock_v1.py
-Q1_R31C1_nested_multi_action_risk_controller_oof_v1.py
-Q1_R31D0_policy_level_crc_protocol_lock_v1.py
-Q1_R31D1_nested_utility_first_policy_level_crc_oof_v1.py
+dabf3519499f1bd1e656e485b4585b8cd85da48c
 ```
 
-### R32 validation
+Audit results:
 
 ```text
-Q1_R32A0_three_action_loao_comparison_protocol_lock_v1.py
-Q1_R32A1_three_action_loao_comparison_execution_v1_fix1.py
-Q1_R32B0_published_reliability_asset_comparability_audit_v1.py
-Q1_R32B1_faithful_common_baseline_panel_lock_v1.py
-Q1_R32B2A_exact_baseline_execution_context_bundle_v1.py
-Q1_R32B2B_exact_ccd_adic_mc_score_generation_v1_fix1.py
-Q1_R32B3_matched_three_action_harm_evaluation_v1_fix1.py
+Final retained scripts: 22/22 PASS
+SHA-bound ancestors:   6/6 present
+SHA verification:      28/28 PASS
+py_compile:             28/28 PASS
+R31-R33 numeric replay: PASS
 ```
 
-### R33 external joint shift
+The synchronization commit added exactly the intended 22 final scripts plus six ancestor scripts. The PR changed-file list has been inspected and contains only the intended publication, provenance, script and synchronization files.
 
-```text
-Q1_R33A0_polypgen_joint_domain_action_shift_asset_audit_v1.py
-Q1_R33A1_external_joint_shift_protocol_lock_v1.py
-Q1_R33A2A_exact_polypgen_memo_transition_context_bundle_v1_fix2.py
-Q1_R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1.py
-Q1_R33A3_polypgen_memo_harm_reveal_external_joint_shift_evaluation_v1.py
-Q1_R33A4_paper_integration_and_claim_freeze_v1.py
-```
+## R31-R33 replay status
 
-Total expected final retained scripts: **22**.
-
-## Replay status
-
-The compact replay now checks frozen numerical values rather than merely checking that files exist.
-
-Expected command:
+The public replay validates frozen manuscript-level numerical anchors rather than only checking file presence.
 
 ```bash
 python code/Q1_R31_R33_public_paper_stat_replay_v1.py --root .
 ```
 
-Expected gate:
+Observed on the synchronized candidate:
 
 ```text
 R32A LOAO rows: 7/7 PASS
@@ -90,10 +62,28 @@ R33 claim lock: PASS
 GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
 ```
 
-## Merge boundary
+## Repository safety
 
-If the intended public claim is only **paper-statistic reproducibility from compact frozen outputs**, the compact layer is sufficient after final replay audit.
+- raw datasets added: **0**
+- target GT added: **0**
+- large segmentation checkpoints added: **0**
+- DINOv2 weights redistributed: **0**
+- frozen `v1.0-paper-v14` rewritten: **NO**
 
-If the intended repository is also to provide **exact R31-R33 method/protocol script auditability**, do **not** mark this PR final or create the new manuscript tag until the 22 retained scripts above are synchronized and checked.
+## Remaining pre-merge gate
 
-After the final candidate is complete, rerun both the legacy 44-anchor replay and the R31-R33 replay before creating a new immutable tag.
+The only substantive replay gate still pending is the **legacy 44-anchor replay on the final synchronized candidate**:
+
+```bash
+python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root .
+```
+
+Required terminal gate:
+
+```text
+Anchors accounted: 44/44
+All anchor states PASS: True
+GATE=PASS_PUBLIC_PAPER_STATISTIC_REPLAY
+```
+
+After that PASS is recorded, re-confirm PR mergeability, update final provenance, merge into `main`, verify the merged commit, and create a new immutable manuscript tag without moving `v1.0-paper-v14`.
