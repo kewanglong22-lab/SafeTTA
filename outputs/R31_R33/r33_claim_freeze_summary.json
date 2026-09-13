@@ -1,0 +1,16 @@
+{
+  "r33a4_final_lock_sha256": "d6b2fd30114c3b9d81eb32712cd5958d09251059c2b86a07e7acff682a865521",
+  "primary_claim": "Action-transferable future-HARM ranking with external support under simultaneous domain + unseen-action shift.",
+  "pristine_prospective_external_claim_allowed": false,
+  "allowed_terms": [
+    "action-transferable",
+    "partially action-invariant",
+    "pre-commit transition-augmented safety ranking"
+  ],
+  "forbidden_terms": [
+    "fully action-invariant",
+    "fully domain-invariant",
+    "pristine prospective R33 validation",
+    "successful multi-action risk controller"
+  ]
+}
