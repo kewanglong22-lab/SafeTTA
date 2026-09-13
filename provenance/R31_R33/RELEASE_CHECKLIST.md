@@ -125,7 +125,7 @@ Current status:
 - [x] R31-R33 numeric replay PASS.
 - [x] Legacy v14 44-anchor replay PASS.
 - [x] Legacy replay PASS recorded in release provenance.
-- [ ] Re-confirm GitHub mergeability after the final provenance commits.
+- [x] GitHub mergeability re-confirmed after final replay-provenance commits (`mergeable=true`; branch ahead of `main`, behind by 0 at confirmation time).
 - [ ] Mark PR ready for review / final merge.
 - [ ] Merge PR into `main`.
 - [ ] Verify merged `main` commit SHA remotely.
