@@ -2,6 +2,8 @@ SafeTTA R31-R33 public replay report
 Candidate branch: r31-r33-public-sync-20260912
 Exact-script synchronization commit: dabf3519499f1bd1e656e485b4585b8cd85da48c
 Legacy replay source-tree commit: 409f86a9e68ff178609ecec1bb4ca7b1ca3bfd00
+Merged PR: #1
+Merge commit on main: ba8facea49d13c01ac8fcf18100beef671d93f20
 Bundle SHA256: 185e4dbc8af3fd19b91a423462e4f8f5f39f05ee2ad49493bd49147c61c318de
 
 EXACT SCRIPT AUDIT
@@ -38,6 +40,8 @@ Decision=READY_FOR_MINIMAL_PUBLIC_RELEASE_VALIDATION
 LEGACY REPLAY ASSET BOUNDARY
 The full author-side 44-anchor validation uses retained frozen intermediate assets that are intentionally not all redistributed in the compact public tree. In particular, R15A1 consumes the frozen R15A0 prediction panel recorded by the R15A0 lock (50,580,135 bytes; SHA256 cff9b08f06dbafa0816bd4f4f732af66304761bf9105d3106b725686f3bf961e). This does not change the scientific calculation; it defines the public reproducibility boundary accurately. The repository should therefore not claim that a clean public clone alone recreates every historical intermediate asset from zero.
 
-FINAL PRE-MERGE STATUS
+FINAL POST-MERGE STATUS
+PR_1_MERGED
+MERGE_COMMIT=ba8facea49d13c01ac8fcf18100beef671d93f20
 BOTH_REPLAY_GATES_PASS
-READY_FOR_PR_FINAL_MERGE_REVIEW
+READY_FOR_IMMUTABLE_MANUSCRIPT_TAG
