@@ -1,8 +1,8 @@
 # R31-R33 publication-sync report
 
-Status: **FULL R31-R33 SCRIPT LAYER SYNCHRONIZED; BOTH REPLAY GATES PASS; READY FOR FINAL MERGE REVIEW**
+Status: **FULL R31-R33 SCRIPT LAYER SYNCHRONIZED; BOTH REPLAY GATES PASS; PR #1 MERGED; READY FOR IMMUTABLE MANUSCRIPT TAG**
 
-The current PR contains both the compact reviewer-facing publication layer and the complete retained R31-R33 execution-script audit layer.
+The R31-R33 publication synchronization layer has been merged into `main` through PR #1.
 
 ## Included
 
@@ -43,12 +43,6 @@ py_compile:             28/28 PASS
 
 ## R31-R33 replay status
 
-```bash
-python code/Q1_R31_R33_public_paper_stat_replay_v1.py --root .
-```
-
-Observed on the synchronized candidate:
-
 ```text
 R32A LOAO rows: 7/7 PASS
 R33 primary rows: 4/4 PASS
@@ -58,12 +52,6 @@ GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
 ```
 
 ## Legacy v14 44-anchor replay status
-
-The legacy deterministic paper-statistic replay was rerun on the synchronized candidate tree at source-tree commit:
-
-```text
-409f86a9e68ff178609ecec1bb4ca7b1ca3bfd00
-```
 
 Observed final gate:
 
@@ -85,8 +73,6 @@ Therefore both manuscript-level replay gates are PASS.
 
 The full author-side 44-anchor validation uses retained frozen intermediate assets that are intentionally not all redistributed in the compact public tree. In particular, R15A1 requires the frozen `R15A0_all_8method_target_predictions.csv` panel recorded by the R15A0 lock (50,580,135 bytes; SHA256 `cff9b08f06dbafa0816bd4f4f732af66304761bf9105d3106b725686f3bf961e`). The public release should not claim that a clean public clone alone regenerates every historical upstream/intermediate artifact from zero.
 
-This boundary is consistent with the repository's stated reproducibility scope: source/protocol code, compact frozen manuscript outputs, SHA-bound provenance and deterministic paper-statistic validation are released; large/private/historical frozen assets remain external when redistribution is not part of the public package.
-
 ## Repository safety
 
 - raw datasets added: **0**
@@ -95,13 +81,22 @@ This boundary is consistent with the repository's stated reproducibility scope: 
 - DINOv2 weights redistributed: **0**
 - frozen `v1.0-paper-v14` rewritten: **NO**
 
-## Final pre-merge state
+## Merge verification
 
-Scientific/replay gates are complete. Remaining repository operations are procedural:
+PR #1 merged successfully with merge commit:
 
-1. re-confirm PR mergeability after these final provenance commits;
-2. mark the PR ready for review / final merge;
-3. merge into `main` only after the final remote state is confirmed;
-4. verify the merged `main` SHA;
-5. create a new immutable manuscript tag without moving `v1.0-paper-v14`;
-6. update manuscript Data/Code Availability with the new tag and merged commit SHA.
+```text
+ba8facea49d13c01ac8fcf18100beef671d93f20
+```
+
+The previous immutable paper tag was re-verified and remains unchanged:
+
+```text
+v1.0-paper-v14 -> ca55622903ffe43065de2ed0ca558f0daf15aa7c
+```
+
+## Remaining release step
+
+1. create the new immutable manuscript tag `v1.1-paper-r31-r33` at the final release snapshot commit;
+2. verify the tag remotely;
+3. update manuscript Data/Code Availability with the tag and final release snapshot commit SHA.
