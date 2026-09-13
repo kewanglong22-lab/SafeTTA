@@ -1,0 +1,18 @@
+SafeTTA R31-R33 retained-script bundle audit
+======================================================================
+Source root: F:\MEDSEG_SAFETTA\code
+Bundle root: F:\MEDSEG_SAFETTA\R31_R33_public_script_bundle_v1
+
+Final scripts expected: 22
+Final scripts PASS: 22/22
+Missing required: 0
+Syntax failures: 0
+Optional ancestors found: 6
+Optional ancestors missing: 0
+
+GATE=PASS_R31_R33_22_FINAL_SCRIPTS_COLLECTED_AND_SYNTAX_CHECKED
+
+Independent container audit (ChatGPT, 2026-09-13):
+- 28 Python files AST/compile PASS
+- normalized cross-platform SHA manifest: 28/28 PASS
+- source ZIP SHA256: 185e4dbc8af3fd19b91a423462e4f8f5f39f05ee2ad49493bd49147c61c318de
