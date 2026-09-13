@@ -1,6 +1,6 @@
 # R31-R33 Release Checklist
 
-This checklist is the final pre-merge / pre-tag gate for the SafeTTA R31-R33 manuscript synchronization layer.
+This checklist is the final pre-tag gate for the SafeTTA R31-R33 manuscript synchronization layer.
 
 ## A. Scientific scope
 
@@ -85,7 +85,7 @@ Legacy v14 replay command:
 python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root . --replay-root <fresh-directory-under-outputs>
 ```
 
-Observed on the final synchronized candidate tree (source-tree commit `409f86a9e68ff178609ecec1bb4ca7b1ca3bfd00`):
+Observed on the synchronized candidate tree:
 
 ```text
 Chain gate: PASS_CHAIN_ASSET_RESOLUTION (43/43)
@@ -110,8 +110,7 @@ Current status:
 ## F. Repository / release safety
 
 - [x] Existing immutable tag `v1.0-paper-v14` is not rewritten.
-- [x] R31-R33 changes remain isolated on a synchronization branch / PR before merge.
-- [x] `main` remains at the frozen pre-merge head during synchronization.
+- [x] R31-R33 changes were isolated on a synchronization branch / PR before merge.
 - [x] No raw datasets are added.
 - [x] No target ground-truth files are added.
 - [x] No DINOv2 weights are redistributed.
@@ -125,25 +124,19 @@ Current status:
 - [x] R31-R33 numeric replay PASS.
 - [x] Legacy v14 44-anchor replay PASS.
 - [x] Legacy replay PASS recorded in release provenance.
-- [x] GitHub mergeability re-confirmed after final replay-provenance commits (`mergeable=true`; branch ahead of `main`, behind by 0 at confirmation time).
-- [ ] Mark PR ready for review / final merge.
-- [ ] Merge PR into `main`.
-- [ ] Verify merged `main` commit SHA remotely.
-- [ ] Create a **new immutable manuscript tag**; do not move or overwrite `v1.0-paper-v14`.
-- [ ] Update manuscript Data/Code Availability with the new tag and commit SHA.
+- [x] GitHub mergeability re-confirmed before merge.
+- [x] PR marked ready for review.
+- [x] PR #1 merged into `main`.
+- [x] Merged `main` commit SHA verified remotely: `ba8facea49d13c01ac8fcf18100beef671d93f20`.
+- [x] Existing tag `v1.0-paper-v14` re-verified to still resolve to commit `ca55622903ffe43065de2ed0ca558f0daf15aa7c`.
+- [ ] Create a **new immutable manuscript tag** `v1.1-paper-r31-r33`; do not move or overwrite `v1.0-paper-v14`.
+- [ ] Verify the new tag resolves to the final release snapshot commit.
+- [ ] Update manuscript Data/Code Availability with the new tag and release snapshot commit SHA.
 
-## Recommended tag naming
-
-Preferred:
+## Recommended final tag
 
 ```text
 v1.1-paper-r31-r33
 ```
 
-Alternative if this becomes the exact submission snapshot:
-
-```text
-v1.1-mia-submission
-```
-
-Only one immutable final manuscript tag should be advertised in the submitted manuscript.
+Only this immutable final manuscript tag should be advertised for the R31-R33 submission snapshot.
