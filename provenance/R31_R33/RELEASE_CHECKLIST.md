@@ -63,20 +63,6 @@ py_compile: 28/28 PASS
 
 ## E. Public replay
 
-Legacy v14 replay command:
-
-```bash
-python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root .
-```
-
-Required gate before final tag:
-
-```text
-Anchors accounted: 44/44
-All anchor states PASS: True
-GATE=PASS_PUBLIC_PAPER_STATISTIC_REPLAY
-```
-
 R31-R33 replay command:
 
 ```bash
@@ -93,12 +79,33 @@ R33 claim lock: PASS
 GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
 ```
 
+Legacy v14 replay command:
+
+```bash
+python code/Q1_SAFETTA_public_paper_stat_replay_v3_fix2.py --root . --replay-root <fresh-directory-under-outputs>
+```
+
+Observed on the final synchronized candidate tree (source-tree commit `409f86a9e68ff178609ecec1bb4ca7b1ca3bfd00`):
+
+```text
+Chain gate: PASS_CHAIN_ASSET_RESOLUTION (43/43)
+Canonical provenance: PASS_CANONICAL_NUMERIC_PROVENANCE (44/44)
+R10L0: PASS numeric_summary_pairs=3
+R15A1: PASS numeric_summary_pairs=6
+R15B1: PASS numeric_summary_pairs=8
+Anchors accounted: 44/44
+All anchor states PASS: True
+GATE=PASS_PUBLIC_PAPER_STATISTIC_REPLAY
+Decision=READY_FOR_MINIMAL_PUBLIC_RELEASE_VALIDATION
+```
+
 Current status:
 
-- [x] R31-R33 replay implementation validates frozen numeric anchors.
-- [x] R31-R33 compact replay rerun successfully on the final synchronized candidate tree before commit.
-- [x] `PUBLIC_REPLAY_REPORT.txt` refreshed with synchronized-candidate audit state.
-- [ ] Legacy 44-anchor replay rerun on the final synchronized candidate.
+- [x] R31-R33 replay validates frozen numeric anchors.
+- [x] R31-R33 compact replay rerun successfully on the synchronized candidate.
+- [x] Legacy 44-anchor replay rerun successfully on the synchronized candidate.
+- [x] `PUBLIC_REPLAY_REPORT.txt` records both PASS gates.
+- [x] Public reproducibility boundary records that the full author-side 44-anchor replay uses retained frozen intermediate assets not all redistributed in the compact public tree.
 
 ## F. Repository / release safety
 
@@ -113,11 +120,12 @@ Current status:
 
 ## G. Final merge / tag gate
 
-- [x] PR changed-file list inspected; 54 changed files are intentional publication/provenance/script/synchronization files.
-- [x] GitHub reported the PR mergeable against current `main` after exact-script synchronization.
-- [ ] Run / verify the legacy v14 44-anchor replay on the final synchronized candidate.
-- [ ] Record the legacy replay PASS in release provenance.
-- [ ] Re-confirm GitHub mergeability immediately before merge.
+- [x] PR changed-file list inspected; intended publication/provenance/script/synchronization files only.
+- [x] Exact-script synchronization and SHA audit PASS.
+- [x] R31-R33 numeric replay PASS.
+- [x] Legacy v14 44-anchor replay PASS.
+- [x] Legacy replay PASS recorded in release provenance.
+- [ ] Re-confirm GitHub mergeability after the final provenance commits.
 - [ ] Mark PR ready for review / final merge.
 - [ ] Merge PR into `main`.
 - [ ] Verify merged `main` commit SHA remotely.
