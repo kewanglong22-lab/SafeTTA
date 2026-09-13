@@ -38,7 +38,18 @@ Expected under `outputs/R31_R33/`:
 - [x] `r33_claim_freeze_summary.json`
 - [x] `README.md`
 
-## D. Public replay
+## D. R31-R33 exact execution-script audit layer
+
+For a **full method/protocol audit release** rather than only a compact paper-statistic release:
+
+- [ ] All 22 final retained R31-R33 experiment scripts synchronized into the grouped `experiments/` directories.
+- [ ] Script contents checked against the frozen author-workspace versions.
+- [ ] Script SHA256 manifest generated/verified for the public tree.
+- [ ] Mechanically failed but SHA-bound ancestors either synchronized under a clearly marked provenance directory or explicitly omitted from the public claim.
+
+Until these items are complete, describe the current PR as the **compact R31-R33 publication/replay layer**, not the complete 22-script execution lineage.
+
+## E. Public replay
 
 Legacy v14 replay command:
 
@@ -70,37 +81,45 @@ R33 claim lock: PASS
 GATE=PASS_R31_R33_PUBLIC_PAPER_STAT_REPLAY
 ```
 
-Current status:
+Interim audit status:
 
+- [x] R31-R33 replay implementation upgraded from file-presence checks to frozen numeric-anchor validation.
+- [x] Replay script syntax-checked and run successfully against the exact released compact table values before synchronization.
+- [x] PR changed-file list inspected: current compact layer contains the intended 20 files and no dataset/checkpoint additions.
 - [ ] Legacy 44-anchor replay rerun on the final merged candidate.
 - [ ] R31-R33 compact replay rerun on the final merged candidate.
 - [ ] `PUBLIC_REPLAY_REPORT.txt` refreshed from the final candidate state.
 
-These items remain intentionally unchecked until the final candidate tree is audited.
+The final-candidate items remain unchecked until the tree that will actually be tagged is audited.
 
-## E. Repository / release safety
+## F. Repository / release safety
 
 - [x] Existing immutable tag `v1.0-paper-v14` is not rewritten.
 - [x] R31-R33 changes are isolated on a separate synchronization branch / PR before merge.
+- [x] `main` remains at the frozen pre-merge head during synchronization.
 - [x] No raw datasets are added.
 - [x] No target ground-truth files are added.
 - [x] No DINOv2 weights are redistributed.
 - [x] No large segmentation checkpoints are added as part of the compact R31-R33 synchronization layer.
 - [x] Reproducibility boundary is stated explicitly.
 
-## F. Final merge / tag gate
+## G. Final merge / tag gate
 
-Do **not** create the final manuscript tag until all items below are complete:
+Do **not** create the final manuscript tag until all items required by the chosen release scope are complete.
 
-- [ ] Inspect PR changed-file list and confirm no unintended files.
-- [ ] Confirm PR is mergeable against current `main`.
+For either release scope:
+
+- [x] Inspect PR changed-file list and confirm the compact-layer files are intentional.
+- [ ] Confirm GitHub reports the PR mergeable against current `main` immediately before merge.
 - [ ] Run / verify the legacy v14 replay on the final candidate.
 - [ ] Run / verify the R31-R33 compact replay on the final candidate.
-- [ ] Refresh `PUBLIC_REPLAY_REPORT.txt` with final PASS state and commit SHA.
+- [ ] Refresh `PUBLIC_REPLAY_REPORT.txt` with final PASS state and candidate/merged commit SHA.
 - [ ] Merge PR into `main`.
 - [ ] Verify merged `main` commit SHA remotely.
 - [ ] Create a **new immutable manuscript tag**; do not move or overwrite `v1.0-paper-v14`.
 - [ ] Update manuscript Data/Code Availability with the new tag and commit SHA.
+
+If the repository is advertised as including the full R31-R33 method/protocol execution lineage, all four items in Section D must also be completed before merge/tag.
 
 ## Recommended tag naming
 
