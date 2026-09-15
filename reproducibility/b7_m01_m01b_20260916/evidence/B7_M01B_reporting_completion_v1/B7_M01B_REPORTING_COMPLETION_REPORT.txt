@@ -1,0 +1,28 @@
+========================================================================================================================================================================
+SafeTTA B7-M01B REPORTING COMPLETION
+
+RAW POINT + PAIRED BOOTSTRAP:
+                                                     comparison metric  full_point  reference_point  raw_point_delta  valid_reps  bootstrap_mean_delta  ci95_low  ci95_high  ci_excludes_zero
+         FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY  AUROC    0.640227         0.492586         0.147641        2000              0.146617  0.077495   0.219825              True
+         FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY  AUPRC    0.471926         0.365923         0.106003        2000              0.106409  0.038194   0.174356              True
+FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_PLUS_SIMPLE_MASK_CHANGE  AUROC    0.640227         0.480967         0.159260        2000              0.159357  0.112601   0.204173              True
+FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_PLUS_SIMPLE_MASK_CHANGE  AUPRC    0.471926         0.344740         0.127185        2000              0.126074  0.081451   0.172747              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE  AUROC    0.640227         0.525713         0.114514        2000              0.114505  0.073318   0.156702              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE  AUPRC    0.471926         0.367530         0.104396        2000              0.104242  0.057892   0.152607              True
+
+EVENT SUPPORT:
+ model_cases_total  harm_model_cases  benefit_model_cases  conditional_harm_prevalence  physical_images_union  physical_images_with_harm  physical_images_with_benefit  physical_images_with_both_across_states  physical_images_harm_only  physical_images_benefit_only
+               860               301                  559                         0.35                    557                        228                           393                                       64                        164                           329
+
+EVENT SUPPORT BY STATE:
+         model_state_id  model_cases_total  harm_model_cases  benefit_model_cases  physical_images_union  physical_images_with_harm  physical_images_with_benefit  physical_images_with_both
+DeepLabV3-R50::20260817                274               100                  174                    274                        100                           174                          0
+DeepLabV3-R50::20260818                321                95                  226                    321                         95                           226                          0
+DeepLabV3-R50::20260819                265               106                  159                    265                        106                           159                          0
+
+PRIMARY_STATUS_PRESERVED=NOT_EVALUABLE_INSUFFICIENT_FROZEN_STRATUM_SUPPORT
+NEW_BOOTSTRAP_DRAWS=NO
+PRIMARY_REDEFINITION=NO
+GATE=PASS_B7_M01B_REPORTING_COMPLETION
+audit_json=F:\MEDSEG_SAFETTA\B7_M01B_reporting_completion_v1\B7_M01B_REPORTING_COMPLETION_AUDIT.json
+========================================================================================================================================================================

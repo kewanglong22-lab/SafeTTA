@@ -1,0 +1,438 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B7_M01_FIX2_EXECUTION_COMPLETE_PRIMARY_SUPPORT_FAILED",
+  "version": "2026-09-15-B7-M01-v1-fix2",
+  "protocol": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\B7_M01_CHANGE_MAGNITUDE_VS_HARM_DIRECTION_PROTOCOL_v1.json",
+    "sha256": "5f71f47062b0630a3f7e391a9906d541593297e0f7a55f8954b6993a52d0316b",
+    "status": "FROZEN_POST_B6_BEFORE_NEW_EXPLANATORY_METRICS"
+  },
+  "p01b": {
+    "audit_path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_AUDIT.json",
+    "audit_sha256": "f59e5af7a24234370181d02f7f670ce6acd4fe0e5bb5482a9126d5f2d5aafad3",
+    "score_path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_SCORES.csv",
+    "score_sha256": "d467f79ce49c04dd1091cc29b5ea4d87d419e61f86d43ab255238f9d4b88bfca",
+    "p01b_gate": "PASS_B6_P01B_POLYPGEN_GEOMETRY_CORE_EXPERIMENT_COMPLETE",
+    "p01b_decision": "CANDIDATE_CONDITIONING_INCREMENT_SUPPORTED"
+  },
+  "source_magnitude_quartiles": [
+    0.006981941031941025,
+    0.018320558305103818,
+    0.09221727067697388
+  ],
+  "source_cutpoints_use_outcomes": false,
+  "target_labels_used_for_cutpoints": false,
+  "new_model_fit": false,
+  "new_inference_tta": false,
+  "target_calibration": false,
+  "score_flip": false,
+  "direction_population": {
+    "harm_n": 301,
+    "benefit_n": 559
+  },
+  "primary_endpoint": "macro source-quartile AUROC delta: FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY",
+  "primary_support_by_stratum": {
+    "1": false,
+    "2": false,
+    "3": true,
+    "4": true
+  },
+  "primary_status": "NOT_EVALUABLE_INSUFFICIENT_FROZEN_STRATUM_SUPPORT",
+  "primary_result": null,
+  "prespecified_overall_secondary_full_vs_magnitude": [
+    {
+      "scope": "OVERALL",
+      "comparison": "FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY",
+      "metric": "AUPRC",
+      "valid_reps": 2000,
+      "bootstrap_mean_delta": 0.10640855422575092,
+      "ci95_low": 0.03819441951419461,
+      "ci95_high": 0.17435640227863328,
+      "ci_excludes_zero": true
+    },
+    {
+      "scope": "OVERALL",
+      "comparison": "FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY",
+      "metric": "AUROC",
+      "valid_reps": 2000,
+      "bootstrap_mean_delta": 0.14661720896323885,
+      "ci95_low": 0.07749496276750116,
+      "ci95_high": 0.21982543407601557,
+      "ci_excludes_zero": true
+    }
+  ],
+  "scientific_decision": "PRIMARY_NOT_EVALUABLE__REPORT_PRESPECIFIED_OVERALL_SECONDARY_ONLY",
+  "geometry_lineage": {
+    "source_outcomes": {
+      "TENT1": {
+        "path": "F:\\MEDSEG_SAFETTA\\R32A1_three_action_loao_comparison_execution_v1_fix1\\R32A1_FIX1_OOF_PREDICTIONS.csv",
+        "sha256": "9f0aec052ede9a0bb50d886fd9e88d68fcec10acc66d8cac44eeb4fa8611fb02",
+        "action_source": "action",
+        "harm_source": "y_harm",
+        "raw_rows": 288000,
+        "rows": 7200,
+        "samples": 800,
+        "states": 9,
+        "unique_keys": 7200,
+        "duplicate_collapse_performed": true,
+        "duplicate_multiplicity_min": 40,
+        "duplicate_multiplicity_median": 40.0,
+        "duplicate_multiplicity_max": 40,
+        "harm_conflicting_keys": 0,
+        "columns": "split_seed;fold;model;evaluation_type;direction;sample_id;model_state_id;model_family;action;y_harm;score",
+        "source66_covered": true,
+        "exact_expected_panel": true,
+        "path_score": 20,
+        "selection_score": 1020
+      },
+      "PL-CONF90": {
+        "path": "F:\\MEDSEG_SAFETTA\\R32A1_three_action_loao_comparison_execution_v1_fix1\\R32A1_FIX1_OOF_PREDICTIONS.csv",
+        "sha256": "9f0aec052ede9a0bb50d886fd9e88d68fcec10acc66d8cac44eeb4fa8611fb02",
+        "action_source": "action",
+        "harm_source": "y_harm",
+        "raw_rows": 288000,
+        "rows": 7200,
+        "samples": 800,
+        "states": 9,
+        "unique_keys": 7200,
+        "duplicate_collapse_performed": true,
+        "duplicate_multiplicity_min": 40,
+        "duplicate_multiplicity_median": 40.0,
+        "duplicate_multiplicity_max": 40,
+        "harm_conflicting_keys": 0,
+        "columns": "split_seed;fold;model;evaluation_type;direction;sample_id;model_state_id;model_family;action;y_harm;score",
+        "source66_covered": true,
+        "exact_expected_panel": true,
+        "path_score": 20,
+        "selection_score": 1020
+      }
+    },
+    "target_outcomes": {
+      "path": "F:\\MEDSEG_SAFETTA\\R33A3_first_polypgen_memo_harm_reveal_external_joint_shift_evaluation_v1\\R33A3_POLYPGEN_MEMO_MATCHED_SCORE_OUTCOME_PANEL.csv",
+      "sha256": "19a8a532709ea6f09f9e687503ac2b0ff9aa6dd56bcdbddcec14d2a242da37ed",
+      "rows": 4596,
+      "samples": 1532,
+      "states": 3,
+      "family": "DeepLabV3-R50",
+      "action": "MEMO-SEG4-1STEP",
+      "harm_source": "memo_harm_label",
+      "delta_source": "memo_delta_dice",
+      "harm_rule_reproduction": "PASS",
+      "finalv2b_consistency": "PASS"
+    },
+    "source_geometry": {
+      "TENT1": {
+        "lineage": "R38A1A historical candidate-mask recovery",
+        "historical_lock_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\R38A1A_FINAL_LOCK.json",
+        "historical_lock_sha256": "56f18adca36397b3c6d457d09281afb944e6e6efb48c985a2f4e5116c864eefa",
+        "historical_manifest_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\R38A1A_HISTORICAL_MASK_ASSET_MANIFEST.csv",
+        "historical_manifest_sha256": "a8789346d2c4a42bd5324612a6de31408088e6a6a2345b194726b96fda768471",
+        "action": "TENT1",
+        "rows": 7200,
+        "states": 9,
+        "assets": [
+          {
+            "model_state_id": "DeepLabV3-R50::20260817",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260817\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "16918cdb0fd3ca56c24f838105f45338d04dc24984e28debcab100fc2a6382b0",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260817\\historical_common800_index.csv",
+            "index_sha256": "4e41a23ec3ff97cf0391cd44257823d0f1561bb8a15eb102790454686ec010dd",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "DeepLabV3-R50::20260818",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260818\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "29c9d6a4d6756186a020774ef8007c8dfddd8fcd55a804e3ba852ae308ad89b6",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260818\\historical_common800_index.csv",
+            "index_sha256": "bb819507903d3f35b65e87a2ea0a61d3574af07c462dd54292ed5f4922e0cb97",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "DeepLabV3-R50::20260819",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260819\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "55cf4321052d25b88c2403fa7decaafaa8ace3588c5090c48fa9a803aed74b8a",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260819\\historical_common800_index.csv",
+            "index_sha256": "4e2b5b65f88b77c46f1a82bcd9b4b5b931cd0b82b1df1783fee894d5ee781993",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "PraNet::20260817",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260817\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "9d03d8821c1f837b2cd3958cb0a2b0d18e1d2cda47545d07aa56ab2d08a89372",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260817\\historical_common800_index.csv",
+            "index_sha256": "2297ad3e6a11e73fe5c848647910aca97e17cfd5ebbbf7e9200d360438951385",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "PraNet::20260818",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260818\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "4645a7405bf3ededa2b5af394136603a933a3a4ea62c529a32e8c84170f0ee12",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260818\\historical_common800_index.csv",
+            "index_sha256": "43c3018a3839ec4bcde21c8c585b625bb32773665745fb62bfd4bcb9120dbe68",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "PraNet::20260819",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260819\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "f3afa258244680c1d715ab5040943b316c95e07d1ef20cde90023cff9817ef85",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260819\\historical_common800_index.csv",
+            "index_sha256": "8de8a6dbe7572ddbcfb1a58f8fe00b60577c64e977cbd27c501f8774f7ea4c17",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "SegFormer-B0::20260820",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260820\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "b649883c8521ebfa54131c82e788342e985a31cd70b2ba48f28438acdba7d7f8",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260820\\historical_common800_index.csv",
+            "index_sha256": "2384d895d1ff37eb72850eef0b2ebb976e020dfa22021fafb6bcf357fb6b9bda",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "SegFormer-B0::20260821",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260821\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "f3066951cf16d4b634ce6ab2f0fb4fdba73b87479d78447fad5a674f7ce3eb30",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260821\\historical_common800_index.csv",
+            "index_sha256": "f77043af8f58ee72b1cb35c74eb9be4f04269951a52deef11fec1ee338579cb6",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "SegFormer-B0::20260822",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260822\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "35df30c6cd2b36aef8620ef45876381e584827a43eacdb093eaa630ed9ee9583",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260822\\historical_common800_index.csv",
+            "index_sha256": "dbaee1721f9f54ae3df24a859d06e269b7bf289daf2821e5bb9eb2d8c3798f6e",
+            "source_key": "source_masks_packed",
+            "candidate_key": "tent1_masks_packed",
+            "rows": 800
+          }
+        ]
+      },
+      "PL-CONF90": {
+        "lineage": "R38A1A historical candidate-mask recovery",
+        "historical_lock_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\R38A1A_FINAL_LOCK.json",
+        "historical_lock_sha256": "56f18adca36397b3c6d457d09281afb944e6e6efb48c985a2f4e5116c864eefa",
+        "historical_manifest_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\R38A1A_HISTORICAL_MASK_ASSET_MANIFEST.csv",
+        "historical_manifest_sha256": "a8789346d2c4a42bd5324612a6de31408088e6a6a2345b194726b96fda768471",
+        "action": "PL-CONF90",
+        "rows": 7200,
+        "states": 9,
+        "assets": [
+          {
+            "model_state_id": "DeepLabV3-R50::20260817",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260817\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "16918cdb0fd3ca56c24f838105f45338d04dc24984e28debcab100fc2a6382b0",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260817\\historical_common800_index.csv",
+            "index_sha256": "4e41a23ec3ff97cf0391cd44257823d0f1561bb8a15eb102790454686ec010dd",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "DeepLabV3-R50::20260818",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260818\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "29c9d6a4d6756186a020774ef8007c8dfddd8fcd55a804e3ba852ae308ad89b6",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260818\\historical_common800_index.csv",
+            "index_sha256": "bb819507903d3f35b65e87a2ea0a61d3574af07c462dd54292ed5f4922e0cb97",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "DeepLabV3-R50::20260819",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260819\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "55cf4321052d25b88c2403fa7decaafaa8ace3588c5090c48fa9a803aed74b8a",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\DeepLabV3-R50__20260819\\historical_common800_index.csv",
+            "index_sha256": "4e2b5b65f88b77c46f1a82bcd9b4b5b931cd0b82b1df1783fee894d5ee781993",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "PraNet::20260817",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260817\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "9d03d8821c1f837b2cd3958cb0a2b0d18e1d2cda47545d07aa56ab2d08a89372",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260817\\historical_common800_index.csv",
+            "index_sha256": "2297ad3e6a11e73fe5c848647910aca97e17cfd5ebbbf7e9200d360438951385",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "PraNet::20260818",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260818\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "4645a7405bf3ededa2b5af394136603a933a3a4ea62c529a32e8c84170f0ee12",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260818\\historical_common800_index.csv",
+            "index_sha256": "43c3018a3839ec4bcde21c8c585b625bb32773665745fb62bfd4bcb9120dbe68",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "PraNet::20260819",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260819\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "f3afa258244680c1d715ab5040943b316c95e07d1ef20cde90023cff9817ef85",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\PraNet__20260819\\historical_common800_index.csv",
+            "index_sha256": "8de8a6dbe7572ddbcfb1a58f8fe00b60577c64e977cbd27c501f8774f7ea4c17",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "SegFormer-B0::20260820",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260820\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "b649883c8521ebfa54131c82e788342e985a31cd70b2ba48f28438acdba7d7f8",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260820\\historical_common800_index.csv",
+            "index_sha256": "2384d895d1ff37eb72850eef0b2ebb976e020dfa22021fafb6bcf357fb6b9bda",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "SegFormer-B0::20260821",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260821\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "f3066951cf16d4b634ce6ab2f0fb4fdba73b87479d78447fad5a674f7ce3eb30",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260821\\historical_common800_index.csv",
+            "index_sha256": "f77043af8f58ee72b1cb35c74eb9be4f04269951a52deef11fec1ee338579cb6",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          },
+          {
+            "model_state_id": "SegFormer-B0::20260822",
+            "npz_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260822\\historical_source_tent_pl_common800.npz",
+            "npz_sha256": "35df30c6cd2b36aef8620ef45876381e584827a43eacdb093eaa630ed9ee9583",
+            "index_path": "F:\\MEDSEG_SAFETTA\\R38A1A_historical_candidate_mask_recovery_and_parity_localization_v1\\historical_common800_masks\\SegFormer-B0__20260822\\historical_common800_index.csv",
+            "index_sha256": "dbaee1721f9f54ae3df24a859d06e269b7bf289daf2821e5bb9eb2d8c3798f6e",
+            "source_key": "source_masks_packed",
+            "candidate_key": "pl_conf90_masks_packed",
+            "rows": 800
+          }
+        ]
+      }
+    },
+    "target_geometry": {
+      "lineage": "R33A2B fix1 pre-HARM SOURCE/MEMO masks",
+      "action": "MEMO",
+      "rows": 4596,
+      "states": 3,
+      "assets": [
+        {
+          "state_index": 0,
+          "model_state_id": "DeepLabV3-R50::20260817",
+          "npz_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\state_00_polypgen_source_memo_pre_harm.npz",
+          "npz_sha256": "75cb4e299ea297ac765e48db656dc7500dab17f6cb329cbf823bf6d0ac541d3e",
+          "lock_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\state_00_polypgen_source_memo_pre_harm.lock.json",
+          "lock_sha256": "3c929062907ec1a6f1f5e2835562ea96b80e957d94ef0ea404371d6de1e0a6fc",
+          "source_key": "source_masks_packed",
+          "candidate_key": "memo_masks_packed",
+          "rows": 1532,
+          "row_binding": {
+            "binding_source": "R33A2B pre-HARM score lock file order",
+            "score_lock_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\R33A2B_POLYPGEN_MEMO_EXTERNAL_SAFETTA_SCORE_PRE_HARM_LOCK.csv",
+            "score_lock_sha256": "0b8bfca0594214b106880607216771dd6375a2b14ce8e0280aafbfd197b03cdf",
+            "sentinel": "memo_changed_pixels",
+            "sentinel_rows": 1532,
+            "sentinel_mismatch_rows": 0,
+            "sentinel_max_abs_diff": 0,
+            "outcome_fields_used": false
+          }
+        },
+        {
+          "state_index": 1,
+          "model_state_id": "DeepLabV3-R50::20260818",
+          "npz_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\state_01_polypgen_source_memo_pre_harm.npz",
+          "npz_sha256": "df20ab49cc5e952972ae2e4604c52ca8c3662d75f36a67adace9a7553705ec9a",
+          "lock_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\state_01_polypgen_source_memo_pre_harm.lock.json",
+          "lock_sha256": "c708b8ab326c5d32756d4dd79058248c1e91c5872330230c769cdc8632495c37",
+          "source_key": "source_masks_packed",
+          "candidate_key": "memo_masks_packed",
+          "rows": 1532,
+          "row_binding": {
+            "binding_source": "R33A2B pre-HARM score lock file order",
+            "score_lock_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\R33A2B_POLYPGEN_MEMO_EXTERNAL_SAFETTA_SCORE_PRE_HARM_LOCK.csv",
+            "score_lock_sha256": "0b8bfca0594214b106880607216771dd6375a2b14ce8e0280aafbfd197b03cdf",
+            "sentinel": "memo_changed_pixels",
+            "sentinel_rows": 1532,
+            "sentinel_mismatch_rows": 0,
+            "sentinel_max_abs_diff": 0,
+            "outcome_fields_used": false
+          }
+        },
+        {
+          "state_index": 2,
+          "model_state_id": "DeepLabV3-R50::20260819",
+          "npz_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\state_02_polypgen_source_memo_pre_harm.npz",
+          "npz_sha256": "b2ff9a673e286c10570cd8ca6292117db70d2a9c7c3d5591fafe089a52acbfdb",
+          "lock_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\state_02_polypgen_source_memo_pre_harm.lock.json",
+          "lock_sha256": "6a083974776f25784047b4f047f41ee7da468eb0a6cf23e0a483e321e66eac83",
+          "source_key": "source_masks_packed",
+          "candidate_key": "memo_masks_packed",
+          "rows": 1532,
+          "row_binding": {
+            "binding_source": "R33A2B pre-HARM score lock file order",
+            "score_lock_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\R33A2B_POLYPGEN_MEMO_EXTERNAL_SAFETTA_SCORE_PRE_HARM_LOCK.csv",
+            "score_lock_sha256": "0b8bfca0594214b106880607216771dd6375a2b14ce8e0280aafbfd197b03cdf",
+            "sentinel": "memo_changed_pixels",
+            "sentinel_rows": 1532,
+            "sentinel_mismatch_rows": 0,
+            "sentinel_max_abs_diff": 0,
+            "outcome_fields_used": false
+          }
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "B7_M01_HARM_VS_BENEFIT_OVERALL.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_HARM_VS_BENEFIT_OVERALL.csv",
+      "sha256": "b761c30c78b4c13a71c0162867efb0164434a6999f7d3c32d043f4203a0db502",
+      "bytes": 586
+    },
+    "B7_M01_SOURCE_DEFINED_MAGNITUDE_STRATA.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_SOURCE_DEFINED_MAGNITUDE_STRATA.csv",
+      "sha256": "f843ece9d3fc7f5ddffe8e59ea2c492831f6206236fd3776f3b80db5933c98ac",
+      "bytes": 1226
+    },
+    "B7_M01_STRATIFIED_MACRO_POINT.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_STRATIFIED_MACRO_POINT.csv",
+      "sha256": "bac3c6bd8c36ce5ced5863f0727b076dfcb1377d0c2088bc1a0aaa3c1c5d54d3",
+      "bytes": 228
+    },
+    "B7_M01_BOOTSTRAP_CI.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_BOOTSTRAP_CI.csv",
+      "sha256": "f37598cc1a419e566f1e4349c31aabd0af04946541f0d52d05a7b6ff028b45ba",
+      "bytes": 1086
+    },
+    "B7_M01_PAIRED_DELTAS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_PAIRED_DELTAS.csv",
+      "sha256": "5283c5a55618c73569afb111f0eaee9ea88bbd56d6a9330f2684899e11731efd",
+      "bytes": 913
+    },
+    "B7_M01_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "b01e05f4141e5bd447f0fce35078c947af92ce8bcd0fd2410b3433270ffa475f",
+      "bytes": 775082
+    },
+    "B7_M01_BOUND_DIRECTION_PANEL.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_BOUND_DIRECTION_PANEL.csv",
+      "sha256": "2fe3d146617d4764821e81c26287a2cd9945a0459fe2b21aad1e92702e9d6ba2",
+      "bytes": 1085945
+    }
+  }
+}

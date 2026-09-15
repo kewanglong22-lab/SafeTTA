@@ -1,0 +1,4 @@
+model_state_id,model_cases_total,harm_model_cases,benefit_model_cases,physical_images_union,physical_images_with_harm,physical_images_with_benefit,physical_images_with_both
+DeepLabV3-R50::20260817,274,100,174,274,100,174,0
+DeepLabV3-R50::20260818,321,95,226,321,95,226,0
+DeepLabV3-R50::20260819,265,106,159,265,106,159,0

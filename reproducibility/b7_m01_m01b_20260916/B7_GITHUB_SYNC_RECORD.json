@@ -1,0 +1,18 @@
+{
+  "sync_script_version": "2026-09-16-B7-GITHUB-SYNC-v1-fix1",
+  "repository": "https://github.com/kewanglong22-lab/SafeTTA.git",
+  "historical_base_tag": "v1.2-paper-final-b6-20260915",
+  "historical_base_commit": "b253be8eff8265cc74c884cda1c1a73dc1317053",
+  "new_branch": "final-paper-b7-20260916",
+  "new_tag": "v1.3-paper-final-b7-20260916",
+  "destination": "reproducibility/b7_m01_m01b_20260916",
+  "bundle_sha256": "cd09b0dc8eda86ba1eaf72b1adce0b2a8b9b86bf3e2c6d5093597fdbc0fa7730",
+  "bundle_gate": "PASS_B7_PUBLIC_SYNC_BUNDLE_READY_FOR_GITHUB_SYNC",
+  "manifest_verified_files": 18,
+  "python_syntax_verified_files": 3,
+  "direct_main_write": false,
+  "force_push": false,
+  "historical_tag_modified": false,
+  "created_local_time": "2026-09-16T00:23:09",
+  "note": "B7 is a post-B6 explanatory extension. The four-stratum primary remains NOT EVALUABLE; the overall HARM-vs-BENEFIT analysis is secondary."
+}

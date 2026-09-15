@@ -1,0 +1,40 @@
+========================================================================================================================================================================
+SafeTTA B7-M01 CHANGE MAGNITUDE VS HARM DIRECTION COMPLETE
+
+Source magnitude quartiles:
+[0.006981941031941025, 0.018320558305103818, 0.09221727067697388]
+
+OVERALL HARM vs BENEFIT:
+               analysis                          score   n  harm_n  benefit_n    auroc    auprc  prevalence
+HARM_VS_BENEFIT_OVERALL                   SOURCE_STATE 860     301        559 0.525713 0.367530        0.35
+HARM_VS_BENEFIT_OVERALL SOURCE_PLUS_SIMPLE_MASK_CHANGE 860     301        559 0.480967 0.344740        0.35
+HARM_VS_BENEFIT_OVERALL FROZEN_FULL_TRANSITION_SAFETTA 860     301        559 0.640227 0.471926        0.35
+HARM_VS_BENEFIT_OVERALL          CHANGE_MAGNITUDE_ONLY 860     301        559 0.492586 0.365923        0.35
+HARM_VS_BENEFIT_OVERALL      CHANGE_MAGNITUDE_IOU_ONLY 860     301        559 0.492586 0.365923        0.35
+
+STRATIFIED MACRO POINT:
+                         score  valid_strata  macro_stratified_auroc
+                  SOURCE_STATE             2                0.540154
+SOURCE_PLUS_SIMPLE_MASK_CHANGE             2                0.514472
+FROZEN_FULL_TRANSITION_SAFETTA             2                0.657353
+         CHANGE_MAGNITUDE_ONLY             2                0.495538
+
+PAIRED BOOTSTRAP DELTAS:
+  scope                                             comparison metric  valid_reps  bootstrap_mean_delta  ci95_low  ci95_high  ci_excludes_zero
+OVERALL FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY  AUPRC        2000              0.106409  0.038194   0.174356              True
+OVERALL FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY  AUROC        2000              0.146617  0.077495   0.219825              True
+OVERALL SOURCE_PLUS_SIMPLE_MASK_CHANGE - CHANGE_MAGNITUDE_ONLY  AUPRC        2000             -0.019665 -0.078064   0.034896             False
+OVERALL SOURCE_PLUS_SIMPLE_MASK_CHANGE - CHANGE_MAGNITUDE_ONLY  AUROC        2000             -0.012740 -0.073029   0.045206             False
+OVERALL                   SOURCE_STATE - CHANGE_MAGNITUDE_ONLY  AUPRC        2000              0.002167 -0.059307   0.065638             False
+OVERALL                   SOURCE_STATE - CHANGE_MAGNITUDE_ONLY  AUROC        2000              0.032112 -0.039914   0.106251             False
+
+PRIMARY_ENDPOINT_STATUS=NOT_EVALUABLE_INSUFFICIENT_FROZEN_STRATUM_SUPPORT
+PRESPECIFIED_OVERALL_SECONDARY_FULL_VS_MAGNITUDE:
+  scope                                             comparison metric  valid_reps  bootstrap_mean_delta  ci95_low  ci95_high  ci_excludes_zero
+OVERALL FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY  AUPRC        2000              0.106409  0.038194   0.174356              True
+OVERALL FROZEN_FULL_TRANSITION_SAFETTA - CHANGE_MAGNITUDE_ONLY  AUROC        2000              0.146617  0.077495   0.219825              True
+
+SCIENTIFIC_DECISION=PRIMARY_NOT_EVALUABLE__REPORT_PRESPECIFIED_OVERALL_SECONDARY_ONLY
+GATE=PASS_B7_M01_FIX2_EXECUTION_COMPLETE_PRIMARY_SUPPORT_FAILED
+audit_json=F:\MEDSEG_SAFETTA\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\B7_M01_CHANGE_MAGNITUDE_VS_HARM_DIRECTION_AUDIT.json
+========================================================================================================================================================================

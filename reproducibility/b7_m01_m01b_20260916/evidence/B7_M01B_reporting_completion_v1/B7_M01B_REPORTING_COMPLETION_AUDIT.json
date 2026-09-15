@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B7_M01B_REPORTING_COMPLETION",
+  "version": "2026-09-15-B7-M01B-v1",
+  "protocol": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\B7_M01B_REPORTING_COMPLETION_PROTOCOL_v1.json",
+    "sha256": "cf42ea73ad66f3b267987c103221ea22b9f1ec7e2091f2389867354a73f27a3d",
+    "status": "FROZEN_AFTER_B7_M01_FIX2_BEFORE_ADDITIONAL_REPORTING_CONTRASTS"
+  },
+  "parent": {
+    "audit_path": "F:\\MEDSEG_SAFETTA\\B7_M01_change_magnitude_vs_harm_direction_v1_fix2\\B7_M01_CHANGE_MAGNITUDE_VS_HARM_DIRECTION_AUDIT.json",
+    "audit_sha256": "a6fdbe9cbb0fc3f6280712e17002cbd5f32a6f2a2e3a2248f7a01bf9482bf873",
+    "gate": "PASS_B7_M01_FIX2_EXECUTION_COMPLETE_PRIMARY_SUPPORT_FAILED",
+    "primary_status": "NOT_EVALUABLE_INSUFFICIENT_FROZEN_STRATUM_SUPPORT"
+  },
+  "new_bootstrap_draws": false,
+  "new_model_fit": false,
+  "new_inference_tta": false,
+  "target_rebinning": false,
+  "primary_redefinition": false,
+  "primary_status_preserved": "NOT_EVALUABLE_INSUFFICIENT_FROZEN_STRATUM_SUPPORT",
+  "outputs": {
+    "B7_M01B_PAIRED_REPORTING_COMPLETION.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01B_reporting_completion_v1\\B7_M01B_PAIRED_REPORTING_COMPLETION.csv",
+      "bytes": 1269,
+      "sha256": "a45db3bf21d3972a59f67a9e58e36fee66683bc2a50c73a2d9a257639f6b2d01"
+    },
+    "B7_M01B_EVENT_SUPPORT.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01B_reporting_completion_v1\\B7_M01B_EVENT_SUPPORT.csv",
+      "bytes": 297,
+      "sha256": "5f0dc6e20f818372250c93f068e974807a1544bcbc53b58680e3174e5c72fb7b"
+    },
+    "B7_M01B_EVENT_SUPPORT_BY_STATE.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B7_M01B_reporting_completion_v1\\B7_M01B_EVENT_SUPPORT_BY_STATE.csv",
+      "bytes": 325,
+      "sha256": "d7bce7f8549f8c5a0d38a324da04456f247b3c541796e1fe1948fa8ae8631641"
+    }
+  }
+}

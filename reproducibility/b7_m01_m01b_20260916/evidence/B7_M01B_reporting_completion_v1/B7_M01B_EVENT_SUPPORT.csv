@@ -1,0 +1,2 @@
+model_cases_total,harm_model_cases,benefit_model_cases,conditional_harm_prevalence,physical_images_union,physical_images_with_harm,physical_images_with_benefit,physical_images_with_both_across_states,physical_images_harm_only,physical_images_benefit_only
+860,301,559,0.35,557,228,393,64,164,329
