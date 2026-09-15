@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P09A_FINAL_EVIDENCE_FREEZE",
+  "version": "2026-09-15-B6-P09A-v1",
+  "protocol": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\B6_P09_FINAL_EVIDENCE_FREEZE_PROTOCOL_v1.json",
+    "sha256": "3989ee752ed7dc461572a1544c8d55f1f597f85f6eba4cffaa6f1eaf82d7ce76",
+    "status": "FROZEN_AFTER_P08B_BEFORE_PUBLIC_RELEASE_SYNC_AND_MANUSCRIPT_REWRITE"
+  },
+  "stages": [
+    {
+      "stage_id": "FinalB3_MRI",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\FinalB3_mri_action_specific_outcome_and_future_harm_v1",
+      "expected_gate": "PASS_FINALB3_MRI_ACTION_OUTCOME_AND_FUTURE_HARM_EVALUATION_COMPLETE",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P01A_MRI_ATTRIBUTION",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1",
+      "expected_gate": null,
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P01B_POLYPGEN_ATTRIBUTION",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5",
+      "expected_gate": "PASS_B6_P01B_POLYPGEN_GEOMETRY_CORE_EXPERIMENT_COMPLETE",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P02_POLYPGEN_UTILITY",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P02_polypgen_exact50_utility_v1",
+      "expected_gate": "PASS_B6_P02_POLYPGEN_EXACT50_UTILITY_COMPLETE",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P02B_POLYPGEN_ABSOLUTE",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P02B_polypgen_exact50_absolute_references_v1",
+      "expected_gate": "PASS_B6_P02B_POLYPGEN_EXACT50_ABSOLUTE_REFERENCES",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P03_MRI_ROBUSTNESS",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1",
+      "expected_gate": null,
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P05B_RUNTIME",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P05B_runtime_scope_reporting_audit_v1",
+      "expected_gate": "PASS_B6_P05B_RUNTIME_SCOPE_REPORTING_AUDIT",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P06B_MRI_PATIENT_UTILITY",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1",
+      "expected_gate": "PASS_B6_P06B_MRI_TRANSITION_PATIENT_UTILITY_COMPLETE",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P07B_MARGIN_SENSITIVITY",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P07B_fixed_score_harm_margin_sensitivity_v1",
+      "expected_gate": "PASS_B6_P07B_FIXED_SCORE_HARM_MARGIN_SENSITIVITY_COMPLETE",
+      "gate_found": true
+    },
+    {
+      "stage_id": "B6_P08B_STATISTICAL_CLOSURE",
+      "resolved": true,
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1",
+      "expected_gate": "PASS_B6_P08B_FINAL_STATISTICAL_CLOSURE_COMPLETE",
+      "gate_found": true
+    }
+  ],
+  "evidence_file_count": 43,
+  "supported_claims": [
+    {
+      "claim": "Candidate-conditioned information adds future-HARM ranking signal beyond SOURCE-state-only information.",
+      "evidence_stage_ids": "B6_P01A_MRI_ATTRIBUTION;B6_P01B_POLYPGEN_ATTRIBUTION;B6_P08B_STATISTICAL_CLOSURE"
+    },
+    {
+      "claim": "The ranking signal transfers across external domain and held-out/unseen action shifts.",
+      "evidence_stage_ids": "FinalB3_MRI;B6_P01B_POLYPGEN_ATTRIBUTION;B6_P07B_MARGIN_SENSITIVITY"
+    },
+    {
+      "claim": "Representation effectiveness is modality/endpoint dependent; simple geometry is especially strong on MRI.",
+      "evidence_stage_ids": "B6_P01A_MRI_ATTRIBUTION;B6_P03_MRI_ROBUSTNESS;B6_P06B_MRI_PATIENT_UTILITY"
+    },
+    {
+      "claim": "Fixed-budget ranking can improve safety allocation without necessarily improving final Dice over SOURCE-only deployment.",
+      "evidence_stage_ids": "B6_P02_POLYPGEN_UTILITY;B6_P02B_POLYPGEN_ABSOLUTE;B6_P06B_MRI_PATIENT_UTILITY"
+    },
+    {
+      "claim": "NeoPolyp shared transition has significant macro-action AUPRC gain over SOURCE_Q66_ONLY, while macro-action AUROC increment is not statistically significant.",
+      "evidence_stage_ids": "B6_P08B_STATISTICAL_CLOSURE"
+    },
+    {
+      "claim": "Full pre-commit runtime is dominated by candidate TTA execution.",
+      "evidence_stage_ids": "B6_P05B_RUNTIME"
+    }
+  ],
+  "forbidden_claims": [
+    "Semantic transition is universally superior.",
+    "SafeTTA universally improves segmentation Dice.",
+    "SafeTTA exact50 outperforms SOURCE-only deployment.",
+    "PolypGen exact50 full transition improves Dice over matched random.",
+    "MRI is zero-shot cross-task transfer.",
+    "The complete full-transition pre-commit pipeline is lightweight.",
+    "The target-domain sigmoid output is calibrated probability.",
+    "Historical PolypGen/PROMISE12 analyses are pristine prospective validation."
+  ],
+  "next": [
+    "Public GitHub synchronization",
+    "New final paper tag/commit",
+    "Manuscript rewrite against this frozen claim matrix"
+  ]
+}

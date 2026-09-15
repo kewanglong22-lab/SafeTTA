@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P02B_POLYPGEN_EXACT50_ABSOLUTE_REFERENCES",
+  "version": "2026-09-15-B6-P02B-v1",
+  "relationship_to_P02": "ADDITIVE_REFERENCE_ONLY",
+  "p02_primary_unchanged": true,
+  "protocol": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\B6_P02B_POLYPGEN_EXACT50_ABSOLUTE_REFERENCE_PROTOCOL_v1.json",
+    "sha256": "4be20289e99bd98163ac124d04774b7436f497fe58e5f7f736dcb5aa4729fb24",
+    "status": "FROZEN_ADDITIVE_REFERENCE_BEFORE_P02B_METRICS"
+  },
+  "p02": {
+    "audit_path": "F:\\MEDSEG_SAFETTA\\B6_P02_polypgen_exact50_utility_v1\\B6_P02_POLYPGEN_EXACT50_UTILITY_AUDIT.json",
+    "audit_sha256": "e5f60dfa9fb36a04d18bba2d15a0d185140db2554a89552ec271b8db988dfdf4",
+    "row_table_path": "F:\\MEDSEG_SAFETTA\\B6_P02_polypgen_exact50_utility_v1\\B6_P02_POLYPGEN_EXACT50_SELECTIONS_AND_DEPLOYMENT.csv",
+    "row_table_sha256": "3c5aed4e199ae5b732d23ac43277dcc75fae1b4f7caea8d6aa43a607a8082cf2",
+    "gate": "PASS_B6_P02_POLYPGEN_EXACT50_UTILITY_COMPLETE",
+    "decision": "CANDIDATE_CONDITIONING_EXACT50_SAFETY_SUPPORTED_UTILITY_NOT_CONFIRMED",
+    "rows": 4596,
+    "images": 1532,
+    "states": 3,
+    "harm_n": 301,
+    "benefit_n": 559
+  },
+  "headline": {
+    "full_transition_vs_matched_random_deployed_dice": {
+      "point_delta": -0.0013827874635261583,
+      "ci95_low": -0.0032585979538305916,
+      "ci95_high": 0.0004973819499432152,
+      "supported": false
+    },
+    "full_transition_vs_source_only_deployed_dice": {
+      "point_delta": -0.0004636370947731505,
+      "ci95_low": -0.004015393556531413,
+      "ci95_high": 0.002957132398508201,
+      "supported": false
+    }
+  },
+  "claim_boundary": {
+    "matched_random_is_matched_budget_expectation": true,
+    "source_only_and_adapt_all_have_different_coverage": true,
+    "no_coverage_optimization": true,
+    "no_rescue": true
+  },
+  "outputs": {
+    "B6_P02B_POLYPGEN_ABSOLUTE_REFERENCE_TABLE.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P02B_polypgen_exact50_absolute_references_v1\\B6_P02B_POLYPGEN_ABSOLUTE_REFERENCE_TABLE.csv",
+      "sha256": "8cf06ed84f1d243092ab71677db54138a3707dd9cf5fed01901b4cb530446f39",
+      "bytes": 901
+    },
+    "B6_P02B_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P02B_polypgen_exact50_absolute_references_v1\\B6_P02B_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "2f4a242eaf17b4d4bf86d830931fda642543f62ddc650f41519f57fbe1476d37",
+      "bytes": 1304038
+    },
+    "B6_P02B_PAIRED_DELTAS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P02B_polypgen_exact50_absolute_references_v1\\B6_P02B_PAIRED_DELTAS.csv",
+      "sha256": "d5ed16577efe6b4dfb0c7395ea30a07a044a3221db33f561bcbabcbec4aa8515",
+      "bytes": 4401
+    }
+  }
+}

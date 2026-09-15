@@ -1,0 +1,19 @@
+====================================================================================================================================================
+SafeTTA B6-P0-3 MRI STRATIFIED ROBUSTNESS COMPLETE
+GT nonempty slices : 778/1377
+GT empty slices    : 599/1377
+
+GT_NONEMPTY:
+FULL_TRANSITION_SAFETTA AUROC=0.680667 AUPRC=0.315584 valid_cells=6/6
+SOURCE_PLUS_SIMPLE_MASK_CHANGE AUROC=0.849961 AUPRC=0.525523 valid_cells=6/6
+
+FULL - SIMPLE bootstrap:
+    stratum metric  valid_reps  delta_mean  ci95_low  ci95_high  ci_excludes_zero
+GT_NONEMPTY  AUPRC        2000   -0.207148 -0.268632  -0.147953              True
+GT_NONEMPTY  AUROC        2000   -0.167533 -0.198275  -0.136727              True
+
+This audit does not replace Final-B3. It tests whether the observed ranking and the simple-mask baseline advantage persist outside GT-empty slices.
+GATE=PASS_B6_P03_MRI_STRATIFIED_ROBUSTNESS_AUDIT_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\B6_P03_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P03_mri_empty_foreground_sourcequality_robustness_v1
+====================================================================================================================================================

@@ -1,0 +1,56 @@
+{
+  "protocol_id": "B6_P03_MRI_STRATIFIED_ROBUSTNESS_PROTOCOL_v1",
+  "version": "2026-09-15-B6-P03-v1",
+  "status": "FROZEN_AFTER_P01A_BEFORE_P03_METRICS",
+  "scientific_role": "Post-freeze/post-reveal robustness audit of already frozen Final-B3 and B6-P01A scores. No representation is refit, selected, reversed, or tuned.",
+  "motivation": "Both-empty slice Dice equals 1.0. The strong simple mask-change baseline observed in B6-P01A may therefore be influenced by empty-slice geometry; this audit tests that possibility without changing any score.",
+  "upstream": {
+    "P0_protocol_sha256": "ed19e9f1d98b66a0f5280694274a1a92d001bbc884f07dd5313320e6dc63ba04",
+    "P01A_protocol_sha256": "2eea6c75886ebe715f5b2e161761c400ae2688702a672c006676232b08b1fb67",
+    "P01A_gate": "PASS_B6_P01A_MRI_MATCHED_REPRESENTATION_ATTRIBUTION_COMPLETE",
+    "FinalB1_lock_sha256": "5900b35a6971ceff32ddd6e22e8332cf9fdf68e65d9a6c2711c52a4d324eacc5",
+    "FinalB3_lock_sha256": "924b8b882c971be7a5562b7d0fc53cf1eece343786f0ff5f24d46b91a86a191b"
+  },
+  "representations": [
+    "SOURCE_STATE",
+    "SEMANTIC_TRANSITION",
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+    "FULL_TRANSITION_SAFETTA"
+  ],
+  "strata": {
+    "ALL": "all frozen PROMISE12 transition rows",
+    "GT_EMPTY": "historical CM6 GT packed mask has zero foreground",
+    "GT_NONEMPTY": "historical CM6 GT packed mask has foreground",
+    "SOURCE_EMPTY": "Final-B1 current-runtime SOURCE hard mask has zero foreground",
+    "SOURCE_NONEMPTY": "Final-B1 current-runtime SOURCE hard mask has foreground",
+    "SOURCE_FOREGROUND_SIZE": "SOURCE-empty is kept separate; for SOURCE-nonempty rows, family-specific Q1-Q4 cutpoints are estimated from Prostate158 Final-B1 SOURCE foreground fractions and applied unchanged to PROMISE12.",
+    "SOURCE_DICE": "Post-reveal explanatory quartiles within PROMISE12 model family, derived from frozen Final-B3 SOURCE Dice. Non-deployable explanatory analysis."
+  },
+  "primary_sensitivity": {
+    "scope": "GT_NONEMPTY",
+    "reason": "directly tests whether the main ranking signal is dominated by both-empty slices",
+    "required_comparison": "FULL_TRANSITION_SAFETTA versus SOURCE_PLUS_SIMPLE_MASK_CHANGE on fixed scores"
+  },
+  "statistics": {
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260917,
+    "cluster_unit": "PROMISE12 patient/case_key",
+    "cell_structure": "3 actions x 2 families",
+    "single_class_rule": "A cell with one HARM class is invalid for AUROC. Bootstrap replicates missing both classes in any point-valid cell are marked invalid; no 0.5 substitution.",
+    "nominal_intervals": true
+  },
+  "frozen_boundaries": {
+    "harm_threshold_delta_dice": -0.02,
+    "score_refit": false,
+    "score_flip": false,
+    "feature_change": false,
+    "target_fit": false,
+    "target_threshold_tuning": false
+  },
+  "interpretation_rules": [
+    "If simple mask-change remains stronger on GT-nonempty slices, report it; do not rescue semantic transition.",
+    "If the simple baseline advantage collapses on GT-nonempty slices, describe empty-slice sensitivity explicitly.",
+    "Historical Final-B3 primary result remains the prespecified primary result regardless of this post-reveal audit."
+  ],
+  "gate": "PASS_B6_P03_MRI_STRATIFIED_ROBUSTNESS_AUDIT_COMPLETE"
+}

@@ -1,0 +1,37 @@
+{
+  "protocol_id": "B6_P09B_PUBLIC_RELEASE_BUNDLE_PROTOCOL_v1",
+  "version": "2026-09-15-P09B-v1",
+  "status": "FROZEN_AFTER_P09A_BEFORE_GITHUB_SYNC",
+  "purpose": "Create a compact, auditable public-release bundle from the frozen P09A evidence state. This stage does not modify scientific results and performs no network/GitHub write.",
+  "source_freeze": {
+    "stage": "B6_P09A_final_evidence_freeze_v1",
+    "required_gate": "PASS_B6_P09A_FINAL_EVIDENCE_FREEZE",
+    "expected_resolved_stages": 10,
+    "expected_paper_facing_hashed_files": 43,
+    "expected_supported_claims": 6,
+    "expected_forbidden_claims": 8
+  },
+  "bundle_policy": {
+    "include": [
+      "final P09A freeze/claim/stage/evidence manifests",
+      "B6 P01-P09 protocols and execution/audit scripts under code/",
+      "compact aggregate reports/audits/summaries from final frozen stages"
+    ],
+    "exclude": [
+      "raw images",
+      "masks/packbits",
+      "model checkpoints",
+      "feature matrices",
+      "row-level prediction tables",
+      "bootstrap replicate tables",
+      "large replay caches"
+    ],
+    "no_overwrite": true,
+    "zip_output": true,
+    "sha256_manifest": true
+  },
+  "next_after_pass": [
+    "Run exact GitHub synchronization script on a fresh clone/branch.",
+    "Create final paper tag only after sync audit passes."
+  ]
+}

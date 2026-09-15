@@ -1,0 +1,83 @@
+{
+  "protocol_id": "B6_P01B_POLYPGEN_MATCHED_CANDIDATE_CONDITIONING_PROTOCOL_v1",
+  "version": "2026-09-15-B6-P01B-v1",
+  "status": "FROZEN_BEFORE_P01B_METRICS",
+  "scientific_role": "Post-freeze/post-reveal matched-control experiment supporting the framework-level candidate-conditioned future-HARM claim. It does not retroactively convert the post-hoc geometry observation into a pristine primary method.",
+  "dataset": {
+    "source": "NeoPolyp frozen three-action panel",
+    "target": "PolypGen unseen MEMO exact frozen R33 panel",
+    "target_gt_history": "historically accessed; not pristine first-access validation"
+  },
+  "physical_unit": {
+    "PolypGen": "image/frame",
+    "basis": "B6-P0-4 fix1 exact-ID audit",
+    "limitation": "Patient/video hierarchy was not recoverable; paired bootstrap therefore uses physical-image clustering and residual within-patient dependence must be disclosed."
+  },
+  "actions": {
+    "train_actions": [
+      "TENT1",
+      "PL-CONF90"
+    ],
+    "heldout_target_action": "MEMO-SEG4-1STEP"
+  },
+  "representations": [
+    "SOURCE_STATE",
+    "SEMANTIC_TRANSITION",
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+    "FULL_TRANSITION_SAFETTA"
+  ],
+  "simple_mask_change": [
+    "SOURCE-candidate prediction Dice",
+    "SOURCE-candidate prediction IoU",
+    "signed candidate-minus-SOURCE foreground fraction",
+    "signed candidate-minus-SOURCE boundary density"
+  ],
+  "reliability_change_baseline": {
+    "included": false,
+    "reason": "B6-P0-4 fix1 found no strongly exact-bound historical probability/logit asset."
+  },
+  "training_fairness": {
+    "same_source_rows": true,
+    "same_harm_labels": true,
+    "same_train_actions": true,
+    "same_classifier_protocol": true,
+    "target_fit_rows": 0,
+    "score_direction_fixed": "higher = HARM risk",
+    "classifier": "class-balanced L2 logistic regression",
+    "C": 1.0,
+    "solver": "lbfgs",
+    "max_iter": 5000,
+    "random_state": 20260820
+  },
+  "primary_question": "Does candidate-conditioned information improve unseen-MEMO HARM ranking over SOURCE state on the exact PolypGen R33 panel?",
+  "secondary_question": "How do semantic and simple geometric candidate-change descriptions compare on this colonoscopy task?",
+  "statistics": {
+    "paired_bootstrap_reps": 2000,
+    "bootstrap_seed": 20260918,
+    "cluster_unit": "physical image/frame",
+    "metrics": [
+      "AUROC",
+      "AUPRC"
+    ],
+    "paired_deltas": [
+      "FULL_TRANSITION_SAFETTA - SOURCE_STATE",
+      "SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE",
+      "FULL_TRANSITION_SAFETTA - SOURCE_PLUS_SIMPLE_MASK_CHANGE"
+    ]
+  },
+  "no_rescue_rules": [
+    "No target-driven feature selection.",
+    "No target-driven score reversal.",
+    "No HARM-threshold change.",
+    "No action-hyperparameter change.",
+    "No removal of unfavorable rows.",
+    "No geometry+semantic fusion designed from PolypGen outcomes in this experiment."
+  ],
+  "execution_order": [
+    "P01B asset binding audit",
+    "exact-key panel verification",
+    "matched representation scoring",
+    "paired physical-image bootstrap"
+  ],
+  "gate": "PASS_B6_P01B_POLYPGEN_MATCHED_CANDIDATE_CONDITIONING_COMPLETE"
+}

@@ -1,0 +1,72 @@
+{
+  "protocol_id": "B6_P08_FINAL_STATISTICAL_CLOSURE_PROTOCOL_v1",
+  "version": "2026-09-15-P08-v1",
+  "status": "FROZEN_AFTER_P07B_BEFORE_FINAL_STATISTICAL_CLOSURE_METRICS",
+  "purpose": "Close the remaining reviewer-facing statistical gaps without introducing a new method: (1) paired physical-image clustered uncertainty for the NeoPolyp three-action LOAO increment of Shared Q66+DeltaS over SOURCE Q66 only; (2) event-support counts at the original HARM margin; (3) highest-recoverable PolypGen patient/video grouping audit.",
+  "analysis_1_neopolyp_loao_paired_increment": {
+    "panel": "NeoPolyp source-development three-action LOAO",
+    "comparison_primary": "Shared Q66+DeltaS - SOURCE Q66 only",
+    "actions": [
+      "MEMO",
+      "PL-CONF90",
+      "TENT1"
+    ],
+    "primary_metric": "macro action AUROC delta",
+    "secondary_metrics": [
+      "macro action AUPRC delta",
+      "per-action AUROC delta",
+      "per-action AUPRC delta"
+    ],
+    "expected_point_anchor": {
+      "SOURCE_Q66_macro_AUROC": 0.72819,
+      "Shared_Q66_DeltaS_macro_AUROC": 0.7416,
+      "point_delta_macro_AUROC": 0.01341
+    },
+    "cluster_unit": "physical NeoPolyp image",
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260923,
+    "invalid_single_class_replicates": "drop for affected metric/action and report valid counts; never impute 0.5",
+    "frozen_constraints": [
+      "no refit",
+      "no score flip",
+      "no action redefinition",
+      "no representation change",
+      "no target-domain use",
+      "no post-hoc action weighting"
+    ]
+  },
+  "analysis_2_event_support": {
+    "harm_definition": "DeltaDice <= -0.02",
+    "MRI_PROMISE12": {
+      "count": "HARM-positive unique patients per family x action cell",
+      "source": "frozen B6-P01A / FinalB3 matched panel"
+    },
+    "POLYPGEN_MEMO": {
+      "count": "HARM-positive unique physical images per model state and pooled",
+      "source": "frozen R33A3 first-HARM-reveal outcome panel"
+    }
+  },
+  "analysis_3_polypgen_grouping_audit": {
+    "goal": "Determine whether a higher-level patient/video/endoscopy grouping variable can be recovered from already-frozen manifests/metadata without guessing from outcomes.",
+    "candidate_fields": [
+      "patient_id",
+      "patient",
+      "subject_id",
+      "subject",
+      "video_id",
+      "video",
+      "sequence_id",
+      "sequence",
+      "case_id",
+      "case",
+      "polyp_id",
+      "lesion_id"
+    ],
+    "if_recoverable": "Freeze the exact mapping and perform a higher-level clustered sensitivity bootstrap as a later deterministic statistic replay.",
+    "if_not_recoverable": "Freeze image/frame as the highest recoverable physical unit and state this limitation."
+  },
+  "analysis_4_optional_source_simple_change": {
+    "role": "optional, not a blocker",
+    "rule": "Only bind a NeoPolyp same-information simple-mask-change LOAO comparator if an exact pre-existing frozen source-side row-level score panel is already recoverable. Do not regenerate or fit a new comparator after outcome reveal."
+  }
+}

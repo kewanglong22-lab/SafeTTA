@@ -1,0 +1,84 @@
+{
+  "protocol_id": "B6_P01B_GEOMETRY_CORE_AMENDMENT_PROTOCOL_v1",
+  "version": "2026-09-15-B6-P01B-GEOM-v1",
+  "status": "FROZEN_AFTER_ASSET_LOSS_AUDIT_BEFORE_P01B_SCIENTIFIC_METRICS",
+  "parent_protocol_sha256": "64ad2ac72ff6fc04ba07a6492e27c6b1af9a537fd0a49e787b5ae2d0b9ea62f9",
+  "reason_for_amendment": "The exact-binding and reconstruction-feasibility audits established before P01B metrics that the final NeoPolyp semantic-transition caches were not preserved, while the SOURCE state is exactly reconstructable. The four-feature simple mask-change descriptor was already frozen in the parent P01B protocol. Therefore the core framework experiment is restricted to SOURCE_STATE versus SOURCE_PLUS_SIMPLE_MASK_CHANGE, with the already-frozen R33 full semantic-transition score retained only as a historical reference when exact binding succeeds.",
+  "scientific_question": "On PolypGen unseen MEMO, does candidate-conditioned geometric change improve future-HARM ranking beyond a matched SOURCE-state-only model trained on the same NeoPolyp TENT1 + PL-CONF90 rows?",
+  "source": {
+    "cohort": "NeoPolyp",
+    "train_actions": [
+      "TENT1",
+      "PL-CONF90"
+    ],
+    "expected_physical_images": 800,
+    "expected_model_states": 9,
+    "expected_rows_per_action": 7200,
+    "expected_total_training_rows": 14400
+  },
+  "target": {
+    "cohort": "PolypGen",
+    "heldout_action": "MEMO-SEG4-1STEP",
+    "expected_physical_images": 1532,
+    "expected_model_states": 3,
+    "expected_rows": 4596,
+    "cluster_unit": "physical image/frame"
+  },
+  "representations": {
+    "SOURCE_STATE": "historical 66-D prediction-conditioned SOURCE state",
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE": {
+      "dimension": 70,
+      "added_features": [
+        "SOURCE-candidate prediction Dice",
+        "SOURCE-candidate prediction IoU",
+        "signed candidate-minus-SOURCE foreground fraction",
+        "signed candidate-minus-SOURCE boundary density"
+      ],
+      "boundary_density": "number of vertical + horizontal adjacent-pixel disagreements divided by ((H-1)W + H(W-1)); identical definition to B6-P01A"
+    },
+    "FROZEN_FULL_TRANSITION_SAFETTA": "optional historical reference only; no refit. Exact R33 risk-score binding required."
+  },
+  "classifier": {
+    "for_new_matched_models": "StandardScaler + class-balanced L2 LogisticRegression",
+    "C": 1.0,
+    "solver": "lbfgs",
+    "max_iter": 5000,
+    "random_state": 20260820,
+    "explicit_action_id": false,
+    "target_fit_rows": 0
+  },
+  "mask_convention": {
+    "height": 352,
+    "width": 352,
+    "packed_bytes": 15488,
+    "bitorder": "little"
+  },
+  "statistics": {
+    "metrics": [
+      "AUROC",
+      "AUPRC"
+    ],
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260918,
+    "paired_cluster_unit": "physical image/frame",
+    "primary_delta": "SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE",
+    "secondary_reference_deltas": [
+      "FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE",
+      "SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA"
+    ]
+  },
+  "interpretation": {
+    "framework_support": "Primary paired AUROC delta > 0 with CI excluding 0, together with AUPRC not worsening, supports incremental candidate-conditioned information on the second task.",
+    "negative_result_rule": "If the geometry model does not improve over SOURCE state, report the null/negative result; do not alter geometry features, threshold, action support, model, or score direction."
+  },
+  "forbidden": [
+    "No PolypGen-driven feature selection.",
+    "No geometry+semantic fusion designed from PolypGen outcomes.",
+    "No score reversal.",
+    "No HARM-threshold change.",
+    "No action removal.",
+    "No target calibration.",
+    "No use of semantic-only source features reconstructed by a new DINO replay in this experiment."
+  ],
+  "gate": "PASS_B6_P01B_POLYPGEN_GEOMETRY_CORE_EXPERIMENT_COMPLETE"
+}

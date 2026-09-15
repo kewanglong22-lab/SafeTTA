@@ -1,0 +1,95 @@
+{
+  "protocol_id": "B6_P05A_MEMO_FULL_TRANSITION_RUNTIME_PROTOCOL_v1_fix1",
+  "version": "2026-09-15-P05A-v1-fix1",
+  "status": "FROZEN_BEFORE_RUNTIME_MEASUREMENT_IMPLEMENTATION_FIX1",
+  "purpose": "Measure a representative full SafeTTA pre-commit transition path on the paper's strongest external unseen-action setting: DeepLabV3-R50 + PolypGen MEMO-SEG4-1STEP.",
+  "relationship_to_previous_runtime": {
+    "source_only_runtime_is_historical_reference": true,
+    "this_stage_measures_full_transition": true,
+    "scientific_outcomes_computed": false,
+    "ground_truth_read": false
+  },
+  "hardware": {
+    "required_cuda": true,
+    "expected_gpu_substring": "RTX 4060 Laptop GPU",
+    "batch_size": 1
+  },
+  "lineage": {
+    "R33A2B_script": "F:\\MEDSEG_SAFETTA\\code\\Q1_R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1.py",
+    "R33A2B_script_sha256": "712e862e57f97aabf46a65054bddadde896e0fd44ad5655a9b6490562cf96641",
+    "R31B1_script_sha256": "3391fe4d7161df488f372379a65d72c0dc0cc4e1e774e02e90d68c9ad17f911b",
+    "R31B2_script_sha256": "fa4802f62bb510b953b216f2a3211df8c556dee943f612493ae75463870bbf5b",
+    "R05D3_script_sha256": "df22d6f3054257743d1f12d9e757323ea9f4a052b7642eb4ab610da46ff21251",
+    "R22A1_script_sha256": "1f0a925721485226d7fd58f3e0968bc7e10213a8f4561023f8886b98fde57ba6"
+  },
+  "benchmark_panel": {
+    "dataset": "PolypGen",
+    "model_state_id": "DeepLabV3-R50::20260817",
+    "action": "MEMO-SEG4-1STEP",
+    "warmup_cases": 10,
+    "measured_cases": 100,
+    "case_selection": "Sort the frozen R33A1 1532-image target RGB manifest by sample_id; use first 10 as warmup and next 100 as measured cases.",
+    "no_gt": true
+  },
+  "timed_components": [
+    "image_load_and_segmentation_preprocess",
+    "restore_before_source",
+    "source_inference",
+    "restore_before_candidate",
+    "candidate_MEMO_update",
+    "candidate_reinference",
+    "restore_after_candidate",
+    "DINO_forward_plus_SOURCE_candidate_conditioning_PCA64",
+    "frozen_transition_safety_head",
+    "simple_mask_geometry_feature",
+    "end_to_end_precommit"
+  ],
+  "setup_only_not_in_per_case_latency": [
+    "DeepLab checkpoint load",
+    "DINOv2 model/processor load",
+    "SOURCE-state parameter/buffer snapshot",
+    "frozen numeric safety-head load"
+  ],
+  "memory": {
+    "report": [
+      "baseline_cuda_allocated_MB_after_models_loaded",
+      "per_case_peak_cuda_allocated_MB",
+      "per_case_peak_cuda_reserved_MB",
+      "per_case_peak_incremental_allocated_MB"
+    ]
+  },
+  "statistics": {
+    "report_ms": [
+      "mean",
+      "std",
+      "median",
+      "p95",
+      "min",
+      "max"
+    ],
+    "report_memory": [
+      "mean",
+      "median",
+      "p95",
+      "max"
+    ]
+  },
+  "claim_boundary": [
+    "This is a representative primary transition runtime, not a claim that all TTA actions have identical cost.",
+    "The historical SOURCE-only runtime remains separately reported.",
+    "Model/DINO loading is setup cost and is not included in steady-state per-case latency.",
+    "No HARM/Dice/GT is read or computed."
+  ],
+  "implementation_fix": {
+    "reason": "Preflight-only execution failed before any model loading/runtime measurement because the v1 protocol contained an incorrect byte SHA256 for the already-authoritative local R33A2B fix1 script.",
+    "scientific_protocol_changed": false,
+    "runtime_panel_changed": false,
+    "action_changed": false,
+    "measurement_definition_changed": false,
+    "old_incorrect_R33A2B_sha256": "3ac8e18b77699b46d798711d9c33564b452450ee286d73e79b0e4d671605e711",
+    "correct_authoritative_local_R33A2B_sha256": "712e862e57f97aabf46a65054bddadde896e0fd44ad5655a9b6490562cf96641",
+    "failure_stage": "[1/5] lineage verification",
+    "model_loading_before_failure": false,
+    "runtime_measurement_before_failure": false
+  }
+}

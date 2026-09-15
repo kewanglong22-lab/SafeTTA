@@ -1,0 +1,19 @@
+============================================================================================================================================================
+SafeTTA B6-P0-5B RUNTIME SCOPE REPORTING AUDIT COMPLETE
+
+Primary paper-facing runtime:
+  semantic full-transition mean   = 639.569 ms/case
+  semantic full-transition median = 634.771 ms/case
+  semantic full-transition p95    = 669.970 ms/case
+
+Secondary decomposition:
+  candidate action transaction    = 555.424 ms/case
+  post-candidate risk scoring     = 28.343 ms/case
+  incremental after SOURCE ready  = 583.767 ms/case
+  auxiliary geometry comparator   = 0.867 ms/case
+  peak CUDA allocated mean/max    = 2890.5 / 2890.5 MB
+
+GATE=PASS_B6_P05B_RUNTIME_SCOPE_REPORTING_AUDIT
+audit_json=F:\MEDSEG_SAFETTA\B6_P05B_runtime_scope_reporting_audit_v1\B6_P05B_RUNTIME_SCOPE_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P05B_runtime_scope_reporting_audit_v1
+============================================================================================================================================================

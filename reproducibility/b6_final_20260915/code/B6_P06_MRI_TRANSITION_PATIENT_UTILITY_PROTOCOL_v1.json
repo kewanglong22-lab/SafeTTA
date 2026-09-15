@@ -1,0 +1,109 @@
+{
+  "protocol_id": "B6_P06_MRI_TRANSITION_PATIENT_UTILITY_PROTOCOL_v1",
+  "version": "2026-09-15-P06-v1",
+  "status": "FROZEN_POST_REVEAL_ADDITIVE_PROTOCOL_BEFORE_NEW_PATIENT_UTILITY_METRICS",
+  "purpose": "Evaluate whether the already-frozen MRI candidate-conditioned HARM rankings translate to patient-level 3D deployment utility on PROMISE12, without any new fitting, score reversal, target calibration, action tuning, or coverage optimization.",
+  "relationship_to_existing_evidence": {
+    "FinalB3_ranking_primary_unchanged": true,
+    "B6_P01A_representation_attribution_unchanged": true,
+    "B6_P03_robustness_unchanged": true,
+    "CM7B_SOURCE_only_patient_utility_is_historical_reference": true,
+    "this_stage_is": "post-reveal explanatory deployment-utility audit"
+  },
+  "panel": {
+    "source_dataset": "Prostate158",
+    "target_dataset": "PROMISE12",
+    "target_patients": 50,
+    "target_slices": 1377,
+    "families": [
+      "DeepLabV3_R50",
+      "SegFormer_B0"
+    ],
+    "actions": [
+      "TENT1",
+      "PL-CONF90",
+      "MEMO-SEG4-1STEP"
+    ],
+    "cells": 6,
+    "evaluation_unit_for_bootstrap": "patient",
+    "harm_definition": "DeltaDice <= -0.02",
+    "benefit_definition": "DeltaDice >= +0.02",
+    "both_empty_slice_dice": 1.0,
+    "patient_3d_dice": "pooled voxel Dice from summed TP/FP/FN within each patient x family x action cell"
+  },
+  "methods": [
+    "SOURCE_ONLY",
+    "ADAPT_ALL",
+    "MATCHED_RANDOM",
+    "SOURCE_STATE_GATING",
+    "SIMPLE_GEOMETRY_GATING",
+    "FULL_TRANSITION_SAFETTA_GATING"
+  ],
+  "primary_operating_point": {
+    "coverage": 0.5,
+    "selection": "exact lowest-risk 50% within each family x action cell",
+    "rounding_rule": "k = floor(n_cell * 0.50); ties broken by stable row key only",
+    "why_fixed": "pre-frozen matched-budget operating point; not selected from deployment outcomes",
+    "bootstrap_selection": "selection labels fixed before bootstrap; do not rerank within bootstrap"
+  },
+  "coverage_curve": {
+    "coverages": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+    ],
+    "role": "secondary descriptive robustness curve",
+    "selection": "exact lowest-risk k within each family x action cell",
+    "prohibition": "do not select or report a best coverage as a tuned operating point"
+  },
+  "metrics": {
+    "primary": "macro6 mean patient-level 3D deployed Dice",
+    "secondary": [
+      "macro6 mean slice deployed Dice",
+      "pooled prevented HARM fraction",
+      "pooled committed HARM rate",
+      "pooled BENEFIT capture fraction",
+      "per-cell patient-level 3D deployed Dice"
+    ]
+  },
+  "random_reference": {
+    "full_target_replicates": 10000,
+    "full_target_seed": 20260919,
+    "matching": "same exact k per family x action cell as the compared gating policy",
+    "bootstrap_reps": 2000,
+    "bootstrap_inner_random_draws": 10,
+    "bootstrap_seed": 20260920
+  },
+  "paired_patient_bootstrap": {
+    "reps": 2000,
+    "seed": 20260920,
+    "cluster": "PROMISE12 patient",
+    "resample_contract": "resample patients and retain every available family x action slice row for each sampled patient occurrence"
+  },
+  "primary_comparisons": [
+    "FULL_TRANSITION_SAFETTA_GATING - MATCHED_RANDOM at exact50",
+    "FULL_TRANSITION_SAFETTA_GATING - SOURCE_STATE_GATING at exact50",
+    "FULL_TRANSITION_SAFETTA_GATING - SIMPLE_GEOMETRY_GATING at exact50"
+  ],
+  "absolute_references": [
+    "SOURCE_ONLY coverage=0",
+    "ADAPT_ALL coverage=1"
+  ],
+  "forbidden": [
+    "new model fitting",
+    "target calibration",
+    "score-direction selection",
+    "coverage optimization",
+    "action-specific hyperparameter tuning",
+    "HARM threshold tuning",
+    "representation fusion after viewing utility outcomes",
+    "dropping patients/slices based on outcomes"
+  ],
+  "asset_gate_before_metrics": "Run B6_P06A asset-binding audit. New patient utility metrics may be computed only after the audit identifies exact frozen score/outcome/count or mask assets."
+}

@@ -1,0 +1,46 @@
+============================================================================================================================================================================
+SafeTTA B6-P0-7B FIXED-SCORE HARM-MARGIN SENSITIVITY COMPLETE
+
+POINT METRICS:
+        panel  margin  is_original_primary_margin  rows  clusters  harm_n  harm_prevalence  pooled_auroc  pooled_auprc  macro_cell_auroc  macro_cell_auprc
+MRI_PROMISE12   -0.01                       False  8262        50    1478         0.178891      0.692995      0.392487          0.735624          0.370685
+MRI_PROMISE12   -0.02                        True  8262        50    1157         0.140039      0.695429      0.381275          0.739470          0.347912
+MRI_PROMISE12   -0.05                       False  8262        50     764         0.092472      0.679840      0.382735          0.736443          0.338554
+POLYPGEN_MEMO   -0.01                       False  4596      1532     450         0.097911      0.759532      0.293844          0.758027          0.297194
+POLYPGEN_MEMO   -0.02                        True  4596      1532     301         0.065492      0.743238      0.255458          0.742863          0.261386
+POLYPGEN_MEMO   -0.05                       False  4596      1532     179         0.038947      0.676747      0.194251          0.675907          0.202415
+
+BOOTSTRAP SUMMARY:
+        panel  margin           metric  valid_reps  requested_reps  bootstrap_mean  ci95_low  ci95_high
+MRI_PROMISE12   -0.01     pooled_auroc        2000            2000        0.692718  0.669751   0.714471
+MRI_PROMISE12   -0.01     pooled_auprc        2000            2000        0.393015  0.355766   0.428926
+MRI_PROMISE12   -0.01 macro_cell_auroc        2000            2000        0.735585  0.716091   0.753741
+MRI_PROMISE12   -0.01 macro_cell_auprc        2000            2000        0.373913  0.341556   0.407217
+MRI_PROMISE12   -0.02     pooled_auroc        2000            2000        0.695326  0.668019   0.721528
+MRI_PROMISE12   -0.02     pooled_auprc        2000            2000        0.381837  0.336213   0.425652
+MRI_PROMISE12   -0.02 macro_cell_auroc        2000            2000        0.739569  0.714091   0.762982
+MRI_PROMISE12   -0.02 macro_cell_auprc        2000            2000        0.351761  0.313311   0.393388
+MRI_PROMISE12   -0.05     pooled_auroc        2000            2000        0.679836  0.639309   0.717275
+MRI_PROMISE12   -0.05     pooled_auprc        2000            2000        0.383634  0.324841   0.438334
+MRI_PROMISE12   -0.05 macro_cell_auroc        2000            2000        0.736127  0.700807   0.767938
+MRI_PROMISE12   -0.05 macro_cell_auprc        2000            2000        0.343965  0.285432   0.405587
+POLYPGEN_MEMO   -0.01     pooled_auroc        2000            2000        0.759773  0.727390   0.790545
+POLYPGEN_MEMO   -0.01     pooled_auprc        2000            2000        0.296401  0.252804   0.340368
+POLYPGEN_MEMO   -0.01 macro_cell_auroc        2000            2000        0.758282  0.725981   0.789304
+POLYPGEN_MEMO   -0.01 macro_cell_auprc        2000            2000        0.302899  0.259537   0.345788
+POLYPGEN_MEMO   -0.02     pooled_auroc        2000            2000        0.743547  0.699963   0.785279
+POLYPGEN_MEMO   -0.02     pooled_auprc        2000            2000        0.258936  0.208482   0.314084
+POLYPGEN_MEMO   -0.02 macro_cell_auroc        2000            2000        0.743231  0.699929   0.785010
+POLYPGEN_MEMO   -0.02 macro_cell_auprc        2000            2000        0.268938  0.218897   0.323248
+POLYPGEN_MEMO   -0.05     pooled_auroc        2000            2000        0.677534  0.611251   0.740899
+POLYPGEN_MEMO   -0.05     pooled_auprc        2000            2000        0.199265  0.146572   0.261010
+POLYPGEN_MEMO   -0.05 macro_cell_auroc        2000            2000        0.676623  0.610813   0.740243
+POLYPGEN_MEMO   -0.05 macro_cell_auprc        2000            2000        0.212472  0.159030   0.274828
+
+Original -0.02 endpoint remains primary: YES
+No refit/calibration/score flip/margin selection: YES
+
+GATE=PASS_B6_P07B_FIXED_SCORE_HARM_MARGIN_SENSITIVITY_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P07B_fixed_score_harm_margin_sensitivity_v1\B6_P07B_HARM_MARGIN_SENSITIVITY_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P07B_fixed_score_harm_margin_sensitivity_v1
+============================================================================================================================================================================

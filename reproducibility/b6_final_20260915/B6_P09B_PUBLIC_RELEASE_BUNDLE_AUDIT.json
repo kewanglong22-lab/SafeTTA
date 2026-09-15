@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P09B_PUBLIC_RELEASE_BUNDLE",
+  "version": "2026-09-15-B6-P09B-v1",
+  "protocol": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\B6_P09B_PUBLIC_RELEASE_BUNDLE_PROTOCOL_v1.json",
+    "sha256": "3e2c64d1c34f6bfd45619479b43ae3b6377a0265eaf7aecfdd63362d2af6ad82",
+    "status": "FROZEN_AFTER_P09A_BEFORE_GITHUB_SYNC"
+  },
+  "p09a": {
+    "freeze_path": "F:\\MEDSEG_SAFETTA\\B6_P09A_final_evidence_freeze_v1\\B6_P09A_FINAL_EVIDENCE_FREEZE.json",
+    "freeze_sha256": "d213be9de7ba7e615a1f6e3b4268e1c34e125caad4b10e20941afb79a77a4e27",
+    "resolved_stages": 10,
+    "evidence_files": 43,
+    "supported_claims": 6,
+    "forbidden_claims": 8
+  },
+  "code_files": 64,
+  "compact_evidence_files": 33,
+  "bundle_manifest_rows_before_audit_json": 98,
+  "raw_prediction_tables_included": false,
+  "mask_files_included": false,
+  "checkpoint_files_included": false,
+  "new_scientific_metrics": false,
+  "github_network_write": false
+}

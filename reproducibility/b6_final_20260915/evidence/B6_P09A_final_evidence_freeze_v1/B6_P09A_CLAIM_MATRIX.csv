@@ -1,0 +1,15 @@
+﻿status,claim,evidence_stage_ids
+SUPPORTED,Candidate-conditioned information adds future-HARM ranking signal beyond SOURCE-state-only information.,B6_P01A_MRI_ATTRIBUTION;B6_P01B_POLYPGEN_ATTRIBUTION;B6_P08B_STATISTICAL_CLOSURE
+SUPPORTED,The ranking signal transfers across external domain and held-out/unseen action shifts.,FinalB3_MRI;B6_P01B_POLYPGEN_ATTRIBUTION;B6_P07B_MARGIN_SENSITIVITY
+SUPPORTED,Representation effectiveness is modality/endpoint dependent; simple geometry is especially strong on MRI.,B6_P01A_MRI_ATTRIBUTION;B6_P03_MRI_ROBUSTNESS;B6_P06B_MRI_PATIENT_UTILITY
+SUPPORTED,Fixed-budget ranking can improve safety allocation without necessarily improving final Dice over SOURCE-only deployment.,B6_P02_POLYPGEN_UTILITY;B6_P02B_POLYPGEN_ABSOLUTE;B6_P06B_MRI_PATIENT_UTILITY
+SUPPORTED,"NeoPolyp shared transition has significant macro-action AUPRC gain over SOURCE_Q66_ONLY, while macro-action AUROC increment is not statistically significant.",B6_P08B_STATISTICAL_CLOSURE
+SUPPORTED,Full pre-commit runtime is dominated by candidate TTA execution.,B6_P05B_RUNTIME
+FORBIDDEN,Semantic transition is universally superior.,
+FORBIDDEN,SafeTTA universally improves segmentation Dice.,
+FORBIDDEN,SafeTTA exact50 outperforms SOURCE-only deployment.,
+FORBIDDEN,PolypGen exact50 full transition improves Dice over matched random.,
+FORBIDDEN,MRI is zero-shot cross-task transfer.,
+FORBIDDEN,The complete full-transition pre-commit pipeline is lightweight.,
+FORBIDDEN,The target-domain sigmoid output is calibrated probability.,
+FORBIDDEN,Historical PolypGen/PROMISE12 analyses are pristine prospective validation.,

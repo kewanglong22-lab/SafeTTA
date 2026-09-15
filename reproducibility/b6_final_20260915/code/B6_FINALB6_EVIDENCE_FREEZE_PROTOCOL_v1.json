@@ -1,0 +1,122 @@
+{
+  "protocol_id": "B6_FINALB6_EVIDENCE_FREEZE_PROTOCOL_v1",
+  "version": "2026-09-15-FinalB6-v1",
+  "status": "POST_EXPERIMENT_EVIDENCE_FREEZE_BEFORE_MANUSCRIPT_REVISION",
+  "purpose": "Freeze the completed B6 evidence chain and allowed claim set before manuscript revision.",
+  "completed_evidence": {
+    "P01A_MRI_attribution": {
+      "role": "mechanism attribution",
+      "anchors": {
+        "SOURCE_STATE_AUROC": 0.528816,
+        "SOURCE_STATE_AUPRC": 0.171936,
+        "SEMANTIC_TRANSITION_AUROC": 0.571579,
+        "SEMANTIC_TRANSITION_AUPRC": 0.347158,
+        "SOURCE_PLUS_SIMPLE_MASK_CHANGE_AUROC": 0.850306,
+        "SOURCE_PLUS_SIMPLE_MASK_CHANGE_AUPRC": 0.415812,
+        "FULL_TRANSITION_SAFETTA_AUROC": 0.73947,
+        "FULL_TRANSITION_SAFETTA_AUPRC": 0.347912,
+        "FULL_MINUS_SIMPLE_AUROC": -0.110835,
+        "FULL_MINUS_SIMPLE_AUROC_CI95": [
+          -0.137994,
+          -0.083142
+        ],
+        "FULL_MINUS_SIMPLE_AUPRC": -0.067901,
+        "FULL_MINUS_SIMPLE_AUPRC_CI95": [
+          -0.126486,
+          -0.019125
+        ]
+      }
+    },
+    "P01B_PolypGen_attribution": {
+      "role": "cross-domain/cross-action external attribution",
+      "anchors": {
+        "SOURCE_STATE_AUROC": 0.649536,
+        "SOURCE_STATE_AUPRC": 0.119172,
+        "SOURCE_PLUS_SIMPLE_MASK_CHANGE_AUROC": 0.760411,
+        "SOURCE_PLUS_SIMPLE_MASK_CHANGE_AUPRC": 0.209984,
+        "FROZEN_FULL_TRANSITION_SAFETTA_AUROC": 0.743238,
+        "FROZEN_FULL_TRANSITION_SAFETTA_AUPRC": 0.255458,
+        "SIMPLE_MINUS_SOURCE_AUROC": 0.110874,
+        "SIMPLE_MINUS_SOURCE_AUROC_CI95": [
+          0.084972,
+          0.13679
+        ],
+        "SIMPLE_MINUS_SOURCE_AUPRC": 0.090812,
+        "SIMPLE_MINUS_SOURCE_AUPRC_CI95": [
+          0.058587,
+          0.133482
+        ]
+      }
+    },
+    "P02_PolypGen_exact50_utility": {
+      "role": "matched-coverage deployment utility",
+      "anchors": {
+        "SOURCE_STATE_DEPLOYED_DICE": 0.749321,
+        "SIMPLE_DEPLOYED_DICE": 0.748043,
+        "FULL_DEPLOYED_DICE": 0.754432,
+        "SIMPLE_MINUS_SOURCE_DEPLOYED_DICE": -0.001278,
+        "SIMPLE_MINUS_SOURCE_DEPLOYED_DICE_CI95": [
+          -0.002008,
+          -0.000529
+        ],
+        "SIMPLE_MINUS_SOURCE_PREVENTED_HARM": 0.106312,
+        "SIMPLE_MINUS_SOURCE_PREVENTED_HARM_CI95": [
+          0.066455,
+          0.146587
+        ],
+        "FULL_MINUS_SOURCE_DEPLOYED_DICE": 0.005111,
+        "FULL_MINUS_SOURCE_DEPLOYED_DICE_CI95": [
+          0.0034,
+          0.006998
+        ],
+        "FULL_MINUS_SOURCE_PREVENTED_HARM": 0.069767,
+        "FULL_MINUS_SOURCE_PREVENTED_HARM_CI95": [
+          0.023024,
+          0.11465
+        ],
+        "FULL_MINUS_SOURCE_BENEFIT_CAPTURE": 0.118068,
+        "FULL_MINUS_SOURCE_BENEFIT_CAPTURE_CI95": [
+          0.075784,
+          0.162438
+        ]
+      }
+    },
+    "P03_MRI_robustness": {
+      "role": "robustness",
+      "anchors": {
+        "GT_NONEMPTY_FULL_AUROC": 0.680667,
+        "GT_NONEMPTY_FULL_AUPRC": 0.315584,
+        "GT_NONEMPTY_SIMPLE_AUROC": 0.849961,
+        "GT_NONEMPTY_SIMPLE_AUPRC": 0.525523,
+        "GT_NONEMPTY_FULL_MINUS_SIMPLE_AUROC": -0.167533,
+        "GT_NONEMPTY_FULL_MINUS_SIMPLE_AUROC_CI95": [
+          -0.198275,
+          -0.136727
+        ],
+        "GT_NONEMPTY_FULL_MINUS_SIMPLE_AUPRC": -0.207148,
+        "GT_NONEMPTY_FULL_MINUS_SIMPLE_AUPRC_CI95": [
+          -0.268632,
+          -0.147953
+        ]
+      }
+    }
+  },
+  "allowed_claims": [
+    "Candidate-conditioned information adds future-HARM ranking information beyond SOURCE state across MRI and colonoscopy external shifts.",
+    "Simple candidate mask geometry is a strong no-GT harm signal and is especially effective on MRI.",
+    "The best representation of candidate change is modality dependent; geometry is not universally superior to semantic transition.",
+    "On PolypGen unseen MEMO, simple geometry significantly improves AUROC and AUPRC over SOURCE-state-only ranking.",
+    "At frozen exact-50 coverage on PolypGen, simple geometry prevents more HARM but sacrifices BENEFIT and does not improve deployed Dice over SOURCE-state gating.",
+    "At frozen exact-50 coverage on PolypGen, the frozen full transition score improves deployed Dice, HARM prevention, and BENEFIT capture versus SOURCE-state gating.",
+    "Ranking quality and deployment utility are distinct endpoints."
+  ],
+  "forbidden_claims": [
+    "Semantic transition is universally the best or necessary candidate representation.",
+    "Simple geometry universally replaces semantic transition.",
+    "Simple geometry improves deployed Dice on PolypGen exact-50.",
+    "Any exact-50 policy is guaranteed to outperform SOURCE-only deployment.",
+    "The 50% coverage was optimized for deployment benefit.",
+    "P0-1/P0-2 results establish calibration or an operating threshold.",
+    "PolypGen is fully prospective/pristine external evaluation."
+  ]
+}

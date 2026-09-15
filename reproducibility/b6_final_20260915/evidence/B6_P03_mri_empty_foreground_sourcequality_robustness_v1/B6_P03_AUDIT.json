@@ -1,0 +1,65 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P03_MRI_STRATIFIED_ROBUSTNESS_AUDIT_COMPLETE",
+  "version": "2026-09-15-B6-P03-v1",
+  "scientific_status": "post-freeze/post-reveal fixed-score robustness audit",
+  "protocol_sha256": "6a2ec54c59e38d35367505343c9e1baa115a2434356415255708e03ef053a1a6",
+  "no_refit": true,
+  "no_score_flip": true,
+  "no_harm_change": true,
+  "historical_primary_replaced": false,
+  "gt": {
+    "source": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM6_promise12_gt_reveal_locked_policy_evaluation_fix1_v1\\PROMISE12_GT_MASKS_PACKBITS.npy",
+    "sha256": "41c8da9e6eb207d63acf4000374f877ae58d9289959753e447f2c0353223058d",
+    "nonempty_slices": 778,
+    "empty_slices": 599,
+    "axis_binding": "PASS_via_CM6_case_audit_positive_slice_counts"
+  },
+  "outputs": {
+    "B6_P03_STRATIFIED_CELL_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_STRATIFIED_CELL_METRICS.csv",
+      "sha256": "b98b82b2bc439c23e0480f55bb80ad2a21961769a0d6b83d6b5902476b1e5f0f",
+      "bytes": 40806
+    },
+    "B6_P03_STRATIFIED_MACRO_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_STRATIFIED_MACRO_METRICS.csv",
+      "sha256": "7bbe3bcabf202e168787d473209b5845ac310a36edfcc94f28c0addf0a3ccf18",
+      "bytes": 5301
+    },
+    "B6_P03_ANALYSIS_ROWS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_ANALYSIS_ROWS.csv",
+      "sha256": "7fecb4bd8681ed922e9feeff0649cd28a3051aceddb5540f8dbf1ac0ba68fd9a",
+      "bytes": 6418492
+    },
+    "B6_P03_SOURCE_FG_CUTPOINTS.json": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_SOURCE_FG_CUTPOINTS.json",
+      "sha256": "5b9279af38282dcb4c4f8fe9f8548896620897a88636fa108b7fa99edc33849b",
+      "bytes": 377
+    },
+    "B6_P03_SOURCE_DICE_CUTPOINTS.json": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_SOURCE_DICE_CUTPOINTS.json",
+      "sha256": "ab9fbda7893168023271410e6c899f22285cede96fc2da139ee8a3cd45fd83e4",
+      "bytes": 219
+    },
+    "B6_P03_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "03b542aa46c924b02e5dee2545b6d6009cd4e4f987c99d47d92130f15e48e65a",
+      "bytes": 2283441
+    },
+    "B6_P03_FULL_MINUS_SIMPLE_DELTA_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_FULL_MINUS_SIMPLE_DELTA_REPLICATES.csv",
+      "sha256": "e10c28b1588f2c5a8275ecda86b2c4daac234e63379cf4a1875959d10a481a0a",
+      "bytes": 640999
+    },
+    "B6_P03_BOOTSTRAP_CI.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_BOOTSTRAP_CI.csv",
+      "sha256": "5cc313fdbd6aad767e76f30002c119af1d8cb57d894f533771236ddb21cf98df",
+      "bytes": 3368
+    },
+    "B6_P03_FULL_MINUS_SIMPLE_DELTAS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P03_mri_empty_foreground_sourcequality_robustness_v1\\B6_P03_FULL_MINUS_SIMPLE_DELTAS.csv",
+      "sha256": "8e6dfbb03aac12280adccfbf0b79042ae0fead3b1f997cae87caca2d0a33ab03",
+      "bytes": 971
+    }
+  }
+}

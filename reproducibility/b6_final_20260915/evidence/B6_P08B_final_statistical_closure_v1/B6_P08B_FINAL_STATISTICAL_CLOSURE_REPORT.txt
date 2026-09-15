@@ -1,0 +1,59 @@
+================================================================================================================================================================================
+SafeTTA B6-P08B FINAL STATISTICAL CLOSURE COMPLETE
+
+NEOPOLYP LOAO POINT SUMMARY
+{
+  "source_macro_action_auroc": 0.7281897701956428,
+  "shared_macro_action_auroc": 0.7415999618331841,
+  "delta_macro_action_auroc": 0.013410191637541341,
+  "source_macro_action_auprc": 0.2956825726410501,
+  "shared_macro_action_auprc": 0.4158594697526734,
+  "delta_macro_action_auprc": 0.1201768971116234,
+  "anchor_parity": {
+    "source_anchor": 0.72819,
+    "shared_anchor": 0.7416,
+    "delta_anchor": 0.01341,
+    "source_abs_diff": 2.2980435721020598e-07,
+    "shared_abs_diff": 3.816681592994087e-08,
+    "delta_abs_diff": 1.9163754134098043e-07,
+    "tolerance": 0.0005,
+    "pass": true
+  }
+}
+
+NEOPOLYP PAIRED BOOTSTRAP SUMMARY
+         scope  heldout_action                          metric  requested_reps  valid_reps  bootstrap_mean  ci95_low  ci95_high  ci_excludes_zero
+MACRO_3_ACTION            None delta_auroc_shared_minus_source            2000        2000        0.013596 -0.003951   0.031951             False
+MACRO_3_ACTION            None delta_auprc_shared_minus_source            2000        2000        0.121271  0.095609   0.147940              True
+    PER_ACTION MEMO-SEG4-1STEP delta_auroc_shared_minus_source            2000        2000       -0.009951 -0.044383   0.024421             False
+    PER_ACTION MEMO-SEG4-1STEP delta_auprc_shared_minus_source            2000        2000        0.119815  0.070080   0.174837              True
+    PER_ACTION       PL-CONF90 delta_auroc_shared_minus_source            2000        2000        0.067037  0.042476   0.091755              True
+    PER_ACTION       PL-CONF90 delta_auprc_shared_minus_source            2000        2000        0.202478  0.161942   0.240737              True
+    PER_ACTION           TENT1 delta_auroc_shared_minus_source            2000        2000       -0.016298 -0.038445   0.005213             False
+    PER_ACTION           TENT1 delta_auprc_shared_minus_source            2000        2000        0.041519  0.006438   0.074171              True
+
+MRI HARM EVENT SUPPORT
+       family          action  rows  harm_rows  harm_prevalence  unique_patients  harm_positive_unique_patients
+DeepLabV3_R50 MEMO-SEG4-1STEP  1377         28         0.020334               50                             18
+DeepLabV3_R50       PL-CONF90  1377        210         0.152505               50                             50
+DeepLabV3_R50           TENT1  1377        284         0.206245               50                             49
+ SegFormer_B0 MEMO-SEG4-1STEP  1377        124         0.090051               50                             33
+ SegFormer_B0       PL-CONF90  1377        101         0.073348               50                             34
+ SegFormer_B0           TENT1  1377        410         0.297749               50                             50
+
+POLYPGEN HARM EVENT SUPPORT
+         model_state_id  rows  harm_rows  harm_prevalence  unique_physical_images  harm_positive_unique_physical_images
+DeepLabV3-R50::20260817  1532        100         0.065274                    1532                                   100
+DeepLabV3-R50::20260818  1532         95         0.062010                    1532                                    95
+DeepLabV3-R50::20260819  1532        106         0.069191                    1532                                   106
+        POOLED_3_STATES  4596        301         0.065492                    1532                                   228
+
+PolypGen highest recoverable statistical unit:
+physical image/frame
+
+No refit/inference/calibration/score flip/selector change: YES
+
+GATE=PASS_B6_P08B_FINAL_STATISTICAL_CLOSURE_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P08B_final_statistical_closure_v1\B6_P08B_FINAL_STATISTICAL_CLOSURE_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P08B_final_statistical_closure_v1
+================================================================================================================================================================================

@@ -1,0 +1,40 @@
+{
+  "amendment_id": "B6_P07_POLYPGEN_SCORE_BINDING_AMENDMENT_v1",
+  "version": "2026-09-15-P07-binding-v1",
+  "status": "FROZEN_AFTER_P07A_SCHEMA_DISCOVERY_BEFORE_P07B_SENSITIVITY_METRICS",
+  "reason": "P07A fix1 correctly found a 4596-row direct matched panel but its generic fuzzy schema heuristic labeled adic_harm_risk as score_col because that column name was shorter. The asset schema itself exposes the semantically correct frozen SafeTTA column safettta_external_harm_risk. This amendment freezes the exact SafeTTA score binding before any margin-sensitivity metrics are computed.",
+  "polypgen_binding": {
+    "score_source": {
+      "path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\R33A2B_POLYPGEN_MEMO_EXTERNAL_SAFETTA_SCORE_PRE_HARM_LOCK.csv",
+      "column": "safettta_external_harm_risk",
+      "stage": "pre-HARM lock",
+      "expected_rows": 4596,
+      "expected_physical_images": 1532
+    },
+    "outcome_source": {
+      "path": "F:\\MEDSEG_SAFETTA\\R33A3_first_polypgen_memo_harm_reveal_external_joint_shift_evaluation_v1\\R33A3_POLYPGEN_MEMO_MODELCASE_OUTCOMES.csv",
+      "delta_column": "memo_delta_dice",
+      "primary_harm_label_column": "memo_harm_label",
+      "stage": "first HARM reveal",
+      "expected_rows": 4596,
+      "expected_physical_images": 1532
+    },
+    "join_keys": [
+      "sample_id",
+      "model_family",
+      "model_state_id",
+      "training_seed",
+      "checkpoint_sha256"
+    ],
+    "score_direction": "higher = greater future-HARM risk",
+    "state_column": "model_state_id"
+  },
+  "scientific_changes": {
+    "model_refit": false,
+    "target_calibration": false,
+    "score_flip": false,
+    "margin_selection": false,
+    "representation_change": false,
+    "action_change": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "protocol_id": "B6_P05_TRANSITION_RUNTIME_BINDING_PROTOCOL_v1",
+  "version": "2026-09-15-P05-v1",
+  "status": "FROZEN_BEFORE_TRANSITION_RUNTIME_MEASUREMENT",
+  "purpose": "Bind exact existing SafeTTA action/DINO/runtime code lineage before measuring full transition latency and peak CUDA memory.",
+  "scientific_metrics": false,
+  "model_loading": false,
+  "inference": false,
+  "gt_read": false,
+  "runtime_measurement": false,
+  "target_hardware_for_next_stage": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "primary_runtime_scope_for_next_stage": {
+    "model_family": "DeepLabV3-R50",
+    "actions": [
+      "TENT1",
+      "PL-CONF90",
+      "MEMO-SEG4-1STEP"
+    ],
+    "batch_size": 1,
+    "components": [
+      "SOURCE prediction if required by action",
+      "candidate TTA update",
+      "candidate re-inference",
+      "DINOv2 token extraction",
+      "SOURCE/candidate mask-conditioned pooling",
+      "PCA64 + scaler + frozen safety head",
+      "shadow-state snapshot/restore"
+    ],
+    "memory": "peak CUDA allocated and reserved memory"
+  },
+  "canonical_known_lineage": {
+    "TENT1": "F:\\MEDSEG_SAFETTA\\code\\Q1_R05D3_neopolyp_source_a1_prediction_lock_v1_fix1.py",
+    "PL_CONF90": "F:\\MEDSEG_SAFETTA\\code\\Q1_R13B_full_neopolyp_pl_conf90_prediction_lock_fix2.py",
+    "exact_execution_context_bundle": "F:\\MEDSEG_SAFETTA\\R30A4B2A2_exact_execution_context_bundle_v1\\R30A4B2A2_EXACT_EXECUTION_CONTEXT_BUNDLE.txt",
+    "expected_context_sha256": "c87f65036f232908cabab1e00060bf6be9c96374b1cc89959a61b9a4a5fc565c"
+  },
+  "selection_rule_for_unknown_assets": "Static lineage/provenance match only; do not choose code path based on measured speed.",
+  "next_stage_after_pass": "Generate and run exact full-transition runtime benchmark using the bound code paths."
+}

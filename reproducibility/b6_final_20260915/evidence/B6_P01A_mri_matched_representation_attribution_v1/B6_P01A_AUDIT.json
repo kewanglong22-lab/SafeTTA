@@ -1,0 +1,151 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P01A_MRI_MATCHED_REPRESENTATION_ATTRIBUTION_COMPLETE",
+  "version": "2026-09-15-B6-P01A-v1",
+  "scientific_status": "post-freeze/post-reveal matched-control attribution",
+  "protocol": {
+    "path": "F:\\MEDSEG_SAFETTA\\code\\B6_P01A_MRI_MATCHED_REPRESENTATION_PROTOCOL_v1.json",
+    "sha256": "2eea6c75886ebe715f5b2e161761c400ae2688702a672c006676232b08b1fb67"
+  },
+  "upstream": {
+    "FinalB1_lock_sha256": "5900b35a6971ceff32ddd6e22e8332cf9fdf68e65d9a6c2711c52a4d324eacc5",
+    "FinalB2_lock_sha256": "def3a692f50342d78781e7be0a38b5afcf1e34962ce20c21801510a6cf985022",
+    "FinalB3_lock_sha256": "924b8b882c971be7a5562b7d0fc53cf1eece343786f0ff5f24d46b91a86a191b",
+    "P0_4_fix1_gate": "PASS_B6_P04_FIX1_EXACT_ID_AND_PANEL_BINDING_AUDIT_COMPLETE"
+  },
+  "design": {
+    "train": "Prostate158 other-two actions",
+    "test": "PROMISE12 held-out action",
+    "target_fit_rows": 0,
+    "test_cluster_unit": "patient/case_key",
+    "reliability_change_baseline": "NOT_INCLUDED_NOT_RECOVERABLE",
+    "simple_mask_change": [
+      "prediction Dice",
+      "prediction IoU",
+      "signed foreground fraction delta",
+      "signed boundary density delta"
+    ],
+    "full_transition_score": "frozen Final-B3; not refit"
+  },
+  "model_records": {
+    "TENT1::SOURCE_STATE": {
+      "heldout_action": "TENT1",
+      "representation": "SOURCE_STATE",
+      "training_rows": 14212,
+      "training_harm": 852,
+      "feature_dim": 66,
+      "target_rows_in_fit": 0
+    },
+    "TENT1::SEMANTIC_TRANSITION": {
+      "heldout_action": "TENT1",
+      "representation": "SEMANTIC_TRANSITION",
+      "training_rows": 14212,
+      "training_harm": 852,
+      "feature_dim": 64,
+      "target_rows_in_fit": 0
+    },
+    "TENT1::SOURCE_PLUS_SIMPLE_MASK_CHANGE": {
+      "heldout_action": "TENT1",
+      "representation": "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+      "training_rows": 14212,
+      "training_harm": 852,
+      "feature_dim": 70,
+      "target_rows_in_fit": 0
+    },
+    "PL-CONF90::SOURCE_STATE": {
+      "heldout_action": "PL-CONF90",
+      "representation": "SOURCE_STATE",
+      "training_rows": 14212,
+      "training_harm": 1214,
+      "feature_dim": 66,
+      "target_rows_in_fit": 0
+    },
+    "PL-CONF90::SEMANTIC_TRANSITION": {
+      "heldout_action": "PL-CONF90",
+      "representation": "SEMANTIC_TRANSITION",
+      "training_rows": 14212,
+      "training_harm": 1214,
+      "feature_dim": 64,
+      "target_rows_in_fit": 0
+    },
+    "PL-CONF90::SOURCE_PLUS_SIMPLE_MASK_CHANGE": {
+      "heldout_action": "PL-CONF90",
+      "representation": "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+      "training_rows": 14212,
+      "training_harm": 1214,
+      "feature_dim": 70,
+      "target_rows_in_fit": 0
+    },
+    "MEMO-SEG4-1STEP::SOURCE_STATE": {
+      "heldout_action": "MEMO-SEG4-1STEP",
+      "representation": "SOURCE_STATE",
+      "training_rows": 14212,
+      "training_harm": 1714,
+      "feature_dim": 66,
+      "target_rows_in_fit": 0
+    },
+    "MEMO-SEG4-1STEP::SEMANTIC_TRANSITION": {
+      "heldout_action": "MEMO-SEG4-1STEP",
+      "representation": "SEMANTIC_TRANSITION",
+      "training_rows": 14212,
+      "training_harm": 1714,
+      "feature_dim": 64,
+      "target_rows_in_fit": 0
+    },
+    "MEMO-SEG4-1STEP::SOURCE_PLUS_SIMPLE_MASK_CHANGE": {
+      "heldout_action": "MEMO-SEG4-1STEP",
+      "representation": "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+      "training_rows": 14212,
+      "training_harm": 1714,
+      "feature_dim": 70,
+      "target_rows_in_fit": 0
+    }
+  },
+  "outputs": {
+    "B6_P01A_SOURCE_LOAO_MATCHED_SCORES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_SOURCE_LOAO_MATCHED_SCORES.csv",
+      "sha256": "4edca220b449fed9af57f146654e29928ead6899b52d757195cbb5b126e2845d",
+      "bytes": 13085989
+    },
+    "B6_P01A_PROMISE12_MATCHED_SCORES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PROMISE12_MATCHED_SCORES.csv",
+      "sha256": "70a311b8d3f0e0d0d226d4ce7d446a70f73027c066bdae284fd85115c656800b",
+      "bytes": 4717720
+    },
+    "B6_P01A_SOURCE_CELL_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_SOURCE_CELL_METRICS.csv",
+      "sha256": "63867ef6d258a19c125171d053e3b375274fd7b7d3725e5427ccbd7e11883bf8",
+      "bytes": 2812
+    },
+    "B6_P01A_PROMISE12_CELL_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PROMISE12_CELL_METRICS.csv",
+      "sha256": "ad3408b6aa8e5284c47f71bf58727b68bc1cda68e58c4ad5ac148b0917ca932b",
+      "bytes": 2806
+    },
+    "B6_P01A_SOURCE_MACRO_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_SOURCE_MACRO_METRICS.csv",
+      "sha256": "ea93dc13711a7eebf8b3e8ef69ef425f5788bc791ac74a07b875faaa12970bf7",
+      "bytes": 423
+    },
+    "B6_P01A_PROMISE12_MACRO_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PROMISE12_MACRO_METRICS.csv",
+      "sha256": "f61cbfd3a121e506353da24007467a9eaffa57e2ca8871f4d001a043eee78730",
+      "bytes": 421
+    },
+    "B6_P01A_PATIENT_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PATIENT_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "baf616be13b709b8a0962f5401b7f61f14d9d9ca68bee4e4b3a2016ecb723484",
+      "bytes": 317953
+    },
+    "B6_P01A_PAIRED_DELTA_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PAIRED_DELTA_REPLICATES.csv",
+      "sha256": "c5ece190666df7aeef25ea39e435de6fa5cb41094a1ce521e6a005f2b8c332f4",
+      "bytes": 638267
+    },
+    "B6_P01A_PAIRED_DELTAS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PAIRED_DELTAS.csv",
+      "sha256": "5d51f1be13136afaca96d98eb9c3a67a0cd1bb491bbbd5c2e3ab05c7390247af",
+      "bytes": 711
+    }
+  }
+}

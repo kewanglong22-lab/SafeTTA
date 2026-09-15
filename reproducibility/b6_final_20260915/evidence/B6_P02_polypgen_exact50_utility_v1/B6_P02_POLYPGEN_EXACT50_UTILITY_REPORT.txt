@@ -1,0 +1,33 @@
+====================================================================================================================================================================
+SafeTTA B6-P0-2 POLYPGEN EXACT50 UTILITY COMPLETE
+
+                representation  coverage  mean_deployed_dice  mean_deployed_delta_vs_source  prevented_harm_fraction  committed_harm_rate  benefit_capture_fraction
+                  SOURCE_STATE       0.5            0.749321                      -0.005575                 0.730897             0.035248                  0.279070
+SOURCE_PLUS_SIMPLE_MASK_CHANGE       0.5            0.748043                      -0.006852                 0.837209             0.021323                  0.121646
+FROZEN_FULL_TRANSITION_SAFETTA       0.5            0.754432                      -0.000464                 0.800664             0.026110                  0.397138
+
+PAIRED DELTAS:
+                                                     comparison                        metric  valid_reps  point_delta  bootstrap_mean_delta  ci95_low  ci95_high  ci_excludes_zero
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE            mean_deployed_dice        2000    -0.001278             -0.001280 -0.002008  -0.000529              True
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE mean_deployed_delta_vs_source        2000    -0.001278             -0.001280 -0.002008  -0.000529              True
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE       prevented_harm_fraction        2000     0.106312              0.106398  0.066455   0.146587              True
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE      benefit_capture_fraction        2000    -0.157424             -0.157767 -0.197487  -0.119929              True
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE           committed_harm_rate        2000    -0.013925             -0.013925 -0.019601  -0.008676              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE            mean_deployed_dice        2000     0.005111              0.005114  0.003400   0.006998              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE mean_deployed_delta_vs_source        2000     0.005111              0.005114  0.003400   0.006998              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE       prevented_harm_fraction        2000     0.069767              0.069252  0.023024   0.114650              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE      benefit_capture_fraction        2000     0.118068              0.119015  0.075784   0.162438              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE           committed_harm_rate        2000    -0.009138             -0.009052 -0.014878  -0.003072              True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA            mean_deployed_dice        2000    -0.006389             -0.006394 -0.008297  -0.004700              True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA mean_deployed_delta_vs_source        2000    -0.006389             -0.006394 -0.008297  -0.004700              True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA       prevented_harm_fraction        2000     0.036545              0.037145 -0.003356   0.078960             False
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA      benefit_capture_fraction        2000    -0.275492             -0.276782 -0.319419  -0.235414              True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA           committed_harm_rate        2000    -0.004787             -0.004873 -0.010360   0.000323             False
+
+UTILITY_SUPPORTED=False
+SAFETY_SUPPORTED=True
+DECISION=CANDIDATE_CONDITIONING_EXACT50_SAFETY_SUPPORTED_UTILITY_NOT_CONFIRMED
+GATE=PASS_B6_P02_POLYPGEN_EXACT50_UTILITY_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P02_polypgen_exact50_utility_v1\B6_P02_POLYPGEN_EXACT50_UTILITY_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P02_polypgen_exact50_utility_v1
+====================================================================================================================================================================

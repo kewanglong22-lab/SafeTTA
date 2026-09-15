@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P01B_POLYPGEN_GEOMETRY_CORE_EXPERIMENT_COMPLETE",
+  "decision": "CANDIDATE_CONDITIONING_INCREMENT_SUPPORTED",
+  "version": "2026-09-15-B6-P01B-GEOM-CORE-v1-fix5",
+  "protocol_sha256": "ad36a75760e36112ee373131e0212ad9819128c26aef24db4ec5a91c9a97095a",
+  "parent_protocol_sha256": "64ad2ac72ff6fc04ba07a6492e27c6b1af9a537fd0a49e787b5ae2d0b9ea62f9",
+  "target_fit_rows": 0,
+  "target_calibration_rows": 0,
+  "geometry_features_changed_after_target": false,
+  "semantic_dino_replay": false,
+  "source_train_rows": 14400,
+  "target_rows": 4596,
+  "target_physical_images": 1532,
+  "target_harm_prevalence": 0.0654917319408181,
+  "primary_comparison": "SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE",
+  "primary_auroc_point_delta": 0.110874113838621,
+  "primary_auroc_ci95": [
+    0.08497220600684743,
+    0.13678960314652064
+  ],
+  "frozen_full_semantic_reference_included": true,
+  "outputs": {
+    "B6_P01B_POLYPGEN_GEOMETRY_CORE_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_METRICS.csv",
+      "sha256": "3cf80a4b478af5f0e14dd03c13cec629759e3781d42ec84bfc07efa2c4f24a3e",
+      "bytes": 324
+    },
+    "B6_P01B_POLYPGEN_GEOMETRY_CORE_BOOTSTRAP_CI.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_BOOTSTRAP_CI.csv",
+      "sha256": "12cf4d6409b5f5c87342cba97ce872e60ec43e2da78f8df335ceb8bf4c339e2b",
+      "bytes": 504
+    },
+    "B6_P01B_POLYPGEN_GEOMETRY_CORE_PAIRED_DELTAS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_PAIRED_DELTAS.csv",
+      "sha256": "7d3e4c32d7fff948fecc18a7f2d4cad690972a659b651c402209ed60c72dbfca",
+      "bytes": 998
+    },
+    "B6_P01B_POLYPGEN_GEOMETRY_CORE_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "9e22028d60ae126ccbfbd0cf8ab1799d9e8901d1744f4b647b8844964051feea",
+      "bytes": 413805
+    },
+    "B6_P01B_POLYPGEN_GEOMETRY_CORE_SCORES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_SCORES.csv",
+      "sha256": "d467f79ce49c04dd1091cc29b5ea4d87d419e61f86d43ab255238f9d4b88bfca",
+      "bytes": 488646
+    },
+    "B6_P01B_POLYPGEN_GEOMETRY_CORE_BINDING.json": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\\B6_P01B_POLYPGEN_GEOMETRY_CORE_BINDING.json",
+      "sha256": "76d0a395556ad84b8e26d85fe1e2b7ab5efe233a185be3856b69d1ffe3031244",
+      "bytes": 25474
+    }
+  }
+}

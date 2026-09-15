@@ -1,0 +1,25 @@
+============================================================================================================================================================================
+SafeTTA B6-P0-6B MRI TRANSITION PATIENT UTILITY COMPLETE
+
+EXACT50 POINT TABLE:
+                        policy  coverage  adapted_rows  mean_patient_3d_deployed_dice  mean_slice_deployed_dice  prevented_harm_fraction  committed_harm_rate  benefit_capture_fraction  harm_n  benefit_n
+                   SOURCE_ONLY  0.000000             0                       0.808064                  0.745248                 1.000000                  NaN                  0.000000    1157        676
+                     ADAPT_ALL  1.000000          8262                       0.798767                  0.713129                 0.000000             0.140039                  1.000000    1157        676
+   SOURCE_STATE_GATING_EXACT50  0.499637          4128                       0.800495                  0.711585                 0.428695             0.160126                  0.319527    1157        676
+SIMPLE_GEOMETRY_GATING_EXACT50  0.499637          4128                       0.807558                  0.733961                 0.845290             0.043362                  0.144970    1157        676
+FULL_TRANSITION_GATING_EXACT50  0.499637          4128                       0.806138                  0.737543                 0.753673             0.069041                  0.315089    1157        676
+
+PRIMARY PATIENT-3D BOOTSTRAP:
+                                                     comparison                        metric  valid_reps  mean_delta  ci95_low  ci95_high  ci_excludes_zero
+        FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXACT50 mean_patient_3d_deployed_dice        2000    0.002631  0.001243   0.004090              True
+   FULL_TRANSITION_GATING_EXACT50 - SOURCE_STATE_GATING_EXACT50 mean_patient_3d_deployed_dice        2000    0.005615  0.003148   0.008305              True
+FULL_TRANSITION_GATING_EXACT50 - SIMPLE_GEOMETRY_GATING_EXACT50 mean_patient_3d_deployed_dice        2000   -0.001419 -0.002692  -0.000136              True
+
+No coverage optimization: YES
+No target calibration/refit/score flip: YES
+FinalB3 mask/outcome parity: PASS
+
+GATE=PASS_B6_P06B_MRI_TRANSITION_PATIENT_UTILITY_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\B6_P06B_MRI_TRANSITION_PATIENT_UTILITY_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P06B_mri_transition_patient_utility_execution_v1_fix1
+============================================================================================================================================================================

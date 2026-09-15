@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P05B_RUNTIME_SCOPE_REPORTING_AUDIT",
+  "version": "2026-09-15-B6-P05B-v1",
+  "source_P05A": {
+    "audit_path": "F:\\MEDSEG_SAFETTA\\B6_P05A_memo_full_transition_runtime_benchmark_v1_fix3\\B6_P05A_MEMO_FULL_TRANSITION_RUNTIME_AUDIT.json",
+    "audit_sha256": "8475f8757814870cbe4bfadd2b1f48d4724645ede71ddff235f8ec7a3e4d088f",
+    "rows_path": "F:\\MEDSEG_SAFETTA\\B6_P05A_memo_full_transition_runtime_benchmark_v1_fix3\\B6_P05A_MEMO_FULL_TRANSITION_RUNTIME_ROWS.csv",
+    "rows_sha256": "12b536fb14d8039d8d363f6b25acfb103e380c57598588ceb9f89ca4019f4ba1",
+    "gate": "PASS_B6_P05A_MEMO_FULL_TRANSITION_RUNTIME_BENCHMARK"
+  },
+  "reporting_scope_correction": {
+    "P05A_end_to_end_included_aux_simple_geometry": true,
+    "runtime_measurement_changed": false,
+    "semantic_full_transition_definition": "end_to_end_precommit_ms - simple_geometry_ms"
+  },
+  "headline": {
+    "semantic_full_transition_mean_ms": 639.5691600046121,
+    "semantic_full_transition_median_ms": 634.7707499808166,
+    "semantic_full_transition_p95_ms": 669.9704949191073,
+    "semantic_full_transition_mean_cases_per_s": 1.564604581924649,
+    "candidate_aware_incremental_after_source_available_mean_ms": 583.7673100002576,
+    "candidate_action_transaction_mean_ms": 555.4240530036623,
+    "post_candidate_risk_scoring_mean_ms": 28.3432569965953,
+    "aux_simple_geometry_mean_ms": 0.8673479990102351,
+    "peak_cuda_allocated_mean_MB": 2890.546875,
+    "peak_cuda_allocated_max_MB": 2890.546875
+  },
+  "claim_boundary": {
+    "primary_runtime": "semantic_full_transition_precommit_ms",
+    "candidate_incremental_is_secondary_descriptive_scope": true,
+    "P05A_raw_pipeline_total_preserved": true,
+    "no_new_measurement": true,
+    "no_runtime_rescue": true
+  }
+}

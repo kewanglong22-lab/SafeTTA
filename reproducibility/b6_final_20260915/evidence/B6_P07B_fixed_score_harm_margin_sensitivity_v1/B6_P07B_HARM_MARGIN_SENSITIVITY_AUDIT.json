@@ -1,0 +1,404 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P07B_FIXED_SCORE_HARM_MARGIN_SENSITIVITY_COMPLETE",
+  "version": "2026-09-15-B6-P07B-v1",
+  "lineage": {
+    "protocol_path": "F:\\MEDSEG_SAFETTA\\code\\B6_P07_HARM_MARGIN_SENSITIVITY_PROTOCOL_v1.json",
+    "protocol_sha256": "9bed5e361d92db364fdc72eaefcd5494b051464977525e266e4c0aa8bc0d233e",
+    "binding_amendment_path": "F:\\MEDSEG_SAFETTA\\code\\B6_P07_POLYPGEN_SCORE_BINDING_AMENDMENT_v1.json",
+    "binding_amendment_sha256": "5e89b2be98fd05b113b9b85d1062074557703f2d33ff7898e0df0f904b36ac2b",
+    "p07a_decision_path": "F:\\MEDSEG_SAFETTA\\B6_P07A_harm_margin_sensitivity_asset_binding_audit_v1_fix1\\B6_P07A_HARM_MARGIN_SENSITIVITY_BINDING.json",
+    "p07a_decision_sha256": "c5b5f0c0a0b63dd9c78bed10e27d68e031d5c7c724067bc75189c2ab5a79ee1d"
+  },
+  "frozen_constraints": {
+    "original_primary_margin": -0.02,
+    "sensitivity_margins": [
+      -0.01,
+      -0.02,
+      -0.05
+    ],
+    "model_refit": false,
+    "target_calibration": false,
+    "score_flip": false,
+    "margin_selection": false
+  },
+  "MRI": {
+    "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PROMISE12_MATCHED_SCORES.csv",
+    "sha256": "70a311b8d3f0e0d0d226d4ce7d446a70f73027c066bdae284fd85115c656800b",
+    "rows": 8262,
+    "patients": 50,
+    "cells": [
+      "DeepLabV3_R50||MEMO-SEG4-1STEP",
+      "DeepLabV3_R50||PL-CONF90",
+      "DeepLabV3_R50||TENT1",
+      "SegFormer_B0||MEMO-SEG4-1STEP",
+      "SegFormer_B0||PL-CONF90",
+      "SegFormer_B0||TENT1"
+    ],
+    "primary_harm_count": 1157,
+    "primary_harm_prevalence": 0.14003873154199953,
+    "primary_label_parity": true
+  },
+  "PolypGen": {
+    "score_path": "F:\\MEDSEG_SAFETTA\\R33A2B_external_polypgen_memo_transition_score_lock_v1_fix1\\R33A2B_POLYPGEN_MEMO_EXTERNAL_SAFETTA_SCORE_PRE_HARM_LOCK.csv",
+    "score_sha256": "0b8bfca0594214b106880607216771dd6375a2b14ce8e0280aafbfd197b03cdf",
+    "outcome_path": "F:\\MEDSEG_SAFETTA\\R33A3_first_polypgen_memo_harm_reveal_external_joint_shift_evaluation_v1\\R33A3_POLYPGEN_MEMO_MODELCASE_OUTCOMES.csv",
+    "outcome_sha256": "3050417d562c68fd67c3ea51ac783070c5afff03ffa9751183d5b53f688b00f7",
+    "rows": 4596,
+    "physical_images": 1532,
+    "states": [
+      "DeepLabV3-R50::20260817",
+      "DeepLabV3-R50::20260818",
+      "DeepLabV3-R50::20260819"
+    ],
+    "score_column": "safettta_external_harm_risk",
+    "delta_column": "memo_delta_dice",
+    "primary_harm_count": 301,
+    "primary_harm_prevalence": 0.0654917319408181,
+    "primary_label_parity": true
+  },
+  "point_metrics": [
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.01,
+      "is_original_primary_margin": false,
+      "rows": 8262,
+      "clusters": 50,
+      "harm_n": 1478,
+      "harm_prevalence": 0.17889130961026387,
+      "pooled_auroc": 0.6929948003102101,
+      "pooled_auprc": 0.3924865062506298,
+      "macro_cell_auroc": 0.735624469691791,
+      "macro_cell_auprc": 0.37068474554894454
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.02,
+      "is_original_primary_margin": true,
+      "rows": 8262,
+      "clusters": 50,
+      "harm_n": 1157,
+      "harm_prevalence": 0.14003873154199953,
+      "pooled_auroc": 0.6954289193399172,
+      "pooled_auprc": 0.381274507806927,
+      "macro_cell_auroc": 0.7394704339796653,
+      "macro_cell_auprc": 0.3479115520459559
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.05,
+      "is_original_primary_margin": false,
+      "rows": 8262,
+      "clusters": 50,
+      "harm_n": 764,
+      "harm_prevalence": 0.0924715565238441,
+      "pooled_auroc": 0.6798395802580514,
+      "pooled_auprc": 0.3827346214129745,
+      "macro_cell_auroc": 0.736442817104462,
+      "macro_cell_auprc": 0.3385544099416496
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.01,
+      "is_original_primary_margin": false,
+      "rows": 4596,
+      "clusters": 1532,
+      "harm_n": 450,
+      "harm_prevalence": 0.097911227154047,
+      "pooled_auroc": 0.7595320791123975,
+      "pooled_auprc": 0.2938437487111486,
+      "macro_cell_auroc": 0.7580274256311409,
+      "macro_cell_auprc": 0.2971942807332256
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.02,
+      "is_original_primary_margin": true,
+      "rows": 4596,
+      "clusters": 1532,
+      "harm_n": 301,
+      "harm_prevalence": 0.0654917319408181,
+      "pooled_auroc": 0.7432377136359591,
+      "pooled_auprc": 0.2554579725474396,
+      "macro_cell_auroc": 0.7428628732365895,
+      "macro_cell_auprc": 0.2613857342537213
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.05,
+      "is_original_primary_margin": false,
+      "rows": 4596,
+      "clusters": 1532,
+      "harm_n": 179,
+      "harm_prevalence": 0.03894691035683203,
+      "pooled_auroc": 0.676746647981453,
+      "pooled_auprc": 0.1942507148174278,
+      "macro_cell_auroc": 0.6759074191616801,
+      "macro_cell_auprc": 0.2024147052404585
+    }
+  ],
+  "bootstrap_summary": [
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.01,
+      "metric": "pooled_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.6927178990012176,
+      "ci95_low": 0.6697509320590691,
+      "ci95_high": 0.7144706815073988
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.01,
+      "metric": "pooled_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.39301487375221394,
+      "ci95_low": 0.35576632470059893,
+      "ci95_high": 0.42892615987482746
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.01,
+      "metric": "macro_cell_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.7355851173269325,
+      "ci95_low": 0.7160913033456815,
+      "ci95_high": 0.7537413753077087
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.01,
+      "metric": "macro_cell_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.373913221052249,
+      "ci95_low": 0.34155587047947655,
+      "ci95_high": 0.4072172788832441
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.02,
+      "metric": "pooled_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.6953263080652722,
+      "ci95_low": 0.6680192857278705,
+      "ci95_high": 0.7215280870590695
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.02,
+      "metric": "pooled_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.38183689910786894,
+      "ci95_low": 0.33621329898791086,
+      "ci95_high": 0.4256521507410367
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.02,
+      "metric": "macro_cell_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.739568775004773,
+      "ci95_low": 0.7140908455438548,
+      "ci95_high": 0.7629822952118351
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.02,
+      "metric": "macro_cell_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.35176126343302494,
+      "ci95_low": 0.3133114487963813,
+      "ci95_high": 0.39338772896033447
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.05,
+      "metric": "pooled_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.6798361555316501,
+      "ci95_low": 0.6393091111836042,
+      "ci95_high": 0.7172751323375416
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.05,
+      "metric": "pooled_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.3836342214729763,
+      "ci95_low": 0.3248409558287524,
+      "ci95_high": 0.4383336115447815
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.05,
+      "metric": "macro_cell_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.7361274973472403,
+      "ci95_low": 0.7008073117223531,
+      "ci95_high": 0.7679380454783256
+    },
+    {
+      "panel": "MRI_PROMISE12",
+      "margin": -0.05,
+      "metric": "macro_cell_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.3439649495332301,
+      "ci95_low": 0.2854320536381323,
+      "ci95_high": 0.40558731938933734
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.01,
+      "metric": "pooled_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.7597729797662303,
+      "ci95_low": 0.7273904834587754,
+      "ci95_high": 0.7905448603355096
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.01,
+      "metric": "pooled_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.29640071013475927,
+      "ci95_low": 0.2528037830294556,
+      "ci95_high": 0.34036766371957716
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.01,
+      "metric": "macro_cell_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.7582815155034025,
+      "ci95_low": 0.7259814941015261,
+      "ci95_high": 0.7893035676971374
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.01,
+      "metric": "macro_cell_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.30289885167407826,
+      "ci95_low": 0.25953681470729706,
+      "ci95_high": 0.34578840868776095
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.02,
+      "metric": "pooled_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.7435474584055343,
+      "ci95_low": 0.6999632024705913,
+      "ci95_high": 0.7852790219038381
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.02,
+      "metric": "pooled_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.2589363762312741,
+      "ci95_low": 0.2084815294386325,
+      "ci95_high": 0.3140843126372619
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.02,
+      "metric": "macro_cell_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.7432311062857115,
+      "ci95_low": 0.6999285100281976,
+      "ci95_high": 0.7850096364441195
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.02,
+      "metric": "macro_cell_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.2689379889176383,
+      "ci95_low": 0.2188973655097778,
+      "ci95_high": 0.3232477991574276
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.05,
+      "metric": "pooled_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.6775340720669667,
+      "ci95_low": 0.6112508707128497,
+      "ci95_high": 0.7408992468782535
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.05,
+      "metric": "pooled_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.19926532023470606,
+      "ci95_low": 0.1465723905353032,
+      "ci95_high": 0.26100962856219195
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.05,
+      "metric": "macro_cell_auroc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.6766225479890763,
+      "ci95_low": 0.6108132354819462,
+      "ci95_high": 0.7402431245468883
+    },
+    {
+      "panel": "POLYPGEN_MEMO",
+      "margin": -0.05,
+      "metric": "macro_cell_auprc",
+      "valid_reps": 2000,
+      "requested_reps": 2000,
+      "bootstrap_mean": 0.2124716721991856,
+      "ci95_low": 0.159029877636727,
+      "ci95_high": 0.2748277155184383
+    }
+  ],
+  "artifacts": {
+    "B6_P07B_HARM_MARGIN_POINT_METRICS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P07B_fixed_score_harm_margin_sensitivity_v1\\B6_P07B_HARM_MARGIN_POINT_METRICS.csv",
+      "sha256": "1f4644654cfce5cc50d4261edd221f91f48f8030617ac2850a1d4a649dfffebb",
+      "bytes": 947
+    },
+    "B6_P07B_HARM_MARGIN_BOOTSTRAP_SUMMARY.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P07B_fixed_score_harm_margin_sensitivity_v1\\B6_P07B_HARM_MARGIN_BOOTSTRAP_SUMMARY.csv",
+      "sha256": "5dcb9d3ecfb18d71f89c0010b0e0dbb7eb942da71e07a82567113e11d66d6c77",
+      "bytes": 2566
+    },
+    "B6_P07B_MRI_PATIENT_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P07B_fixed_score_harm_margin_sensitivity_v1\\B6_P07B_MRI_PATIENT_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "63a71a670a4412fcad6c9bed843d56143c31f4deac45d29c0043aa701b09030b",
+      "bytes": 611882
+    },
+    "B6_P07B_POLYPGEN_IMAGE_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P07B_fixed_score_harm_margin_sensitivity_v1\\B6_P07B_POLYPGEN_IMAGE_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "f95e291aae67f275ba96967a4f3b7c556c483cb542b9c5f33ebca66193ae7015",
+      "bytes": 613423
+    }
+  }
+}

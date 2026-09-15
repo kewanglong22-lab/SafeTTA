@@ -1,0 +1,102 @@
+{
+  "protocol_id": "B6_P02_POLYPGEN_EXACT50_UTILITY_PROTOCOL_v1",
+  "version": "2026-09-15-P02-v1",
+  "status": "FROZEN_BEFORE_P02_UTILITY_METRICS",
+  "purpose": "Matched-coverage deployment utility on PolypGen unseen MEMO after P0-1B candidate-conditioning attribution.",
+  "information_boundary": {
+    "new_model_fit": false,
+    "target_fit": false,
+    "target_calibration": false,
+    "score_reversal": false,
+    "feature_selection": false,
+    "threshold_tuning": false,
+    "coverage_tuning": false,
+    "action_change": false,
+    "harm_rule_change": false
+  },
+  "inputs": {
+    "p01b_stage": "F:\\MEDSEG_SAFETTA\\B6_P01B_polypgen_geometry_core_experiment_v1_fix5",
+    "p01b_audit": "B6_P01B_POLYPGEN_GEOMETRY_CORE_AUDIT.json",
+    "p01b_scores": "B6_P01B_POLYPGEN_GEOMETRY_CORE_SCORES.csv",
+    "target_outcome_panel": "F:\\MEDSEG_SAFETTA\\R33A3_first_polypgen_memo_harm_reveal_external_joint_shift_evaluation_v1\\R33A3_POLYPGEN_MEMO_MATCHED_SCORE_OUTCOME_PANEL.csv"
+  },
+  "target_panel": {
+    "dataset": "PolypGen",
+    "action": "MEMO-SEG4-1STEP",
+    "physical_images": 1532,
+    "model_states": 3,
+    "rows": 4596,
+    "states": [
+      "DeepLabV3-R50::20260817",
+      "DeepLabV3-R50::20260818",
+      "DeepLabV3-R50::20260819"
+    ],
+    "harm_rule": "memo_delta_dice <= -0.02",
+    "benefit_rule": "memo_delta_dice >= +0.02"
+  },
+  "representations": [
+    "SOURCE_STATE",
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+    "FROZEN_FULL_TRANSITION_SAFETTA"
+  ],
+  "ranking_direction": "higher score = higher predicted HARM risk",
+  "deployment_policy": {
+    "coverage": 0.5,
+    "scope": "within each external model state",
+    "selected_per_state": 766,
+    "total_selected": 2298,
+    "selection": "execute MEMO on the lowest-risk rows; retain SOURCE on the rest",
+    "tie_break": "sample_id ascending",
+    "selection_is_fixed_before_bootstrap": true
+  },
+  "utility_metrics": {
+    "primary": "mean_deployed_dice",
+    "secondary": [
+      "mean_deployed_delta_vs_source",
+      "prevented_harm_fraction",
+      "benefit_capture_fraction",
+      "committed_harm_rate"
+    ],
+    "definitions": {
+      "deployed_dice": "memo_dice if selected else source_dice",
+      "deployed_delta_vs_source": "memo_delta_dice if selected else 0",
+      "prevented_harm_fraction": "HARM rows not selected / all HARM rows",
+      "benefit_capture_fraction": "BENEFIT rows selected / all BENEFIT rows",
+      "committed_harm_rate": "selected HARM rows / all selected rows"
+    }
+  },
+  "descriptive_references": {
+    "SOURCE_ONLY": "coverage=0, deployed_dice=source_dice",
+    "DEPLOY_ALL_MEMO": "coverage=1, deployed_dice=memo_dice"
+  },
+  "bootstrap": {
+    "unit": "physical image / sample_id",
+    "cluster_members": "all 3 DeepLab states for the sampled physical image",
+    "reps": 2000,
+    "seed": 20260918,
+    "selection_policy": "fixed from the full target panel; do not rerank inside bootstrap",
+    "ci": "percentile 95%",
+    "invalid_fraction_replicates": "omit only when denominator is zero; report valid_reps"
+  },
+  "paired_comparisons": [
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE",
+    "FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE",
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA"
+  ],
+  "primary_decision": {
+    "comparison": "SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE",
+    "metric": "mean_deployed_dice",
+    "supported_if": "point_delta > 0 and 95% CI lower bound > 0"
+  },
+  "safety_decision": {
+    "comparison": "SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE",
+    "metric": "prevented_harm_fraction",
+    "supported_if": "point_delta > 0 and 95% CI lower bound > 0"
+  },
+  "claim_discipline": [
+    "Ranking quality is distinct from deployment utility.",
+    "Do not tune coverage, thresholds, score signs, or features after seeing P0-2 outcomes.",
+    "Do not claim simple geometry universally dominates semantic transition.",
+    "P0-2 tests utility at one frozen matched coverage: 50%."
+  ]
+}

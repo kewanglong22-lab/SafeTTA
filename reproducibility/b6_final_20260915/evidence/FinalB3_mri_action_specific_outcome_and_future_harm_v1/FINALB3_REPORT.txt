@@ -1,0 +1,18 @@
+============================================================================================================================================================
+SafeTTA Final-B3 — MRI Future-HARM evaluation COMPLETE
+Version               : 2026-09-15-FinalB3-v1
+Families              : ['DeepLabV3_R50', 'SegFormer_B0']
+Actions               : ['TENT1', 'PL-CONF90', 'MEMO-SEG4-1STEP']
+Representation        : 130-D SOURCE-state + S64; no ActionID
+Training              : Prostate158 only
+External evaluation   : PROMISE12 held-out action / joint domain+action shift
+Primary AUROC          : 0.739470 [0.716079, 0.762561]
+Primary AUPRC          : 0.347912 [0.313195, 0.391989]
+Primary prevalence     : 0.140039
+AUPRC lift             : 2.484x
+Scientific decision    : MRI_JOINT_DOMAIN_UNSEEN_ACTION_HARM_RANKING_CONFIRMED
+
+GATE=PASS_FINALB3_MRI_ACTION_OUTCOME_AND_FUTURE_HARM_EVALUATION_COMPLETE
+lock_json=F:\MEDSEG_SAFETTA\FinalB3_mri_action_specific_outcome_and_future_harm_v1\FINALB3_MRI_FUTURE_HARM_LOCK.json
+stage_dir=F:\MEDSEG_SAFETTA\FinalB3_mri_action_specific_outcome_and_future_harm_v1
+============================================================================================================================================================

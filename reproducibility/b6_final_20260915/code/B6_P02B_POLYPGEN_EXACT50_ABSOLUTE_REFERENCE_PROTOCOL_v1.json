@@ -1,0 +1,80 @@
+{
+  "protocol_id": "B6_P02B_POLYPGEN_EXACT50_ABSOLUTE_REFERENCE_PROTOCOL_v1",
+  "version": "2026-09-15-P02B-v1",
+  "status": "FROZEN_ADDITIVE_REFERENCE_BEFORE_P02B_METRICS",
+  "purpose": "Add absolute deployment references to the already-completed P0-2 exact-50 analysis without changing any P0-2 model, score, coverage, threshold, or primary decision.",
+  "relationship_to_P02": {
+    "P02_primary_unchanged": true,
+    "P02_decision_unchanged": "CANDIDATE_CONDITIONING_EXACT50_SAFETY_SUPPORTED_UTILITY_NOT_CONFIRMED",
+    "this_stage_is": "post-P02 additive reference analysis",
+    "not_allowed": [
+      "coverage tuning",
+      "threshold tuning",
+      "score reversal",
+      "refitting",
+      "feature selection",
+      "target calibration",
+      "relabeling HARM/BENEFIT"
+    ]
+  },
+  "panel": {
+    "dataset": "PolypGen",
+    "action": "MEMO-SEG4-1STEP",
+    "rows": 4596,
+    "images": 1532,
+    "states": 3,
+    "harm_rule": "memo_delta_dice <= -0.02",
+    "benefit_rule": "memo_delta_dice >= +0.02"
+  },
+  "references": {
+    "SOURCE_ONLY": {
+      "coverage": 0.0,
+      "deployed_prediction": "SOURCE for every row"
+    },
+    "ADAPT_ALL_MEMO": {
+      "coverage": 1.0,
+      "deployed_prediction": "MEMO for every row"
+    },
+    "MATCHED_RANDOM_EXPECTATION_EXACT50": {
+      "coverage": 0.5,
+      "definition": "Exact expectation under uniform random selection of 766/1532 rows independently within each state. No arbitrary random seed or outcome-guided selection.",
+      "expected_deployed_dice": "mean(source_dice + 0.5 * memo_delta_dice)",
+      "expected_prevented_harm_fraction": 0.5,
+      "expected_benefit_capture_fraction": 0.5,
+      "expected_committed_harm_rate": "HARM prevalence"
+    },
+    "SOURCE_STATE_GATING_EXACT50": {
+      "coverage": 0.5,
+      "source": "completed P0-2 frozen selection"
+    },
+    "SIMPLE_GEOMETRY_GATING_EXACT50": {
+      "coverage": 0.5,
+      "source": "completed P0-2 frozen selection"
+    },
+    "FULL_TRANSITION_GATING_EXACT50": {
+      "coverage": 0.5,
+      "source": "completed P0-2 frozen selection"
+    }
+  },
+  "statistics": {
+    "bootstrap_unit": "physical image/sample_id with all 3 states retained",
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260918,
+    "fixed_P02_selections": true,
+    "random_reference": "analytical matched-random expectation recalculated on each bootstrap resample",
+    "ci": "percentile 95%"
+  },
+  "paired_comparisons": [
+    "FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50",
+    "SOURCE_STATE_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50",
+    "SIMPLE_GEOMETRY_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50",
+    "FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY",
+    "FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL_MEMO"
+  ],
+  "claim_boundary": [
+    "Matched-random is a matched-budget expectation, not a newly optimized comparator.",
+    "SOURCE-only and adapt-all are absolute deployment references with different coverage.",
+    "This stage does not rescue or redefine the frozen P0-2 primary result.",
+    "If full transition remains below SOURCE-only, report that directly."
+  ]
+}

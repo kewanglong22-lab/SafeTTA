@@ -1,0 +1,43 @@
+{
+  "protocol_id": "B6_P09_FINAL_EVIDENCE_FREEZE_PROTOCOL_v1",
+  "version": "2026-09-15-P09-v1",
+  "status": "FROZEN_AFTER_P08B_BEFORE_PUBLIC_RELEASE_SYNC_AND_MANUSCRIPT_REWRITE",
+  "purpose": "Freeze the final SafeTTA evidence lineage after completion of P01-P08. No new scientific metrics, fitting, inference, calibration, threshold tuning, coverage tuning, or selector changes are allowed in this stage.",
+  "required_evidence": [
+    "FinalB3 MRI held-out-action ranking",
+    "B6-P01A MRI matched representation attribution",
+    "B6-P01B PolypGen candidate-conditioning attribution",
+    "B6-P02/P02B PolypGen fixed-budget utility and absolute references",
+    "B6-P03 MRI endpoint robustness",
+    "B6-P05B representative full-transition runtime scope",
+    "B6-P06B MRI patient-level fixed-budget utility",
+    "B6-P07B HARM-margin sensitivity",
+    "B6-P08B NeoPolyp paired LOAO uncertainty + event support/statistical-unit closure"
+  ],
+  "claim_rules": {
+    "supported": [
+      "Candidate-conditioned information adds future-HARM ranking signal beyond SOURCE-state-only information.",
+      "The ranking signal transfers across external domain and held-out/unseen action shifts.",
+      "Representation effectiveness is modality/endpoint dependent; simple geometry is especially strong on MRI.",
+      "Fixed-budget ranking can improve safety allocation without necessarily improving final Dice over SOURCE-only deployment.",
+      "NeoPolyp shared transition has a significant macro-action AUPRC gain over SOURCE_Q66_ONLY, but its macro-action AUROC increment is not statistically significant.",
+      "Full pre-commit runtime is dominated by execution of the candidate TTA action."
+    ],
+    "forbidden": [
+      "Semantic transition is universally superior.",
+      "SafeTTA universally improves segmentation Dice.",
+      "SafeTTA exact50 outperforms SOURCE-only deployment.",
+      "PolypGen exact50 full transition improves Dice over matched random.",
+      "MRI is zero-shot cross-task transfer.",
+      "The complete full-transition pre-commit pipeline is lightweight.",
+      "The target-domain sigmoid output is calibrated probability.",
+      "Historical PolypGen/PROMISE12 analyses are pristine prospective validation."
+    ]
+  },
+  "next_after_pass": [
+    "Synchronize final public scripts/evidence map to GitHub.",
+    "Create a new final paper tag/commit.",
+    "Rewrite manuscript against the frozen claim matrix.",
+    "Do not add new performance experiments unless a new external reviewer explicitly requires one."
+  ]
+}

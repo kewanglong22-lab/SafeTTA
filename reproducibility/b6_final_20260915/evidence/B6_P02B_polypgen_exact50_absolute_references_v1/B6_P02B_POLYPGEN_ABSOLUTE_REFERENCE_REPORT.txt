@@ -1,0 +1,44 @@
+====================================================================================================================================================================
+SafeTTA B6-P0-2B POLYPGEN ABSOLUTE REFERENCES COMPLETE
+
+                            policy  coverage  mean_deployed_dice  mean_deployed_delta_vs_source  prevented_harm_fraction  committed_harm_rate  benefit_capture_fraction
+                       SOURCE_ONLY       0.0            0.754896                       0.000000                 1.000000                  NaN                  0.000000
+                    ADAPT_ALL_MEMO       1.0            0.756734                       0.001838                 0.000000             0.065492                  1.000000
+MATCHED_RANDOM_EXPECTATION_EXACT50       0.5            0.755815                       0.000919                 0.500000             0.065492                  0.500000
+       SOURCE_STATE_GATING_EXACT50       0.5            0.749321                      -0.005575                 0.730897             0.035248                  0.279070
+    SIMPLE_GEOMETRY_GATING_EXACT50       0.5            0.748043                      -0.006852                 0.837209             0.021323                  0.121646
+    FULL_TRANSITION_GATING_EXACT50       0.5            0.754432                      -0.000464                 0.800664             0.026110                  0.397138
+
+PAIRED DELTAS:
+                                                         comparison                        metric  valid_reps  point_delta  bootstrap_mean_delta  ci95_low  ci95_high  ci_excludes_zero
+FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50            mean_deployed_dice        2000    -0.001383             -0.001351 -0.003259   0.000497             False
+FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50 mean_deployed_delta_vs_source        2000    -0.001383             -0.001351 -0.003259   0.000497             False
+FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50       prevented_harm_fraction        2000     0.300664              0.300969  0.248998   0.351269              True
+FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50           committed_harm_rate        2000    -0.039382             -0.039445 -0.047698  -0.031592              True
+FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50      benefit_capture_fraction        2000    -0.102862             -0.101725 -0.145112  -0.057971              True
+   SOURCE_STATE_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50            mean_deployed_dice        2000    -0.006494             -0.006466 -0.008476  -0.004546              True
+   SOURCE_STATE_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50 mean_deployed_delta_vs_source        2000    -0.006494             -0.006466 -0.008476  -0.004546              True
+   SOURCE_STATE_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50       prevented_harm_fraction        2000     0.230897              0.231716  0.174901   0.288648              True
+   SOURCE_STATE_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50           committed_harm_rate        2000    -0.030244             -0.030393 -0.039094  -0.022523              True
+   SOURCE_STATE_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50      benefit_capture_fraction        2000    -0.220930             -0.220740 -0.262693  -0.177894              True
+SIMPLE_GEOMETRY_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50            mean_deployed_dice        2000    -0.007772             -0.007745 -0.009728  -0.005769              True
+SIMPLE_GEOMETRY_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50 mean_deployed_delta_vs_source        2000    -0.007772             -0.007745 -0.009728  -0.005769              True
+SIMPLE_GEOMETRY_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50       prevented_harm_fraction        2000     0.337209              0.338114  0.289644   0.385137              True
+SIMPLE_GEOMETRY_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50           committed_harm_rate        2000    -0.044169             -0.044318 -0.052898  -0.035967              True
+SIMPLE_GEOMETRY_GATING_EXACT50 - MATCHED_RANDOM_EXPECTATION_EXACT50      benefit_capture_fraction        2000    -0.378354             -0.378507 -0.407181  -0.348483              True
+                       FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY            mean_deployed_dice        2000    -0.000464             -0.000402 -0.004015   0.002957             False
+                       FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY mean_deployed_delta_vs_source        2000    -0.000464             -0.000402 -0.004015   0.002957             False
+                       FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY       prevented_harm_fraction        2000    -0.199336             -0.199031 -0.251002  -0.148731              True
+                       FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY      benefit_capture_fraction        2000     0.397138              0.398275  0.354888   0.442029              True
+                    FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL_MEMO            mean_deployed_dice        2000    -0.002302             -0.002301 -0.004388  -0.000161              True
+                    FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL_MEMO mean_deployed_delta_vs_source        2000    -0.002302             -0.002301 -0.004388  -0.000161              True
+                    FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL_MEMO       prevented_harm_fraction        2000     0.800664              0.800969  0.748998   0.851269              True
+                    FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL_MEMO           committed_harm_rate        2000    -0.039382             -0.039445 -0.047698  -0.031592              True
+                    FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL_MEMO      benefit_capture_fraction        2000    -0.602862             -0.601725 -0.645112  -0.557971              True
+
+FULL_VS_MATCHED_RANDOM_UTILITY_SUPPORTED=False
+FULL_VS_SOURCE_ONLY_SUPERIORITY_SUPPORTED=False
+GATE=PASS_B6_P02B_POLYPGEN_EXACT50_ABSOLUTE_REFERENCES
+audit_json=F:\MEDSEG_SAFETTA\B6_P02B_polypgen_exact50_absolute_references_v1\B6_P02B_POLYPGEN_ABSOLUTE_REFERENCE_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P02B_polypgen_exact50_absolute_references_v1
+====================================================================================================================================================================

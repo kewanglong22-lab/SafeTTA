@@ -1,0 +1,98 @@
+{
+  "protocol_id": "B6_P01A_MRI_MATCHED_REPRESENTATION_PROTOCOL_v1",
+  "version": "2026-09-15-B6-P01A-v1",
+  "status": "FROZEN_POST_REVEAL_MATCHED_ATTRIBUTION",
+  "scientific_role": "Post-freeze/post-reveal matched-control audit. It is not a new pristine external validation and does not replace the prespecified Final-B3 primary endpoint.",
+  "upstream": {
+    "FinalB1_lock_sha256": "5900b35a6971ceff32ddd6e22e8332cf9fdf68e65d9a6c2711c52a4d324eacc5",
+    "FinalB2_lock_sha256": "def3a692f50342d78781e7be0a38b5afcf1e34962ce20c21801510a6cf985022",
+    "FinalB3_lock_sha256": "924b8b882c971be7a5562b7d0fc53cf1eece343786f0ff5f24d46b91a86a191b",
+    "P0_protocol_sha256": "ed19e9f1d98b66a0f5280694274a1a92d001bbc884f07dd5313320e6dc63ba04",
+    "P0_4_fix1_gate": "PASS_B6_P04_FIX1_EXACT_ID_AND_PANEL_BINDING_AUDIT_COMPLETE"
+  },
+  "cohorts": {
+    "train": "Prostate158 only",
+    "test": "PROMISE12",
+    "PROMISE12_gt_history": "Historically GT-accessed in the earlier SOURCE-only branch. This analysis uses frozen Final-B1/B2/B3 assets and is a post-reveal attribution audit."
+  },
+  "families": [
+    "DeepLabV3_R50",
+    "SegFormer_B0"
+  ],
+  "actions": [
+    "TENT1",
+    "PL-CONF90",
+    "MEMO-SEG4-1STEP"
+  ],
+  "training": {
+    "design": "For each held-out action, train only on the other two Prostate158 actions.",
+    "same_physical_patients_across_actions": true,
+    "interpretation": "action-transfer, not unseen-patient transfer",
+    "target_fit_rows": 0,
+    "scaler": "StandardScaler fitted on corresponding Prostate158 training rows only",
+    "classifier": "class-balanced L2 LogisticRegression",
+    "C": 1.0,
+    "solver": "lbfgs",
+    "max_iter": 5000,
+    "random_state": 20260820,
+    "score_direction": "P(HARM=1), higher = greater risk"
+  },
+  "representations": {
+    "SOURCE_STATE": {
+      "features": "[SOURCE foreground fraction, SOURCE boundary density, z64_SOURCE]",
+      "dim": 66
+    },
+    "SEMANTIC_TRANSITION": {
+      "features": "frozen Final-B2 S64(action)",
+      "dim": 64
+    },
+    "SOURCE_PLUS_SIMPLE_MASK_CHANGE": {
+      "features": [
+        "SOURCE state (66-D)",
+        "SOURCE-candidate prediction Dice",
+        "SOURCE-candidate prediction IoU",
+        "signed candidate-minus-SOURCE foreground fraction",
+        "signed candidate-minus-SOURCE boundary density"
+      ],
+      "dim": 70,
+      "GT_used": false
+    },
+    "FULL_TRANSITION_SAFETTA": {
+      "features": "[SOURCE state, frozen semantic transition]",
+      "dim": 130,
+      "score_source": "Use the frozen Final-B3 held-out-action model/scores; do not refit."
+    }
+  },
+  "reliability_change_baseline": {
+    "included": false,
+    "reason": "B6-P0-4 fix1 found 0 strong exact-bound probability/logit candidates; historical reliability-change assets are not recoverable for fair P0-1 use."
+  },
+  "outcome": {
+    "harm": "DeltaDice <= -0.02",
+    "full_model_primary_result_remains": "Final-B3 prespecified AUROC 0.739470 [0.716079,0.762561], AUPRC 0.347912, prevalence 0.140039"
+  },
+  "statistics": {
+    "test_cluster_unit": "PROMISE12 patient/case_key",
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260916,
+    "point_metric": "macro over 3 held-out actions x 2 model families",
+    "paired_deltas": [
+      "FULL_TRANSITION_SAFETTA - SOURCE_STATE",
+      "FULL_TRANSITION_SAFETTA - SEMANTIC_TRANSITION",
+      "FULL_TRANSITION_SAFETTA - SOURCE_PLUS_SIMPLE_MASK_CHANGE"
+    ],
+    "metrics": [
+      "AUROC",
+      "AUPRC"
+    ],
+    "single_class_bootstrap": "invalid replicate for the affected metric/cell; do not substitute 0.5"
+  },
+  "interpretation": {
+    "superiority_required_for_execution_pass": false,
+    "no_target_feature_selection": true,
+    "no_target_score_flip": true,
+    "no_harm_threshold_change": true,
+    "negative_result_policy": "Report without rescue tuning."
+  },
+  "gate": "PASS_B6_P01A_MRI_MATCHED_REPRESENTATION_ATTRIBUTION_COMPLETE"
+}

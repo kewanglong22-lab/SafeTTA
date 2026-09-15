@@ -1,0 +1,21 @@
+================================================================================================================================================================
+SafeTTA B6-P0-1B POLYPGEN GEOMETRY CORE EXPERIMENT COMPLETE
+                representation    auroc    auprc  prevalence    n  harm_n
+                  SOURCE_STATE 0.649536 0.119172    0.065492 4596     301
+SOURCE_PLUS_SIMPLE_MASK_CHANGE 0.760411 0.209984    0.065492 4596     301
+FROZEN_FULL_TRANSITION_SAFETTA 0.743238 0.255458    0.065492 4596     301
+
+PAIRED DELTAS:
+                                                     comparison metric  valid_reps  point_delta  bootstrap_mean_delta  ci95_low  ci95_high  ci_excludes_zero
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE  AUPRC        2000     0.136286              0.137711  0.093977   0.181616              True
+                  FROZEN_FULL_TRANSITION_SAFETTA - SOURCE_STATE  AUROC        2000     0.093701              0.093377  0.060315   0.125343              True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA  AUPRC        2000    -0.045474             -0.045041 -0.086300  -0.002353              True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE - FROZEN_FULL_TRANSITION_SAFETTA  AUROC        2000     0.017173              0.017435 -0.014059   0.051827             False
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE  AUPRC        2000     0.090812              0.092669  0.058587   0.133482              True
+                  SOURCE_PLUS_SIMPLE_MASK_CHANGE - SOURCE_STATE  AUROC        2000     0.110874              0.110812  0.084972   0.136790              True
+
+DECISION=CANDIDATE_CONDITIONING_INCREMENT_SUPPORTED
+GATE=PASS_B6_P01B_POLYPGEN_GEOMETRY_CORE_EXPERIMENT_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P01B_polypgen_geometry_core_experiment_v1_fix5\B6_P01B_POLYPGEN_GEOMETRY_CORE_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P01B_polypgen_geometry_core_experiment_v1_fix5
+================================================================================================================================================================

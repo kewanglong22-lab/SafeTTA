@@ -1,0 +1,21 @@
+========================================================================================================================================================
+SafeTTA B6-P0-1A MRI MATCHED ATTRIBUTION COMPLETE
+SOURCE_STATE                         AUROC=0.528816 AUPRC=0.171936 prev=0.140039
+SEMANTIC_TRANSITION                  AUROC=0.571579 AUPRC=0.347158 prev=0.140039
+SOURCE_PLUS_SIMPLE_MASK_CHANGE       AUROC=0.850306 AUPRC=0.415812 prev=0.140039
+FULL_TRANSITION_SAFETTA              AUROC=0.739470 AUPRC=0.347912 prev=0.140039
+
+PAIRED FULL - COMPARATOR:
+                    comparator metric  point_delta_full_minus_comparator  ci95_low  ci95_high  ci_excludes_zero  full_better_at_point
+                  SOURCE_STATE  AUROC                           0.210654  0.179130   0.244749              True                  True
+                  SOURCE_STATE  AUPRC                           0.175976  0.140056   0.214133              True                  True
+           SEMANTIC_TRANSITION  AUROC                           0.167892  0.131780   0.211581              True                  True
+           SEMANTIC_TRANSITION  AUPRC                           0.000754 -0.026709   0.026490             False                  True
+SOURCE_PLUS_SIMPLE_MASK_CHANGE  AUROC                          -0.110835 -0.137994  -0.083142              True                 False
+SOURCE_PLUS_SIMPLE_MASK_CHANGE  AUPRC                          -0.067901 -0.126486  -0.019125              True                 False
+
+Execution PASS does not imply semantic transition superiority; negative or null paired deltas remain valid audit outcomes.
+GATE=PASS_B6_P01A_MRI_MATCHED_REPRESENTATION_ATTRIBUTION_COMPLETE
+audit_json=F:\MEDSEG_SAFETTA\B6_P01A_mri_matched_representation_attribution_v1\B6_P01A_AUDIT.json
+stage_dir=F:\MEDSEG_SAFETTA\B6_P01A_mri_matched_representation_attribution_v1
+========================================================================================================================================================

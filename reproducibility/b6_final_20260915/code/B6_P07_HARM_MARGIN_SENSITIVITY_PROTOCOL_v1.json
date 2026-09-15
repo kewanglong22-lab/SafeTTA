@@ -1,0 +1,73 @@
+{
+  "protocol_id": "B6_P07_HARM_MARGIN_SENSITIVITY_PROTOCOL_v1",
+  "version": "2026-09-15-P07-v1",
+  "status": "FROZEN_POST_REVEAL_SENSITIVITY_PROTOCOL_BEFORE_MARGIN_SENSITIVITY_METRICS",
+  "purpose": "Test whether the frozen full-transition future-HARM rankings remain informative under clinically/operationally stricter or looser Dice-loss margins, without any refitting, recalibration, score-direction change, representation change, or target tuning.",
+  "margins": {
+    "harm_if_delta_dice_leq": [
+      -0.01,
+      -0.02,
+      -0.05
+    ],
+    "primary_original_margin": -0.02,
+    "interpretation": "sensitivity analysis only; no margin is selected as a new primary endpoint"
+  },
+  "panels": {
+    "MRI_PROMISE12": {
+      "rows_expected": 8262,
+      "patients_expected": 50,
+      "families": [
+        "DeepLabV3_R50",
+        "SegFormer_B0"
+      ],
+      "actions": [
+        "TENT1",
+        "PL-CONF90",
+        "MEMO-SEG4-1STEP"
+      ],
+      "cells": 6,
+      "score": "frozen FULL_TRANSITION_SAFETTA risk score",
+      "cluster_unit": "PROMISE12 patient",
+      "summary": [
+        "pooled AUROC/AUPRC",
+        "macro-6 cell AUROC/AUPRC"
+      ]
+    },
+    "POLYPGEN_MEMO": {
+      "rows_expected": 4596,
+      "physical_images_expected": 1532,
+      "action": "MEMO-SEG4-1STEP",
+      "score": "frozen R33A2B full-transition SafeTTA risk score",
+      "cluster_unit": "physical PolypGen image/frame",
+      "summary": [
+        "pooled AUROC/AUPRC",
+        "macro-3 state AUROC/AUPRC if exact state labels are recoverable"
+      ]
+    }
+  },
+  "bootstrap": {
+    "reps": 2000,
+    "MRI_seed": 20260921,
+    "PolypGen_seed": 20260922,
+    "invalid_single_class_replicates": "drop and report valid count; never replace AUROC with 0.5"
+  },
+  "frozen_constraints": [
+    "higher score = greater HARM risk",
+    "no model fitting/refitting",
+    "no target calibration",
+    "no score flip",
+    "no margin-dependent feature changes",
+    "no action hyperparameter changes",
+    "no coverage optimization",
+    "no cherry-picking a preferred sensitivity margin"
+  ],
+  "reporting": {
+    "primary_remains": "DeltaDice <= -0.02",
+    "sensitivity_rows": [
+      "-0.01",
+      "-0.02",
+      "-0.05"
+    ],
+    "claim_rule": "Use sensitivity only to assess robustness of the ranking conclusion. Do not replace the preregistered/frozen -0.02 endpoint."
+  }
+}

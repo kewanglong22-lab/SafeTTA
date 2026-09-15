@@ -1,0 +1,589 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P06B_MRI_TRANSITION_PATIENT_UTILITY_COMPLETE",
+  "version": "2026-09-15-B6-P06B-v1-fix1",
+  "lineage": {
+    "protocol_sha256": "d6e02e54cc4c4e39c6321428b5c9bfacdf33716acfca3424b98ec90adfc23b15",
+    "p06a_decision_path": "F:\\MEDSEG_SAFETTA\\B6_P06A_mri_transition_patient_utility_asset_binding_audit_v1\\B6_P06A_BINDING_DECISION.json",
+    "p06a_decision_sha256": "2a7de48a583eb43861f16f06e99ec437ad90b943b00eaf267b48780f215a915c",
+    "p06a_route": "RECOUNT_FROM_FROZEN_MASKS",
+    "producer_code": {
+      "FinalB1": {
+        "path": "F:\\MEDSEG_SAFETTA\\code\\Q1_FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3.py",
+        "sha256": "84fb53ca04ef6ad1c0c1e5138fd11767fb4aebfab8e0a072cd2b16d8f55060b7",
+        "prediction_mask_bitorder": "big"
+      },
+      "FinalB3": {
+        "path": "F:\\MEDSEG_SAFETTA\\code\\Q1_FinalB3_mri_action_specific_outcome_and_future_harm_v1.py",
+        "sha256": "d1215ab90dd377f05929613d957299bf6c5ab55d67bec1cb33c572434354f042"
+      },
+      "CM6": {
+        "path": "F:\\MEDSEG_SAFETTA\\code\\Q1X_CM6_promise12_gt_reveal_locked_policy_evaluation_fix1.py",
+        "sha256": "68208034e3f9ff5937bf44973f7882d0d2820073d9188e0cc07637f1963d24b0",
+        "gt_mask_bitorder": "little"
+      }
+    }
+  },
+  "binding": {
+    "scores": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PROMISE12_MATCHED_SCORES.csv",
+      "sha256": "70a311b8d3f0e0d0d226d4ce7d446a70f73027c066bdae284fd85115c656800b",
+      "representation_column": "representation",
+      "representation_labels": {
+        "SOURCE_STATE": "SOURCE_STATE",
+        "SIMPLE_GEOMETRY": "SOURCE_PLUS_SIMPLE_MASK_CHANGE",
+        "FULL_TRANSITION": "FULL_TRANSITION_SAFETTA"
+      }
+    },
+    "counts": {
+      "gt_path": "F:\\MEDSEG_SAFETTA\\outputs\\Q1X_CM6_promise12_gt_reveal_locked_policy_evaluation_fix1_v1\\PROMISE12_GT_MASKS_PACKBITS.npy",
+      "gt_sha256": "41c8da9e6eb207d63acf4000374f877ae58d9289959753e447f2c0353223058d",
+      "mask_assets": [
+        {
+          "family": "DeepLabV3_R50",
+          "action": "SOURCE",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\DeepLabV3_R50\\source_current_masks_packbits.npy",
+          "sha256": "3c2055cf891f6679e456d0da2cd61dc1334a0201a5d0f0c098a519a2961f56c2"
+        },
+        {
+          "family": "DeepLabV3_R50",
+          "action": "TENT1",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\DeepLabV3_R50\\tent1_current_masks_packbits.npy",
+          "sha256": "4981a6f9cba3b47bd0b6352baec83d74d15abf65536cc2fbfae53375890381c9"
+        },
+        {
+          "family": "DeepLabV3_R50",
+          "action": "PL-CONF90",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\DeepLabV3_R50\\pl_conf90_masks_packbits.npy",
+          "sha256": "1e199e9c4105e750132cbe73534608592d71ac433ca68f1fdcded9a8460d7cc5"
+        },
+        {
+          "family": "DeepLabV3_R50",
+          "action": "MEMO-SEG4-1STEP",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\DeepLabV3_R50\\memo_seg4_1step_masks_packbits.npy",
+          "sha256": "d348d4a0b617a0388880dd44e7d8d14a378d7235a7575570fc4a92e63fe41a2e"
+        },
+        {
+          "family": "SegFormer_B0",
+          "action": "SOURCE",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\SegFormer_B0\\source_current_masks_packbits.npy",
+          "sha256": "a72c0c014c2382cb10c3846c4235dc216991e4239506f0ef4f4927b83894f81c"
+        },
+        {
+          "family": "SegFormer_B0",
+          "action": "TENT1",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\SegFormer_B0\\tent1_current_masks_packbits.npy",
+          "sha256": "69432753531a71d6d5c4c36c6cbfe21363502d3a2bab7166c525428e30aa6f37"
+        },
+        {
+          "family": "SegFormer_B0",
+          "action": "PL-CONF90",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\SegFormer_B0\\pl_conf90_masks_packbits.npy",
+          "sha256": "dc3b38f022037e88f447f463749a72bf07dc0006dccfcce4f2a5561856dee430"
+        },
+        {
+          "family": "SegFormer_B0",
+          "action": "MEMO-SEG4-1STEP",
+          "path": "F:\\MEDSEG_SAFETTA\\FinalB1_mri_action_port_and_candidate_mask_lock_v1_fix3\\target_promise12\\SegFormer_B0\\memo_seg4_1step_masks_packbits.npy",
+          "sha256": "b9fb1bb93e3de29160b71cd8f790c0bab0b4e2eb5e010a84257731f98677826c"
+        }
+      ]
+    },
+    "finalb3_parity": {
+      "path": "F:\\MEDSEG_SAFETTA\\FinalB3_mri_action_specific_outcome_and_future_harm_v1\\FINALB3_PROMISE12_ACTION_OUTCOMES.csv",
+      "sha256": "c63f0c5d7b6ee7d9fa5fe02e0a44737bd742c0ce265699c10af5cfdde44293aa",
+      "max_abs_diffs": {
+        "source_dice": 1.1102230246251565e-16,
+        "action_dice": 1.1102230246251565e-16,
+        "delta_dice": 1.1102230246251565e-16
+      },
+      "harm_exact": true,
+      "benefit_exact": true
+    },
+    "patients": [
+      "Case00",
+      "Case01",
+      "Case02",
+      "Case03",
+      "Case04",
+      "Case05",
+      "Case06",
+      "Case07",
+      "Case08",
+      "Case09",
+      "Case10",
+      "Case11",
+      "Case12",
+      "Case13",
+      "Case14",
+      "Case15",
+      "Case16",
+      "Case17",
+      "Case18",
+      "Case19",
+      "Case20",
+      "Case21",
+      "Case22",
+      "Case23",
+      "Case24",
+      "Case25",
+      "Case26",
+      "Case27",
+      "Case28",
+      "Case29",
+      "Case30",
+      "Case31",
+      "Case32",
+      "Case33",
+      "Case34",
+      "Case35",
+      "Case36",
+      "Case37",
+      "Case38",
+      "Case39",
+      "Case40",
+      "Case41",
+      "Case42",
+      "Case43",
+      "Case44",
+      "Case45",
+      "Case46",
+      "Case47",
+      "Case48",
+      "Case49"
+    ],
+    "cell_keys": [
+      {
+        "family": "DeepLabV3_R50",
+        "action": "TENT1",
+        "cell_i": 0
+      },
+      {
+        "family": "DeepLabV3_R50",
+        "action": "PL-CONF90",
+        "cell_i": 1
+      },
+      {
+        "family": "DeepLabV3_R50",
+        "action": "MEMO-SEG4-1STEP",
+        "cell_i": 2
+      },
+      {
+        "family": "SegFormer_B0",
+        "action": "TENT1",
+        "cell_i": 3
+      },
+      {
+        "family": "SegFormer_B0",
+        "action": "PL-CONF90",
+        "cell_i": 4
+      },
+      {
+        "family": "SegFormer_B0",
+        "action": "MEMO-SEG4-1STEP",
+        "cell_i": 5
+      }
+    ]
+  },
+  "protocol": {
+    "primary_coverage": 0.5,
+    "coverage_curve": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+    ],
+    "harm_threshold": -0.02,
+    "benefit_threshold": 0.02,
+    "score_direction": "higher=HARM risk; adapt lowest risk",
+    "coverage_optimization": false,
+    "target_calibration": false,
+    "score_flip": false
+  },
+  "headline": {
+    "exact50": [
+      {
+        "policy": "SOURCE_ONLY",
+        "coverage": 0.0,
+        "adapted_rows": 0,
+        "mean_patient_3d_deployed_dice": 0.8080640542958307,
+        "mean_slice_deployed_dice": 0.7452480840612025,
+        "prevented_harm_fraction": 1.0,
+        "committed_harm_rate": NaN,
+        "benefit_capture_fraction": 0.0,
+        "harm_n": 1157,
+        "benefit_n": 676
+      },
+      {
+        "policy": "ADAPT_ALL",
+        "coverage": 1.0,
+        "adapted_rows": 8262,
+        "mean_patient_3d_deployed_dice": 0.7987674952627329,
+        "mean_slice_deployed_dice": 0.7131288843077346,
+        "prevented_harm_fraction": 0.0,
+        "committed_harm_rate": 0.14003873154199953,
+        "benefit_capture_fraction": 1.0,
+        "harm_n": 1157,
+        "benefit_n": 676
+      },
+      {
+        "policy": "SOURCE_STATE_GATING_EXACT50",
+        "coverage": 0.49963689179375453,
+        "adapted_rows": 4128,
+        "mean_patient_3d_deployed_dice": 0.8004945404008906,
+        "mean_slice_deployed_dice": 0.7115845560643458,
+        "prevented_harm_fraction": 0.428694900605013,
+        "committed_harm_rate": 0.16012596899224807,
+        "benefit_capture_fraction": 0.31952662721893493,
+        "harm_n": 1157,
+        "benefit_n": 676
+      },
+      {
+        "policy": "SIMPLE_GEOMETRY_GATING_EXACT50",
+        "coverage": 0.49963689179375453,
+        "adapted_rows": 4128,
+        "mean_patient_3d_deployed_dice": 0.8075579619159086,
+        "mean_slice_deployed_dice": 0.7339606728704567,
+        "prevented_harm_fraction": 0.8452895419187554,
+        "committed_harm_rate": 0.043362403100775194,
+        "benefit_capture_fraction": 0.14497041420118342,
+        "harm_n": 1157,
+        "benefit_n": 676
+      },
+      {
+        "policy": "FULL_TRANSITION_GATING_EXACT50",
+        "coverage": 0.49963689179375453,
+        "adapted_rows": 4128,
+        "mean_patient_3d_deployed_dice": 0.8061377558826892,
+        "mean_slice_deployed_dice": 0.7375428328855786,
+        "prevented_harm_fraction": 0.7536732929991357,
+        "committed_harm_rate": 0.0690406976744186,
+        "benefit_capture_fraction": 0.3150887573964497,
+        "harm_n": 1157,
+        "benefit_n": 676
+      }
+    ],
+    "full_vs_random": [
+      {
+        "metric": "mean_patient_3d_deployed_dice",
+        "full_transition": 0.8061377558826892,
+        "random_mean": 0.8034849547732851,
+        "random_ci95_low": 0.8023292112506687,
+        "random_ci95_high": 0.8046503842590245,
+        "full_minus_random_mean": 0.0026528011094041105,
+        "delta_ci95_low": 0.0014873716236647268,
+        "delta_ci95_high": 0.0038085446320204634,
+        "p_random_ge_full": 9.999000099990002e-05,
+        "p_random_le_full": 1.0
+      },
+      {
+        "metric": "mean_slice_deployed_dice",
+        "full_transition": 0.7375428328855786,
+        "random_mean": 0.7292092435181614,
+        "random_ci95_low": 0.7267942244144846,
+        "random_ci95_high": 0.7316121494674425,
+        "full_minus_random_mean": 0.008333589367417314,
+        "delta_ci95_low": 0.005930683418136182,
+        "delta_ci95_high": 0.010748608471094056,
+        "p_random_ge_full": 9.999000099990002e-05,
+        "p_random_le_full": 1.0
+      },
+      {
+        "metric": "prevented_harm_fraction",
+        "full_transition": 0.7536732929991357,
+        "random_mean": 0.5004628349178911,
+        "random_ci95_low": 0.47450302506482284,
+        "random_ci95_high": 0.526361279170268,
+        "full_minus_random_mean": 0.2532104580812445,
+        "delta_ci95_low": 0.22731201382886768,
+        "delta_ci95_high": 0.2791702679343128,
+        "p_random_ge_full": 9.999000099990002e-05,
+        "p_random_le_full": 1.0
+      },
+      {
+        "metric": "committed_harm_rate",
+        "full_transition": 0.0690406976744186,
+        "random_mean": 0.1400107800387597,
+        "random_ci95_low": 0.13275193798449614,
+        "random_ci95_high": 0.14728682170542637,
+        "full_minus_random_mean": -0.07097008236434107,
+        "delta_ci95_low": -0.07824612403100777,
+        "delta_ci95_high": -0.06371124031007754,
+        "p_random_ge_full": 1.0,
+        "p_random_le_full": 9.999000099990002e-05
+      },
+      {
+        "metric": "benefit_capture_fraction",
+        "full_transition": 0.3150887573964497,
+        "random_mean": 0.4998062130177515,
+        "random_ci95_low": 0.46449704142011833,
+        "random_ci95_high": 0.5355029585798816,
+        "full_minus_random_mean": -0.18471745562130176,
+        "delta_ci95_low": -0.2204142011834319,
+        "delta_ci95_high": -0.14940828402366862,
+        "p_random_ge_full": 1.0,
+        "p_random_le_full": 9.999000099990002e-05
+      }
+    ],
+    "patient_bootstrap": [
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_STATE_GATING_EXACT50",
+        "metric": "mean_patient_3d_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.005614841395661211,
+        "ci95_low": 0.0031477890078121682,
+        "ci95_high": 0.008305095129112318,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_STATE_GATING_EXACT50",
+        "metric": "mean_slice_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.02584710544821582,
+        "ci95_low": 0.018982795436086632,
+        "ci95_high": 0.032951355919775244,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_STATE_GATING_EXACT50",
+        "metric": "prevented_harm_fraction",
+        "valid_reps": 2000,
+        "mean_delta": 0.3236217719566132,
+        "ci95_low": 0.2751058262860347,
+        "ci95_high": 0.3741522696034935,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_STATE_GATING_EXACT50",
+        "metric": "committed_harm_rate",
+        "valid_reps": 2000,
+        "mean_delta": -0.09076382526269708,
+        "ci95_low": -0.10990124518122257,
+        "ci95_high": -0.07341540907591342,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_STATE_GATING_EXACT50",
+        "metric": "benefit_capture_fraction",
+        "valid_reps": 2000,
+        "mean_delta": -0.004719818556627745,
+        "ci95_low": -0.050655083745067005,
+        "ci95_high": 0.04105618175332288,
+        "ci_excludes_zero": false
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SIMPLE_GEOMETRY_GATING_EXACT50",
+        "metric": "mean_patient_3d_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": -0.0014192098003585688,
+        "ci95_low": -0.002692432522712582,
+        "ci95_high": -0.000135748999031291,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SIMPLE_GEOMETRY_GATING_EXACT50",
+        "metric": "mean_slice_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.0035823929083019426,
+        "ci95_low": -0.00037975210559300365,
+        "ci95_high": 0.007663067475200565,
+        "ci_excludes_zero": false
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SIMPLE_GEOMETRY_GATING_EXACT50",
+        "metric": "prevented_harm_fraction",
+        "valid_reps": 2000,
+        "mean_delta": -0.08955075898593741,
+        "ci95_low": -0.13483335543892225,
+        "ci95_high": -0.04574420677361864,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SIMPLE_GEOMETRY_GATING_EXACT50",
+        "metric": "committed_harm_rate",
+        "valid_reps": 2000,
+        "mean_delta": 0.02519937789992118,
+        "ci95_low": 0.013793715846004126,
+        "ci95_high": 0.03751252888500191,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SIMPLE_GEOMETRY_GATING_EXACT50",
+        "metric": "benefit_capture_fraction",
+        "valid_reps": 2000,
+        "mean_delta": 0.16736330795100185,
+        "ci95_low": 0.11265430002768649,
+        "ci95_high": 0.2181011740749712,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY",
+        "metric": "mean_patient_3d_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": -0.001955318904921964,
+        "ci95_low": -0.003641972806832733,
+        "ci95_high": -0.0004347921865437174,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY",
+        "metric": "mean_slice_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": -0.007744909957681497,
+        "ci95_low": -0.013103644870759042,
+        "ci95_high": -0.002978952263381604,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY",
+        "metric": "prevented_harm_fraction",
+        "valid_reps": 2000,
+        "mean_delta": -0.24747218469774315,
+        "ci95_low": -0.28257090387909256,
+        "ci95_high": -0.2111807171777813,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - SOURCE_ONLY",
+        "metric": "benefit_capture_fraction",
+        "valid_reps": 2000,
+        "mean_delta": 0.3156932016092585,
+        "ci95_low": 0.27596791559000866,
+        "ci95_high": 0.35185185185185186,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL",
+        "metric": "mean_patient_3d_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.007356645513842904,
+        "ci95_low": 0.004979713037281094,
+        "ci95_high": 0.009949559098864058,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL",
+        "metric": "mean_slice_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.02444355861935365,
+        "ci95_low": 0.01720818198610375,
+        "ci95_high": 0.0318723130935262,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL",
+        "metric": "prevented_harm_fraction",
+        "valid_reps": 2000,
+        "mean_delta": 0.7525278153022569,
+        "ci95_low": 0.7174290961209074,
+        "ci95_high": 0.7888192828222187,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL",
+        "metric": "committed_harm_rate",
+        "valid_reps": 2000,
+        "mean_delta": -0.07061884185154192,
+        "ci95_low": -0.08104150043833787,
+        "ci95_high": -0.061062174141342365,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - ADAPT_ALL",
+        "metric": "benefit_capture_fraction",
+        "valid_reps": 2000,
+        "mean_delta": -0.6843067983907415,
+        "ci95_low": -0.7240320844099913,
+        "ci95_high": -0.6481481481481481,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXACT50",
+        "metric": "mean_patient_3d_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.002630501897011902,
+        "ci95_low": 0.0012427451139143258,
+        "ci95_high": 0.004089573090690887,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXACT50",
+        "metric": "mean_slice_deployed_dice",
+        "valid_reps": 2000,
+        "mean_delta": 0.008284554073813144,
+        "ci95_low": 0.004658080649166877,
+        "ci95_high": 0.011584782094596987,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXACT50",
+        "metric": "prevented_harm_fraction",
+        "valid_reps": 2000,
+        "mean_delta": 0.251621393707131,
+        "ci95_low": 0.21702372090760144,
+        "ci95_high": 0.2876052848459874,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXACT50",
+        "metric": "committed_harm_rate",
+        "valid_reps": 2000,
+        "mean_delta": -0.07052165747198007,
+        "ci95_low": -0.08013746049536158,
+        "ci95_high": -0.061503276332961355,
+        "ci_excludes_zero": true
+      },
+      {
+        "comparison": "FULL_TRANSITION_GATING_EXACT50 - MATCHED_RANDOM_EXACT50",
+        "metric": "benefit_capture_fraction",
+        "valid_reps": 2000,
+        "mean_delta": -0.18342414616857172,
+        "ci95_low": -0.2340347194508739,
+        "ci95_high": -0.1350799877279102,
+        "ci_excludes_zero": true
+      }
+    ]
+  },
+  "artifacts": {
+    "B6_P06B_BOUND_PATIENT_UTILITY_ROWS.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_BOUND_PATIENT_UTILITY_ROWS.csv",
+      "sha256": "8e917f2e3b3f9e8e21595f7bf1f19bedf3fe77d792f2bb8ea2652cdf6ad42277",
+      "bytes": 1356581
+    },
+    "B6_P06B_EXACT50_POINT_TABLE.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_EXACT50_POINT_TABLE.csv",
+      "sha256": "64ed09c45d98ba10422c494d977c7da7e4cee26b9a31eb4f692f58e827248241",
+      "bytes": 825
+    },
+    "B6_P06B_COVERAGE_CURVE.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_COVERAGE_CURVE.csv",
+      "sha256": "d019cbdb0538e97c8828819a9980c1f80221de70ad1a8d2da0558386284c565c",
+      "bytes": 4198
+    },
+    "B6_P06B_EXACT50_RANDOM_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_EXACT50_RANDOM_REPLICATES.csv",
+      "sha256": "87209a33e218efb725ee03506f38a8df9d63671c1764c55f6627a12fed2a4ecd",
+      "bytes": 1351941
+    },
+    "B6_P06B_EXACT50_RANDOM_SUMMARY.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_EXACT50_RANDOM_SUMMARY.csv",
+      "sha256": "51ded77daf3f16d23ed05ea5da00809ee965e6a621d6033a1ebc444f68cede68",
+      "bytes": 1111
+    },
+    "B6_P06B_PATIENT_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_PATIENT_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "f5a1f766cbce093735a6688df9c5841c003d6fc07e4335a48a630cde27ec0f24",
+      "bytes": 5054261
+    },
+    "B6_P06B_PATIENT_BOOTSTRAP_SUMMARY.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P06B_mri_transition_patient_utility_execution_v1_fix1\\B6_P06B_PATIENT_BOOTSTRAP_SUMMARY.csv",
+      "sha256": "030d76fbf28ae41c9a0ba5222f3f7a6e1c7aed0dbf7369e9beacbe351fc93b30",
+      "bytes": 3736
+    }
+  }
+}

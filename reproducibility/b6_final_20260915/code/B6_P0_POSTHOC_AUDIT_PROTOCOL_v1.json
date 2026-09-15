@@ -1,0 +1,93 @@
+{
+  "protocol_id": "B6_P0_POSTHOC_AUDIT_PROTOCOL_v1",
+  "version": "2026-09-15-B6-P0-v1",
+  "status": "FROZEN_BEFORE_NEW_P0_METRICS",
+  "purpose": "Freeze post-reveal P0 audits before computing any new scientific metric.",
+  "historical_label_access_boundary": {
+    "PolypGen": "Historically GT-accessed; not pristine first-access validation.",
+    "PROMISE12": "Historically GT-accessed in the earlier SOURCE-only TENT1 branch; new transition analyses are protocol-locked new-action analyses.",
+    "rule": "All new matched controls/robustness analyses are post-freeze/post-reveal audits."
+  },
+  "frozen_scientific_constants": {
+    "harm_threshold_delta_dice": -0.02,
+    "benefit_threshold_delta_dice": 0.02,
+    "score_direction": "higher = greater HARM risk",
+    "target_fit_rows": 0,
+    "candidate_actions": [
+      "TENT1",
+      "PL-CONF90",
+      "MEMO-SEG4-1STEP"
+    ],
+    "mri_transition_families": [
+      "DeepLabV3_R50",
+      "SegFormer_B0"
+    ],
+    "candidate_morphology_in_final_transition": false,
+    "explicit_action_id_in_final_transition": false
+  },
+  "P0_1": {
+    "representations": [
+      "SOURCE state only",
+      "semantic transition only",
+      "SOURCE state + simple mask change",
+      "SOURCE state + reliability change if exact probability/logit assets are recoverable",
+      "SOURCE state + semantic transition"
+    ],
+    "simple_mask_change_features": [
+      "SOURCE-candidate prediction Dice",
+      "SOURCE-candidate prediction IoU",
+      "foreground-area change",
+      "boundary-density change"
+    ],
+    "bootstrap_reps": 2000,
+    "cluster_unit": "highest recoverable physical unit",
+    "target_fit_rows": 0
+  },
+  "P0_2": {
+    "formal_coverage": 0.5,
+    "target_coverage_selection": "FORBIDDEN",
+    "mri_patient_level_3d_required": true
+  },
+  "P0_3": {
+    "refit": false,
+    "score_flip": false,
+    "strata": [
+      "GT-empty/nonempty",
+      "SOURCE-empty/nonempty",
+      "SOURCE foreground size",
+      "SOURCE Dice explanatory"
+    ],
+    "single_class_bootstrap_rule": "invalid for AUROC; report invalid replicate; do not substitute 0.5"
+  },
+  "P0_4": {
+    "must_run_before_P0_1": true,
+    "audit_targets": [
+      "PolypGen physical hierarchy recovery",
+      "PROMISE12 patient identifiers",
+      "probability/logit asset recovery",
+      "headline event support",
+      "GT access timeline",
+      "table/script/output/SHA lineage"
+    ],
+    "missing_asset_rule": "NOT_RECOVERABLE; do not silently regenerate a different historical asset."
+  },
+  "P0_5": {
+    "outcome_independent": true,
+    "batch_size": 1,
+    "actions": [
+      "TENT1",
+      "PL-CONF90",
+      "MEMO-SEG4-1STEP"
+    ]
+  },
+  "stop_rules": [
+    "No HARM-threshold change.",
+    "No target score reversal.",
+    "No target-outcome coverage selection.",
+    "No target-driven feature addition.",
+    "No action-hyperparameter change.",
+    "No dropping hard actions/architectures.",
+    "No Final-B1/B2/B3 panel change."
+  ],
+  "gate": "PASS_B6_P0_PROTOCOL_FROZEN"
+}

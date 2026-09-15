@@ -1,0 +1,312 @@
+{
+  "status": "PASS",
+  "gate": "PASS_B6_P08B_FINAL_STATISTICAL_CLOSURE_COMPLETE",
+  "version": "2026-09-15-B6-P08B-v1",
+  "lineage": {
+    "protocol_path": "F:\\MEDSEG_SAFETTA\\code\\B6_P08_FINAL_STATISTICAL_CLOSURE_PROTOCOL_v1.json",
+    "protocol_sha256": "fc231ec059188f44db277940a321f341b2f322b80902664c10889bfb5fe2a147",
+    "p08a3_lock_path": "F:\\MEDSEG_SAFETTA\\B6_P08A3_neopolyp_loao_exact_binding_amendment_v1_fix1\\B6_P08A3_NEOPOLYP_LOAO_EXACT_BINDING_AMENDMENT.json",
+    "p08a3_lock_sha256": "b848b89ec153b99a3a046088e9384485937479081c564206237102b8f8e488d0",
+    "r32a1_oof_path": "F:\\MEDSEG_SAFETTA\\R32A1_three_action_loao_comparison_execution_v1_fix1\\R32A1_FIX1_OOF_PREDICTIONS.csv",
+    "r32a1_oof_sha256": "9f0aec052ede9a0bb50d886fd9e88d68fcec10acc66d8cac44eeb4fa8611fb02",
+    "p08a_fix2_decision_path": "F:\\MEDSEG_SAFETTA\\B6_P08A_final_statistical_closure_asset_binding_audit_v1_fix2\\B6_P08A_FINAL_STATISTICAL_CLOSURE_BINDING.json",
+    "p08a_fix2_decision_sha256": "730df35ed252fd9687e3de80e209a9db36842fb9ec3fc97569af76b6b885204d",
+    "polypgen_grouping_route": "IMAGE_FRAME_IS_HIGHEST_RECOVERABLE_UNIT_IN_CURRENT_ASSETS"
+  },
+  "neoPolyp_LOAO": {
+    "source_model": "SOURCE_Q66_ONLY",
+    "shared_model": "SHARED_TRANSITION_Q66_DSEM64",
+    "evaluation_type": "LOAO",
+    "direction_to_heldout_action": {
+      "PL-CONF90+MEMO-SEG4-1STEP->TENT1": "TENT1",
+      "TENT1+MEMO-SEG4-1STEP->PL-CONF90": "PL-CONF90",
+      "TENT1+PL-CONF90->MEMO-SEG4-1STEP": "MEMO-SEG4-1STEP"
+    },
+    "split_seeds": [
+      20260912,
+      20260913,
+      20260914,
+      20260915,
+      20260916
+    ],
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "physical_images": 800,
+    "model_states": 9,
+    "paired_oof_rows": 108000,
+    "bootstrap_reps": 2000,
+    "bootstrap_seed": 20260923,
+    "point_summary": {
+      "source_macro_action_auroc": 0.7281897701956428,
+      "shared_macro_action_auroc": 0.7415999618331841,
+      "delta_macro_action_auroc": 0.013410191637541341,
+      "source_macro_action_auprc": 0.2956825726410501,
+      "shared_macro_action_auprc": 0.4158594697526734,
+      "delta_macro_action_auprc": 0.1201768971116234,
+      "anchor_parity": {
+        "source_anchor": 0.72819,
+        "shared_anchor": 0.7416,
+        "delta_anchor": 0.01341,
+        "source_abs_diff": 2.2980435721020598e-07,
+        "shared_abs_diff": 3.816681592994087e-08,
+        "delta_abs_diff": 1.9163754134098043e-07,
+        "tolerance": 0.0005,
+        "pass": true
+      }
+    },
+    "bootstrap_summary": [
+      {
+        "scope": "MACRO_3_ACTION",
+        "heldout_action": null,
+        "metric": "delta_auroc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": 0.013596057534032707,
+        "ci95_low": -0.0039507905471434426,
+        "ci95_high": 0.0319508935083517,
+        "ci_excludes_zero": false
+      },
+      {
+        "scope": "MACRO_3_ACTION",
+        "heldout_action": null,
+        "metric": "delta_auprc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": 0.12127059774085154,
+        "ci95_low": 0.0956090021480088,
+        "ci95_high": 0.147939933869458,
+        "ci_excludes_zero": true
+      },
+      {
+        "scope": "PER_ACTION",
+        "heldout_action": "MEMO-SEG4-1STEP",
+        "metric": "delta_auroc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": -0.009951174138123669,
+        "ci95_low": -0.044382774140607484,
+        "ci95_high": 0.024420704295896045,
+        "ci_excludes_zero": false
+      },
+      {
+        "scope": "PER_ACTION",
+        "heldout_action": "MEMO-SEG4-1STEP",
+        "metric": "delta_auprc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": 0.11981482544238202,
+        "ci95_low": 0.07008003870118898,
+        "ci95_high": 0.17483735125774114,
+        "ci_excludes_zero": true
+      },
+      {
+        "scope": "PER_ACTION",
+        "heldout_action": "PL-CONF90",
+        "metric": "delta_auroc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": 0.06703690949073646,
+        "ci95_low": 0.042476375035884105,
+        "ci95_high": 0.09175463455376537,
+        "ci_excludes_zero": true
+      },
+      {
+        "scope": "PER_ACTION",
+        "heldout_action": "PL-CONF90",
+        "metric": "delta_auprc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": 0.20247797057548164,
+        "ci95_low": 0.16194178790121871,
+        "ci95_high": 0.24073711978723109,
+        "ci_excludes_zero": true
+      },
+      {
+        "scope": "PER_ACTION",
+        "heldout_action": "TENT1",
+        "metric": "delta_auroc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": -0.01629756275051468,
+        "ci95_low": -0.03844455590094061,
+        "ci95_high": 0.005212616485475899,
+        "ci_excludes_zero": false
+      },
+      {
+        "scope": "PER_ACTION",
+        "heldout_action": "TENT1",
+        "metric": "delta_auprc_shared_minus_source",
+        "requested_reps": 2000,
+        "valid_reps": 2000,
+        "bootstrap_mean": 0.041518997204691,
+        "ci95_low": 0.0064378749969082345,
+        "ci95_high": 0.07417115939162014,
+        "ci_excludes_zero": true
+      }
+    ]
+  },
+  "MRI_event_support": {
+    "meta": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P01A_mri_matched_representation_attribution_v1\\B6_P01A_PROMISE12_MATCHED_SCORES.csv",
+      "sha256": "70a311b8d3f0e0d0d226d4ce7d446a70f73027c066bdae284fd85115c656800b",
+      "representation": "FULL_TRANSITION_SAFETTA",
+      "patient_column": "case_key",
+      "rows": 8262,
+      "patients": 50,
+      "harm_rows": 1157,
+      "harm_prevalence": 0.14003873154199953,
+      "harm_positive_patients_pooled": 50
+    },
+    "rows": [
+      {
+        "family": "DeepLabV3_R50",
+        "action": "MEMO-SEG4-1STEP",
+        "rows": 1377,
+        "harm_rows": 28,
+        "harm_prevalence": 0.020334059549745823,
+        "unique_patients": 50,
+        "harm_positive_unique_patients": 18
+      },
+      {
+        "family": "DeepLabV3_R50",
+        "action": "PL-CONF90",
+        "rows": 1377,
+        "harm_rows": 210,
+        "harm_prevalence": 0.15250544662309368,
+        "unique_patients": 50,
+        "harm_positive_unique_patients": 50
+      },
+      {
+        "family": "DeepLabV3_R50",
+        "action": "TENT1",
+        "rows": 1377,
+        "harm_rows": 284,
+        "harm_prevalence": 0.20624546114742193,
+        "unique_patients": 50,
+        "harm_positive_unique_patients": 49
+      },
+      {
+        "family": "SegFormer_B0",
+        "action": "MEMO-SEG4-1STEP",
+        "rows": 1377,
+        "harm_rows": 124,
+        "harm_prevalence": 0.09005083514887437,
+        "unique_patients": 50,
+        "harm_positive_unique_patients": 33
+      },
+      {
+        "family": "SegFormer_B0",
+        "action": "PL-CONF90",
+        "rows": 1377,
+        "harm_rows": 101,
+        "harm_prevalence": 0.07334785766158315,
+        "unique_patients": 50,
+        "harm_positive_unique_patients": 34
+      },
+      {
+        "family": "SegFormer_B0",
+        "action": "TENT1",
+        "rows": 1377,
+        "harm_rows": 410,
+        "harm_prevalence": 0.29774872912127814,
+        "unique_patients": 50,
+        "harm_positive_unique_patients": 50
+      }
+    ]
+  },
+  "PolypGen_event_support": {
+    "meta": {
+      "path": "F:\\MEDSEG_SAFETTA\\R33A3_first_polypgen_memo_harm_reveal_external_joint_shift_evaluation_v1\\R33A3_POLYPGEN_MEMO_MODELCASE_OUTCOMES.csv",
+      "sha256": "3050417d562c68fd67c3ea51ac783070c5afff03ffa9751183d5b53f688b00f7",
+      "rows": 4596,
+      "physical_images": 1532,
+      "states": 3,
+      "harm_rows": 301,
+      "harm_prevalence": 0.0654917319408181,
+      "harm_positive_unique_physical_images_pooled": 228,
+      "harm_label_parity_at_minus_0p02": true
+    },
+    "rows": [
+      {
+        "model_state_id": "DeepLabV3-R50::20260817",
+        "rows": 1532,
+        "harm_rows": 100,
+        "harm_prevalence": 0.06527415143603134,
+        "unique_physical_images": 1532,
+        "harm_positive_unique_physical_images": 100
+      },
+      {
+        "model_state_id": "DeepLabV3-R50::20260818",
+        "rows": 1532,
+        "harm_rows": 95,
+        "harm_prevalence": 0.06201044386422976,
+        "unique_physical_images": 1532,
+        "harm_positive_unique_physical_images": 95
+      },
+      {
+        "model_state_id": "DeepLabV3-R50::20260819",
+        "rows": 1532,
+        "harm_rows": 106,
+        "harm_prevalence": 0.06919060052219321,
+        "unique_physical_images": 1532,
+        "harm_positive_unique_physical_images": 106
+      },
+      {
+        "model_state_id": "POOLED_3_STATES",
+        "rows": 4596,
+        "harm_rows": 301,
+        "harm_prevalence": 0.0654917319408181,
+        "unique_physical_images": 1532,
+        "harm_positive_unique_physical_images": 228
+      }
+    ],
+    "highest_recoverable_statistical_unit": "physical image/frame"
+  },
+  "scientific_constraints": {
+    "refit": false,
+    "inference": false,
+    "target_calibration": false,
+    "score_flip": false,
+    "selector_change": false,
+    "action_weighting": false,
+    "split_seed_selection": false,
+    "performance_based_binding": false
+  },
+  "artifacts": {
+    "B6_P08B_NEO_LOAO_POINT_BY_SEED_ACTION.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1\\B6_P08B_NEO_LOAO_POINT_BY_SEED_ACTION.csv",
+      "sha256": "ed6165df3cdf17cd31445ff70988b2ceadb20254b68679c11e41794149183e4b",
+      "bytes": 2811
+    },
+    "B6_P08B_NEO_LOAO_POINT_BY_ACTION.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1\\B6_P08B_NEO_LOAO_POINT_BY_ACTION.csv",
+      "sha256": "91ecd5df676b8ff62ae29d0fb09602c79f8a91c0ddf2d49c9abdceceede16d7c",
+      "bytes": 524
+    },
+    "B6_P08B_NEO_LOAO_PAIRED_BOOTSTRAP_REPLICATES.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1\\B6_P08B_NEO_LOAO_PAIRED_BOOTSTRAP_REPLICATES.csv",
+      "sha256": "3f59d7c792cf655c9b82644723d21c3f818bc9d616e915720c39bde51e4ccbb8",
+      "bytes": 798049
+    },
+    "B6_P08B_NEO_LOAO_PAIRED_BOOTSTRAP_SUMMARY.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1\\B6_P08B_NEO_LOAO_PAIRED_BOOTSTRAP_SUMMARY.csv",
+      "sha256": "2b344e058ce7a59860f207c3de444e62f234b5db66e2775848cc520887018e3c",
+      "bytes": 1144
+    },
+    "B6_P08B_MRI_HARM_EVENT_SUPPORT.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1\\B6_P08B_MRI_HARM_EVENT_SUPPORT.csv",
+      "sha256": "2ddb7bbe3721bb5ac99fd2b5a806003a132e46e30e4df9342404d09750447c73",
+      "bytes": 453
+    },
+    "B6_P08B_POLYPGEN_HARM_EVENT_SUPPORT.csv": {
+      "path": "F:\\MEDSEG_SAFETTA\\B6_P08B_final_statistical_closure_v1\\B6_P08B_POLYPGEN_HARM_EVENT_SUPPORT.csv",
+      "sha256": "c8e957ede1070404019031546041ef3171adfa012d627c87b939f5c9b5b9ca6f",
+      "bytes": 348
+    }
+  }
+}
