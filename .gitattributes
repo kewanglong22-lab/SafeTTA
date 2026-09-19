@@ -1,11 +1,18 @@
-# SafeTTA reproducibility: preserve frozen Python bytes across platforms.
-# The strict public replay verifies SHA256 of frozen scripts.
+# SafeTTA reproducibility: preserve frozen text bytes across platforms.
+# The strict public replay verifies SHA256 of frozen scripts and selected paper-facing CSVs.
 *.py text eol=lf
 
 # Explicit binary artifacts.
 *.joblib -text
 *.npz -text
 *.npy -text
+
+# Final68 paper-facing compact reproducibility layer.
+reproducibility/final68_20260919/*.csv text eol=lf
+reproducibility/final68_20260919/*.json text eol=lf
+reproducibility/final68_20260919/*.md text eol=lf
+reproducibility/final68_20260919/figure_data/*.csv text eol=lf
+
 experiments/reviewer_defense/*.py text eol=lf
 outputs/r16_reviewer_defense/*.csv text eol=lf
 outputs/r16_reviewer_defense/*.json text eol=lf
