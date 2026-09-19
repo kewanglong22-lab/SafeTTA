@@ -1,6 +1,6 @@
 # Final68 publication synchronization report
 
-Status: **COMPACT PUBLIC LAYER + EXACT FROZEN CONTROLLER SYNCHRONIZED; WINDOWS LF NORMALIZATION FIX ADDED; PUBLIC REPLAY RE-RUN REQUIRED BEFORE MERGE**
+Status: **COMPACT PUBLIC LAYER + EXACT FROZEN CONTROLLER SYNCHRONIZED; WINDOWS LF ISSUE RESOLVED; FINAL68 PUBLIC REPLAY PASS; READY FOR PR FINAL REVIEW**
 
 Target repository:
 
@@ -24,6 +24,7 @@ Historical tags/releases remain unchanged.
 - Final68 lock/artifact SHA registry;
 - claim-boundary document;
 - `code/Q1_Final68_public_paper_stat_replay_v1.py`;
+- exact frozen Final68 controller;
 - draft Final68 release notes.
 
 ## Exact frozen controller synchronization
@@ -36,7 +37,7 @@ controller: COPY=PASS -> artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CON
 GATE=PASS_FINAL68_AUTHOR_BINARY_ASSET_SYNC
 ```
 
-The controller was committed to the synchronization branch in commit:
+The controller was committed in:
 
 ```text
 b4fcfcf  Add exact frozen Final68 controller artifact
@@ -44,27 +45,57 @@ b4fcfcf  Add exact frozen Final68 controller artifact
 
 The target68 NPY remains SHA-bound provenance only and is not redistributed in this compact layer.
 
-## Windows replay diagnostic
+## Windows line-ending audit
 
-The first Windows replay after controller synchronization produced SHA failures for all three figure-data CSVs while all 155 numeric-anchor rows matched. The observed hashes exactly equal the CRLF-converted forms of the frozen LF files:
+The first Windows replay after controller synchronization failed only the three figure-data SHA checks because the worktree files had CRLF line endings. All 155 numerical anchor rows still matched.
+
+`.gitattributes` now enforces LF for Final68 frozen CSV/JSON/Markdown assets. After LF normalization, the exact frozen figure-data hashes are:
 
 ```text
-fig2 CRLF SHA 914a805c3a819a8960fc010b183579cad3139a1f41455c6813339d8676498594
-fig3 CRLF SHA 55cf34c37d70cc86f0d060413bbcb0837c435744b0ed797b85ca24b646527fe7
-figS1 CRLF SHA f1d4cb0193e297fcab92384b7365d99f58c1a3cb9d13e62ee53363a454fff8b5
+fig2  b47c30e3cf56173e7b075b5876c5364720759cd9e9dda49e55bd419b39ae198e
+fig3  68790ec7cb6a17cdf73932b87d34f3946f7689bdb245a63c39cb7ba90d422225
+figS1 96b2a58cffa3c799619e097a86f6165009b6ef01b954b5bcc60637dd14638fef
 ```
 
-This is a checkout line-ending issue, not a numerical/data mismatch. `.gitattributes` now enforces LF for the Final68 reproducibility CSV/JSON/Markdown layer.
+The re-run on Windows completed with:
 
-## Final merge/tag gate
+```text
+Anchor rows: 155
+Required anchors: 24
+Missing: 0
+Mismatched: 0
+FIGURE_DATA fig2_coverage_utility_frozen_points.csv: PASS
+FIGURE_DATA fig3_action_shift_loao_frozen_points.csv: PASS
+FIGURE_DATA figS1_margin_sensitivity_frozen_points.csv: PASS
+FINAL68_CONTROLLER_SHA=PASS
+FINAL68_TARGET68_SHA=PASS
+LEGACY_SIGNATURE_EXCLUSION=PASS
+GATE=PASS_FINAL68_PUBLIC_PAPER_STAT_REPLAY
+```
 
-Do not merge or tag until:
+The CRLF event is therefore resolved as a checkout-byte issue, not a numerical or scientific-data mismatch.
 
-1. the current Windows clone pulls the updated `.gitattributes`;
-2. the three figure-data CSV worktree files are rewritten to LF;
-3. `Q1_Final68_public_paper_stat_replay_v1.py --root .` ends with `GATE=PASS_FINAL68_PUBLIC_PAPER_STAT_REPLAY`;
-4. PR #2 is re-audited on the final branch head;
-5. the PR is merged into `main`;
-6. the final merged commit SHA is recorded;
-7. immutable tag `v2.0-paper-final68` is created and verified;
-8. manuscript Code Availability is updated with the exact tag + commit.
+## PR audit status
+
+PR #2 has been checked against the current Final68 manuscript boundaries:
+
+- Final68 = Geometry4 + Transition64;
+- tri-state HARM / NEUTRAL / BENEFIT controller;
+- no explicit ActionID;
+- pre-commit, not strictly pre-update;
+- PolypGen frozen operating-point gain remains non-significant;
+- QCResUNet is not claimed to be uniformly worse;
+- PROMISE12 is framework replication, not zero-shot controller transfer;
+- 0.087 ms is controller-only overhead;
+- historical 66-D / 70-D / 130-D results remain historical evidence only.
+
+The duplicate root-level author-sync helper was removed; the canonical helper remains under `code/`.
+
+## Remaining release steps
+
+1. mark PR #2 ready for review;
+2. re-confirm mergeability at the final branch head;
+3. merge PR #2 into `main`;
+4. record the final merged commit SHA;
+5. create and verify immutable tag `v2.0-paper-final68`;
+6. update manuscript Code Availability with the exact repository, tag, and commit SHA.
