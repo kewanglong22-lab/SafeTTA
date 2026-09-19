@@ -21,9 +21,9 @@ Final68 = Geometry4 + Transition64
 
 No explicit ActionID is supplied to the Final68 controller.
 
-## Final68 public synchronization status
+## Final68 reproducibility layer
 
-The Final68 compact reproducibility layer is being synchronized under:
+Current compact paper-facing provenance is under:
 
 ```text
 reproducibility/final68_20260919/
@@ -41,7 +41,19 @@ Expected gate:
 GATE=PASS_FINAL68_PUBLIC_PAPER_STAT_REPLAY
 ```
 
-The compact replay verifies frozen paper-facing numerical anchors, figure-data tables, and SHA-bound author artifacts. It does **not** retrain segmentation models, rerun TTA/DINO inference, or access target ground truth.
+The exact frozen Final68 controller is released at:
+
+```text
+artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CONTROLLER.joblib
+```
+
+Expected SHA256:
+
+```text
+8dfa218efe259e9ee0205fde1abc525583d3156f0491cd0143e541b835d4f3f4
+```
+
+The compact replay verifies frozen paper-facing numerical anchors, figure-data tables, and SHA-bound artifacts. It does **not** retrain segmentation models, rerun TTA/DINO inference, or access target ground truth.
 
 ## Current Final68 evidence
 
@@ -134,7 +146,7 @@ Key boundaries:
 
 ## Reproducibility scope
 
-The public repository is intended to support deterministic verification of released paper-level numerical anchors from frozen compact evidence and SHA-bound artifacts.
+The public repository supports deterministic verification of released paper-level numerical anchors from frozen compact evidence and SHA-bound artifacts.
 
 It does not claim:
 
