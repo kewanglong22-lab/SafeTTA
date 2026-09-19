@@ -24,6 +24,7 @@ The transition is scored **after the candidate prediction has been produced but 
 - `FINAL68_LOCKS.json` — exact known artifact and lock SHA256 identifiers.
 - `CLAIM_BOUNDARIES.md` — supported and forbidden interpretations.
 - `figure_data/` — frozen paper-facing figure point tables.
+- `../../artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CONTROLLER.joblib` — exact frozen Final68 controller.
 
 ## Public replay
 
@@ -41,6 +42,12 @@ GATE=PASS_FINAL68_PUBLIC_PAPER_STAT_REPLAY
 
 This replay verifies the compact public evidence layer. It does not retrain segmentation models, re-run TTA, reconstruct DINOv2 features, or access target ground truth.
 
-## Binary-author artifacts
+## Binary artifacts
 
-The exact author-side frozen controller and target68 matrix are SHA-bound in `FINAL68_LOCKS.json`. They must not be reconstructed or substituted with approximations. If redistributed in a later release asset, the bytes must match the recorded SHA256 exactly.
+The exact frozen controller is redistributed in this repository and is SHA-bound in `FINAL68_LOCKS.json`:
+
+```text
+8dfa218efe259e9ee0205fde1abc525583d3156f0491cd0143e541b835d4f3f4
+```
+
+The target68 NPY remains SHA-bound provenance only and is **not** redistributed in the compact Final68 layer. Neither artifact should be reconstructed or substituted with an approximation.
