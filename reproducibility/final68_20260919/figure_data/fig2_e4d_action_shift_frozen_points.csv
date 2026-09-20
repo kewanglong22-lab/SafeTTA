@@ -1,0 +1,4 @@
+action,hvb_auroc,hvb_ci95_low,hvb_ci95_high,deployed_minus_source,deploy_ci95_low,deploy_ci95_high,n_model_cases,role
+TENT1,0.817440,0.784944,0.846591,0.005709,-0.002026,0.013128,2400,primary_grouped_image_disjoint_LOAO
+PL-CONF90,0.729658,0.679815,0.777933,0.011781,0.008599,0.015475,2400,primary_grouped_image_disjoint_LOAO
+MEMO,0.735553,0.687708,0.783476,,,,2400,primary_grouped_image_disjoint_LOAO
