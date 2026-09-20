@@ -6,24 +6,22 @@ SafeTTA asks a deployment-oriented question: after a specified test-time adaptat
 
 ## Current manuscript method: Final68
 
-The current paper-facing method is:
-
 ```text
 Final68 = Geometry4 + Transition64
 ```
 
-- **Geometry4**: prediction-to-prediction Dice, IoU, foreground-area change, and boundary-density change.
-- **Transition64**: candidate-conditioned minus SOURCE-conditioned semantic PCA64 representation, built from frozen DINOv2 patch features.
+- **Geometry4**: SOURCE-to-candidate prediction Dice, IoU, foreground-area change, and boundary-density change.
+- **Transition64**: candidate-conditioned minus SOURCE-conditioned semantic PCA64 representation derived from frozen DINOv2 patch features.
 - **Controller**: class-balanced tri-state logistic regression predicting HARM / NEUTRAL / BENEFIT.
 - **Utility**: `u = P(BENEFIT) - P(HARM)`.
 - **Decision**: accept candidate if `u > 0`; otherwise retain SOURCE.
 - **Timing**: pre-commit, not strictly pre-update. The candidate prediction exists before the safety decision, but SOURCE remains recoverable.
 
-No explicit ActionID is supplied to the Final68 controller.
+Final68 deliberately contains candidate-induced transition information rather than an absolute SOURCE-state branch. No explicit ActionID is supplied to the frozen controller.
 
-## Final68 reproducibility layer
+## Corrected v7 public reproducibility layer
 
-Current compact paper-facing provenance is under:
+The active compact paper-facing layer is under:
 
 ```text
 reproducibility/final68_20260919/
@@ -38,24 +36,24 @@ python code/Q1_Final68_public_paper_stat_replay_v1.py --root .
 Expected gate:
 
 ```text
-GATE=PASS_FINAL68_PUBLIC_PAPER_STAT_REPLAY
+GATE=PASS_FINAL68_V7_CORRECTED_PUBLIC_PAPER_STAT_REPLAY
 ```
 
-The exact frozen Final68 controller is released at:
+The replay now hashes the **actual controller file bytes** before validating the frozen SHA256.
+
+Exact controller:
 
 ```text
 artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CONTROLLER.joblib
 ```
 
-Expected SHA256:
+Expected actual-file SHA256:
 
 ```text
 8dfa218efe259e9ee0205fde1abc525583d3156f0491cd0143e541b835d4f3f4
 ```
 
-The compact replay verifies frozen paper-facing numerical anchors, figure-data tables, and SHA-bound artifacts. It does **not** retrain segmentation models, rerun TTA/DINO inference, or access target ground truth.
-
-## Current Final68 evidence
+## Current evidence line
 
 ### External PolypGen
 
@@ -69,15 +67,23 @@ The compact replay verifies frozen paper-facing numerical anchors, figure-data t
 | Deployed Dice | 0.75692 |
 | Deployed − SOURCE | +0.00202 |
 
-The frozen PolypGen operating-point deployment improvement is **not statistically significant**.
+The frozen PolypGen operating-point deployment improvement is positive but **not statistically significant**.
 
-### Strict three-action LOAO
+### Primary grouped image-disjoint action shift
 
-| Held-out action | HARM-vs-BENEFIT AUROC | HARM rollback | BENEFIT accept |
+The primary action-shift analysis is the grouped physical-image-disjoint held-out-action protocol. Historical E4C is retained only as secondary provenance and is not called strict LOAO.
+
+| Held-out action | HARM-vs-BENEFIT AUROC | 95% CI | Deployed − SOURCE |
 |---|---:|---:|---:|
-| TENT1 | 0.8408 | 85.40% | 73.11% |
-| PL-CONF90 | 0.7774 | 50.00% | 88.73% |
-| MEMO | 0.8339 | 82.12% | 69.96% |
+| TENT1 | 0.817440 | [0.784944, 0.846591] | +0.005709 [-0.002026, 0.013128] |
+| PL-CONF90 | 0.729658 | [0.679815, 0.777933] | +0.011781 [0.008599, 0.015475] |
+| MEMO | 0.735553 | [0.687708, 0.783476] | N/A |
+
+The TENT1 deployment interval crosses zero. Absolute MEMO deployment is unavailable in the frozen primary lineage.
+
+### Endpoint sensitivity
+
+The frozen primary HARM/NEUTRAL/BENEFIT Dice margin is `±0.02`. Margins `±0.01`, `±0.03`, and `±0.05` are sensitivity analyses only.
 
 ### PROMISE12 prostate-MRI replication
 
@@ -89,43 +95,49 @@ The frozen PolypGen operating-point deployment improvement is **not statisticall
 | Deployed Dice | 0.75135 |
 | Deployed − SOURCE | +0.00610 |
 
-PROMISE12 is an **independently re-fitted framework replication**, not zero-shot transfer of the exact colonoscopy controller.
+PROMISE12 is an **independently re-fitted framework replication**, not zero-shot transfer of the colonoscopy controller. The deployment endpoint is panel-level with patient-clustered inference and is not presented as patient-level pooled 3-D Dice improvement.
 
-## Deployment interpretation
+### Frozen score-level comparator sensitivity
 
-The current manuscript explicitly separates:
-
-1. **ranking quality**;
-2. **HARM prevention**;
-3. **BENEFIT retention**; and
-4. **deployed segmentation quality**.
-
-A high global HARM AUROC does not necessarily produce better deployment if the ranking is overly conservative.
+The PolypGen comparator panel uses pre-frozen risk scores under a common 50% accept/rollback budget. It compares score ordering and deployment consequences; it is **not** a harmonized end-to-end reproduction of the original QCResUNet, TEGDA, SicTTA, or MC-dropout pipelines.
 
 ## Controller-only overhead
 
-Once the 68-D representation is already available:
+Once Final68 is already available:
 
 ```text
 mean single-case CPU latency: 0.0869 ms
 serialized controller size:   5,188 bytes
 ```
 
-These numbers describe the **controller only** and are not end-to-end SafeTTA latency.
+These numbers describe the **controller only**. They exclude candidate TTA execution, segmentation inference, DINOv2 extraction, Geometry4, and Transition64 construction.
+
+## Public-asset exclusions
+
+Two previously published figure-data files are intentionally excluded from the corrected active evidence layer because their provenance is not independently sufficient for the current manuscript claims:
+
+```text
+fig2_coverage_utility_frozen_points.csv
+fig3_action_shift_loao_frozen_points.csv
+```
+
+The corrected action-shift figure data are provided instead as:
+
+```text
+reproducibility/final68_20260919/figure_data/fig2_e4d_action_shift_frozen_points.csv
+```
 
 ## Historical releases
 
-Earlier immutable SafeTTA releases remain available for reproducibility. They include SOURCE66 / SOURCE+simple70 / SOURCE+semantic-transition130 experiments and the earlier R31-R33 extension.
-
-Those historical representations and results are scientifically distinct from Final68 and are **not** used as current Final68 evidence. In particular, the old PolypGen full-transition result `0.7432 / 0.2555` belongs to the historical 130-D method.
-
-The original frozen v14 tag remains immutable:
+Historical tags remain immutable. In particular, `v2.0-paper-final68` remains the pre-correction Final68 public snapshot and resolves to commit:
 
 ```text
-v1.0-paper-v14
+84c907bcd91de228c5f480659f1d9c29e39d0195
 ```
 
-Historical cross-platform releases `v1.0.0` and `v1.0.1` also remain unchanged.
+Earlier 66-D / 70-D / 130-D representations, old R31-R33 transition analyses, and historical E4C results are scientifically distinct from the current Final68 primary evidence line.
+
+The old PolypGen 130-D full-transition result `0.7432 / 0.2555` is historical provenance and is not a current Final68 result.
 
 ## Claim boundaries
 
@@ -135,30 +147,24 @@ See:
 reproducibility/final68_20260919/CLAIM_BOUNDARIES.md
 ```
 
-Key boundaries:
+Key boundaries include:
 
 - do not claim Full68 has the best global HARM AUROC;
 - do not claim significant improvement at the frozen PolypGen operating point;
 - do not claim uniform superiority over QCResUNet;
+- do not treat the comparator table as an end-to-end method reproduction;
+- do not call historical E4C the primary strict LOAO result;
+- do not report primary absolute MEMO deployment where the frozen paired lineage is incomplete;
 - do not call PROMISE12 zero-shot controller transfer;
-- do not call 0.087 ms end-to-end latency;
+- do not call `0.087 ms` end-to-end latency;
 - do not interpret `u=0` as a clinically calibrated optimum.
 
 ## Reproducibility scope
 
-The public repository supports deterministic verification of released paper-level numerical anchors from frozen compact evidence and SHA-bound artifacts.
+The repository supports deterministic verification of released paper-level numerical anchors from frozen compact evidence and SHA-bound artifacts.
 
-It does not claim:
-
-- bit-identical retraining of every historical segmentation checkpoint;
-- redistribution of raw datasets or external ground truth;
-- redistribution of third-party DINOv2 weights;
-- bit-identical wall-clock runtime across hardware.
+It does not claim bit-identical retraining of every historical segmentation checkpoint, redistribution of raw datasets/ground truth/third-party DINOv2 weights, or bit-identical wall-clock runtime across hardware.
 
 ## License
 
 Original SafeTTA materials that the authors are entitled to license are released under Apache License 2.0. Third-party models, datasets, and software retain their original terms.
-
-## Citation
-
-A formal citation entry will be added after final bibliographic information is available.
