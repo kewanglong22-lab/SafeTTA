@@ -1,6 +1,6 @@
-# Final68 publication synchronization report
+# Final68 v7 corrected public-layer synchronization report
 
-Status: **COMPACT PUBLIC LAYER + EXACT FROZEN CONTROLLER SYNCHRONIZED; WINDOWS LF ISSUE RESOLVED; FINAL68 PUBLIC REPLAY PASS; READY FOR PR FINAL REVIEW**
+Status: **CORRECTED PUBLIC LAYER STAGED ON PR BRANCH; HISTORICAL TAGS UNCHANGED; MERGE + NEW TAG PENDING**
 
 Target repository:
 
@@ -8,94 +8,129 @@ Target repository:
 kewanglong22-lab/SafeTTA
 ```
 
-Synchronization branch:
+Current correction branch:
 
 ```text
-final68-public-sync-20260919
+final68-v7-public-repair-20260920
 ```
 
-Historical tags/releases remain unchanged.
-
-## Compact layer contents
-
-- updated root README for Final68;
-- `reproducibility/final68_20260919/` numerical/provenance layer;
-- exact paper-facing figure-data CSVs;
-- Final68 lock/artifact SHA registry;
-- claim-boundary document;
-- `code/Q1_Final68_public_paper_stat_replay_v1.py`;
-- exact frozen Final68 controller;
-- draft Final68 release notes.
-
-## Exact frozen controller synchronization
-
-Author-side sync observed:
+Historical tag `v2.0-paper-final68` remains immutable and resolves to commit:
 
 ```text
-controller: source_sha=8dfa218efe259e9ee0205fde1abc525583d3156f0491cd0143e541b835d4f3f4
-controller: COPY=PASS -> artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CONTROLLER.joblib
-GATE=PASS_FINAL68_AUTHOR_BINARY_ASSET_SYNC
+84c907bcd91de228c5f480659f1d9c29e39d0195
 ```
 
-The controller was committed in:
+It is retained as pre-correction provenance and must not be moved, deleted, or reassigned.
+
+## Why the v7 correction exists
+
+The manuscript-level P0-P7 audit identified four active public-layer issues that required repair without rewriting historical artifacts:
+
+1. historical E4C was still presented as the primary/strict LOAO line;
+2. two figure-data CSVs had insufficient independent provenance for current paper claims;
+3. `0.087 ms` could be misread as end-to-end SafeTTA latency;
+4. the public replay validated the recorded controller SHA string without hashing the actual controller file bytes.
+
+The corrected branch repairs these public-facing issues while preserving historical files/tags as provenance.
+
+## Corrected active evidence line
+
+### Primary action shift
+
+The primary action-shift analysis is the grouped physical-image-disjoint held-out-action analysis:
 
 ```text
-b4fcfcf  Add exact frozen Final68 controller artifact
+TENT1      H-v-B AUROC 0.817440  [0.784944, 0.846591]
+PL-CONF90  H-v-B AUROC 0.729658  [0.679815, 0.777933]
+MEMO       H-v-B AUROC 0.735553  [0.687708, 0.783476]
 ```
 
-The target68 NPY remains SHA-bound provenance only and is not redistributed in this compact layer.
-
-## Windows line-ending audit
-
-The first Windows replay after controller synchronization failed only the three figure-data SHA checks because the worktree files had CRLF line endings. All 155 numerical anchor rows still matched.
-
-`.gitattributes` now enforces LF for Final68 frozen CSV/JSON/Markdown assets. After LF normalization, the exact frozen figure-data hashes are:
+Deployment boundaries:
 
 ```text
-fig2  b47c30e3cf56173e7b075b5876c5364720759cd9e9dda49e55bd419b39ae198e
-fig3  68790ec7cb6a17cdf73932b87d34f3946f7689bdb245a63c39cb7ba90d422225
-figS1 96b2a58cffa3c799619e097a86f6165009b6ef01b954b5bcc60637dd14638fef
+TENT1      deployed-SOURCE +0.005709  CI [-0.002026, 0.013128]
+PL-CONF90  deployed-SOURCE +0.011781  CI [ 0.008599, 0.015475]
+MEMO       absolute deployment N/A
 ```
 
-The re-run on Windows completed with:
+Historical E4C remains secondary provenance and is not described as strict LOAO.
+
+### Endpoint margin
+
+The frozen primary HARM/NEUTRAL/BENEFIT Dice margin is `±0.02`. Margins `±0.01`, `±0.03`, and `±0.05` are sensitivity analyses only.
+
+### Runtime
+
+The approximately `0.087 ms/case` measurement is the controller-only stage **after Final68 already exists**. It excludes candidate TTA execution, segmentation inference, DINOv2 extraction, Geometry4, and Transition64 construction.
+
+## Public asset repair
+
+Removed from the corrected active layer:
 
 ```text
-Anchor rows: 155
-Required anchors: 24
-Missing: 0
-Mismatched: 0
-FIGURE_DATA fig2_coverage_utility_frozen_points.csv: PASS
-FIGURE_DATA fig3_action_shift_loao_frozen_points.csv: PASS
-FIGURE_DATA figS1_margin_sensitivity_frozen_points.csv: PASS
-FINAL68_CONTROLLER_SHA=PASS
-FINAL68_TARGET68_SHA=PASS
-LEGACY_SIGNATURE_EXCLUSION=PASS
-GATE=PASS_FINAL68_PUBLIC_PAPER_STAT_REPLAY
+reproducibility/final68_20260919/figure_data/fig2_coverage_utility_frozen_points.csv
+reproducibility/final68_20260919/figure_data/fig3_action_shift_loao_frozen_points.csv
 ```
 
-The CRLF event is therefore resolved as a checkout-byte issue, not a numerical or scientific-data mismatch.
+Their historical SHA256 values remain documented in `FINAL68_LOCKS.json` for traceability.
 
-## PR audit status
+Added canonical current action-shift figure data:
 
-PR #2 has been checked against the current Final68 manuscript boundaries:
+```text
+reproducibility/final68_20260919/figure_data/fig2_e4d_action_shift_frozen_points.csv
+```
 
-- Final68 = Geometry4 + Transition64;
-- tri-state HARM / NEUTRAL / BENEFIT controller;
-- no explicit ActionID;
-- pre-commit, not strictly pre-update;
-- PolypGen frozen operating-point gain remains non-significant;
-- QCResUNet is not claimed to be uniformly worse;
-- PROMISE12 is framework replication, not zero-shot controller transfer;
-- 0.087 ms is controller-only overhead;
-- historical 66-D / 70-D / 130-D results remain historical evidence only.
+Expected SHA256:
 
-The duplicate root-level author-sync helper was removed; the canonical helper remains under `code/`.
+```text
+36cb4a79697bd3aeffc63eaafaf97b6e72ba998ad6fc23425c9e942007af7558
+```
+
+The frozen margin-sensitivity data remain active:
+
+```text
+figS1_margin_sensitivity_frozen_points.csv
+SHA256 96b2a58cffa3c799619e097a86f6165009b6ef01b954b5bcc60637dd14638fef
+```
+
+## Controller byte binding
+
+Exact controller path:
+
+```text
+artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CONTROLLER.joblib
+```
+
+Expected SHA256:
+
+```text
+8dfa218efe259e9ee0205fde1abc525583d3156f0491cd0143e541b835d4f3f4
+```
+
+The corrected replay opens this file in binary mode, computes SHA256 from its actual bytes, and compares that value to the frozen expected digest.
+
+## Corrected replay
+
+Command:
+
+```bash
+python code/Q1_Final68_public_paper_stat_replay_v1.py --root .
+```
+
+Expected final gate:
+
+```text
+GATE=PASS_FINAL68_V7_CORRECTED_PUBLIC_PAPER_STAT_REPLAY
+```
+
+The replay additionally checks that the two excluded unsafe figure-data files are absent and that historical E4C/E7 groups are not part of the active numeric-anchor registry.
 
 ## Remaining release steps
 
-1. mark PR #2 ready for review;
-2. re-confirm mergeability at the final branch head;
-3. merge PR #2 into `main`;
-4. record the final merged commit SHA;
-5. create and verify immutable tag `v2.0-paper-final68`;
-6. update manuscript Code Availability with the exact repository, tag, and commit SHA.
+1. review the correction branch diff;
+2. run the corrected public replay from a clean checkout;
+3. open and review the PR against `main`;
+4. merge the PR;
+5. record the merged commit SHA;
+6. create a **new** immutable corrected tag; do not reuse or move `v2.0-paper-final68`;
+7. update manuscript Code Availability with the new tag and merged commit SHA.
