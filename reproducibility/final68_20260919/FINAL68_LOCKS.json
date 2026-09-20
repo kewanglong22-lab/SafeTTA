@@ -1,10 +1,31 @@
 {
-  "version": "2026-09-19-Final68-public-sync-v1",
+  "version": "2026-09-20-Final68-v7-public-repair-v1",
   "frozen_artifacts": {
+    "controller_joblib_path": "artifacts/final68/FINAL68_E1B1_SOURCE_ONLY_TRISTATE_CONTROLLER.joblib",
     "controller_joblib_sha256": "8dfa218efe259e9ee0205fde1abc525583d3156f0491cd0143e541b835d4f3f4",
     "target68_npy_sha256": "0640a87e087398ff68a79229509da614451310c924c270ca718e0a235c9a88ab",
     "source68_sha256": "5d732db2bb341f04ce687cdf0d7ef5e2f219dc8943da61312e41b9cc6f6280d7",
     "e1b1_preoutcome_score_sha256": "f11e92782637758841bd2b91a1afc78372685636e6b2a3eecb84c1503d398922"
+  },
+  "active_evidence_roles": {
+    "E4D": "primary grouped physical-image-disjoint held-out-action analysis",
+    "E4E": "endpoint-margin sensitivity with +/-0.02 frozen primary margin",
+    "E4C": "secondary historical shared-image-panel action-held-out evidence"
+  },
+  "historical_locks": {
+    "E1B0": "27d4a3540a78da1ebe5481ab0804b34e93dbf6b28b6183a6013d25d6f023b9ac",
+    "E1B1": "1966f5e640c9e4db70c9c98fafe4d5bbd62d360e4a156980bd30548dc3944075",
+    "E1B2": "c8475dbad414190588920dbdd31852bab4ba3e4348d160496368e845ff961802",
+    "E3A3": "d42a846027fc69a2444e865836fa621e05ef9d1b8018a15aaa2c01d36769d326",
+    "E3B": "bcd9bc064b624814b50a1ac5faab75e45b063eeacab508f670945f49c74f06da",
+    "E4B": "3afeebdf635f504454b990b1ac8b3d5c876519d4a99a76db4b17ba659236c10f",
+    "E4C": "e63b8d2fbd8d0154431a4e7de4b3272d8a3146b1e7581e7b12fd5fc2cdf92aed",
+    "E5": "9032d5970b6ae6a7def501765ff984d13c045e4fd259eb59be57e403bbe37987",
+    "E5A": "c2767bceb5cc819577323dafaa77091da906c51a7fce1670ae9fd500d9bf9447",
+    "E6A2": "11f01a17753ef1656353bdafa48a7a5b2e452cb6f86b26a826c2f1ee6de03dc2",
+    "E6B": "3d5406615482246ff020839ec83fef39dbe6ce1b3e13be402b14d4aa48dc7823",
+    "E7": "636e942b5f561c3268e8329203d0b2710d215516de5fb249e2848fe7eeb2e780",
+    "PROMISE12_B2": "76581782040354f4226d1411ac60fd54b7f62f0f76bc85d9b9b38daf814"
   },
   "locks": {
     "E1B0": "27d4a3540a78da1ebe5481ab0804b34e93dbf6b28b6183a6013d25d6f023b9ac",
@@ -21,14 +42,24 @@
     "E7": "636e942b5f561c3268e8329203d0b2710d215516de5fb249e2848fe7eeb2e780",
     "PROMISE12_B2": "76581782040354f4226d1411ac60fd54b7f62f0f76bc85d9b9b38daf814"
   },
-  "expected_gates": [
-    "PASS_FINAL68_E1B2_POLYPGEN_FINAL68_OUTCOME_REVEAL_AND_CLUSTERED_EVALUATION",
-    "PASS_FINAL68_E3B_FULL68_VS_COMPARATORS_PAIRED_CLUSTERED_EVALUATION",
-    "PASS_FINAL68_E4C_STRICT_THREE_ACTION_LOAO_COMPLETE",
-    "PASS_FINAL68_E5_POLYPGEN_MARGIN_ROBUSTNESS_COMPLETE",
-    "PASS_FINAL68_E5A_NEAR_ZERO_MASS_GENUINE_CONTROLLER_PROPERTY",
-    "PASS_FINAL68_E6B_CONTROLLER_RUNTIME_MEMORY_COMPLETE",
-    "PASS_FINAL68_E7_POLYPGEN_COVERAGE_UTILITY_COMPLETE",
-    "PASS_FINALTASK_B2_PROMISE12_FINAL68D_OUTCOME_REVEAL_AND_CLUSTERED_EVALUATION"
-  ]
+  "excluded_public_assets": {
+    "fig2_coverage_utility_frozen_points.csv": {
+      "sha256": "b47c30e3cf56173e7b075b5876c5364720759cd9e9dda49e55bd419b39ae198e",
+      "reason": "unsupported full comparator coverage arrays"
+    },
+    "fig3_action_shift_loao_frozen_points.csv": {
+      "sha256": "68790ec7cb6a17cdf73932b87d34f3946f7689bdb245a63c39cb7ba90d422225",
+      "reason": "unverified historical action-shift CI rows"
+    }
+  },
+  "active_figure_data": {
+    "fig2_e4d_action_shift_frozen_points.csv": "36cb4a79697bd3aeffc63eaafaf97b6e72ba998ad6fc23425c9e942007af7558",
+    "figS1_margin_sensitivity_frozen_points.csv": "96b2a58cffa3c799619e097a86f6165009b6ef01b954b5bcc60637dd14638fef"
+  },
+  "claim_boundaries": {
+    "controller_latency": "0.087 ms is controller-only after Final68 exists; not end-to-end SafeTTA latency",
+    "memo_absolute_deployment": "N/A in the primary E4D lineage",
+    "promise12": "independently re-fitted framework replication, not zero-shot transfer of the colonoscopy controller",
+    "primary_harm_margin": "0.02 Dice; 0.01/0.03/0.05 are sensitivity only"
+  }
 }

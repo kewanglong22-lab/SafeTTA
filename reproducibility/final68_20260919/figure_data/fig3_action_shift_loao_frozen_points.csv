@@ -1,4 +1,0 @@
-held_out_action,hvb_auroc,hvb_auroc_ci_low,hvb_auroc_ci_high,harm_rollback,harm_rollback_ci_low,harm_rollback_ci_high,benefit_accept,benefit_accept_ci_low,benefit_accept_ci_high
-TENT1,0.8408066594,0.812878,0.867613,0.854041,0.822297,0.883975,0.7310705,0.681471,0.779751
-PL-CONF90,0.7774311927,0.73084,0.822621,0.5,0.419339,0.579214,0.8872727,0.848131,0.924815
-MEMO,0.8339258507,0.794827,0.871066,0.8212291,0.763628,0.879518,0.6996047,0.639087,0.759843
