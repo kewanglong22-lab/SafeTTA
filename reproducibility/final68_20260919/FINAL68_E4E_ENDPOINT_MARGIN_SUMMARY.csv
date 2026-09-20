@@ -1,0 +1,5 @@
+dice_margin,hvb_auroc,hvb_auprc,harm_rollback,benefit_accepted,role
+0.01,0.722411,0.716600,0.716243,0.695829,sensitivity
+0.02,0.760884,0.737825,0.710086,0.742179,primary
+0.03,0.770854,0.737988,0.693338,0.773107,sensitivity
+0.05,0.782102,0.740094,0.673712,0.798075,sensitivity
